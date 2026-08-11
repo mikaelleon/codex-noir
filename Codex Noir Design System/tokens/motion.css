@@ -1,0 +1,7 @@
+:root{
+  --ease-standard:cubic-bezier(.4,0,.2,1); /* @kind other */
+  --duration-fast:150ms; /* @kind other */
+  --duration-unlock:400ms; /* @kind other */
+  --shadow-panel:0 8px 24px var(--shadow-color);
+  --shadow-none:none;
+}

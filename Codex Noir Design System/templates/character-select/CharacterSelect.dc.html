@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Codex Noir — Character Select" description="Full-viewport Developer/Artist path-select entry screen, MMORPG character-select styling" -->
+<helmet><script src="./ds-base.js"></script><script src="./image-slot.js"></script><style>
+@keyframes csFadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes csFadeScale{from{opacity:0;transform:translate(-50%,-50%) scale(0.97)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes csTrackIn{from{opacity:0;letter-spacing:0.4em}to{opacity:1;letter-spacing:0.2em}}
+@keyframes csDrift{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.cs-root{position:relative;height:100vh;min-height:560px;overflow:hidden;background:var(--ink-black)}
+.cs-bg{position:absolute;inset:-10%;animation-name:csDrift;animation-duration:240s;animation-timing-function:linear;animation-iteration-count:infinite}
+.cs-card{display:block;text-decoration:none;position:relative;transition:transform 150ms var(--ease-standard)}
+.cs-card:hover,.cs-card:focus-visible{transform:translateY(-4px) scale(1.02)}
+.cs-tarot{clip-path:polygon(18% 0,82% 0,100% 10%,100% 90%,82% 100%,18% 100%,0 90%,0 10%);background:var(--panel-raised);padding:10px;transition:box-shadow 150ms var(--ease-standard)}
+.cs-frame{clip-path:polygon(18% 0,82% 0,100% 10%,100% 90%,82% 100%,18% 100%,0 90%,0 10%);border:2px solid var(--gold);background:var(--panel);position:relative;transition:border-color 150ms var(--ease-standard)}
+.cs-card:hover .cs-tarot,.cs-card:focus-visible .cs-tarot{box-shadow:0 0 28px rgba(217,190,140,0.3)}
+.cs-card:hover .cs-frame,.cs-card:focus-visible .cs-frame{border-color:var(--gold-bright)}
+.cs-numeral{position:absolute;top:6px;left:50%;transform:translateX(-50%);z-index:3;font-family:var(--font-heading);font-size:11px;letter-spacing:0.1em;color:var(--gold);background:var(--panel-raised);padding:2px 8px}
+.cs-side-label{position:absolute;top:50%;writing-mode:vertical-rl;font-family:var(--font-heading);font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);z-index:3}
+.cs-side-label.left{left:8px;transform:translateY(-50%) rotate(180deg)}
+.cs-side-label.right{right:8px;transform:translateY(-50%)}
+.cs-card:focus-visible{outline:2px solid var(--gold-bright);outline-offset:6px}
+.cs-label{transition:color 150ms var(--ease-standard),letter-spacing 150ms var(--ease-standard)}
+.cs-card:hover .cs-label,.cs-card:focus-visible .cs-label{color:var(--gold-bright);letter-spacing:0.22em}
+.cs-root:has(.cs-card-right:hover) .cs-card-left,.cs-root:has(.cs-card-right:focus-visible) .cs-card-left{opacity:0.55}
+.cs-root:has(.cs-card-left:hover) .cs-card-right,.cs-root:has(.cs-card-left:focus-visible) .cs-card-right{opacity:0.55}
+.cs-card{opacity:1;transition:opacity 150ms var(--ease-standard),transform 150ms var(--ease-standard)}
+.cs-glyph{transform:translate(-50%,-50%)}
+.cs-anim-cardL{animation:csFadeUp 500ms cubic-bezier(.4,0,.2,1) both;animation-delay:500ms}
+.cs-anim-cardR{animation:csFadeUp 500ms cubic-bezier(.4,0,.2,1) both;animation-delay:650ms}
+.cs-anim-glyph{animation:csFadeScale 400ms cubic-bezier(.4,0,.2,1) both;animation-delay:200ms}
+.cs-anim-labelL{animation:csTrackIn 400ms cubic-bezier(.4,0,.2,1) both;animation-delay:900ms}
+.cs-anim-labelR{animation:csTrackIn 400ms cubic-bezier(.4,0,.2,1) both;animation-delay:1050ms}
+@media(max-width:860px){
+.cs-stage{flex-direction:column!important;gap:36px!important;padding:32px 24px!important}
+.cs-glyph{position:relative!important;margin:0 auto!important;top:auto!important;left:auto!important;transform:none!important}
+.cs-card{width:100%!important;max-width:340px}
+}
+@media(prefers-reduced-motion:reduce){.cs-bg,.cs-anim-cardL,.cs-anim-cardR,.cs-anim-glyph,.cs-anim-labelL,.cs-anim-labelR{animation:none!important;opacity:1!important;letter-spacing:0.2em!important}.cs-anim-glyph{transform:translate(-50%,-50%)!important}}
+</style></helmet>
+
+<div class="cs-root">
+<div class="cs-bg" aria-hidden="true" style="opacity:0.9;background:url('../../assets/bg-celestial.png') center/cover no-repeat"></div>
+
+<div class="cs-stage" style="position:relative;z-index:1;height:100%;display:flex;align-items:center;justify-content:center;gap:96px;padding:0 48px">
+
+<a class="cs-card cs-card-left cs-anim-cardL" href="#developer" aria-label="Select Developer profile" style="position:relative;z-index:2;width:280px">
+<div class="cs-label cs-anim-labelL" style="text-align:center;margin-bottom:14px;font-family:var(--font-heading);font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold)">Developer</div>
+<div class="cs-tarot" style="aspect-ratio:3/4.4">
+<div class="cs-frame" style="width:100%;height:100%">
+<span class="cs-numeral">&#8226; I &#8226;</span>
+<span class="cs-side-label left">The Developer</span>
+<span class="cs-side-label right">Code &amp; Craft</span>
+<image-slot id="cs-developer-portrait" shape="rect" style="position:absolute;inset:0;width:100%;height:100%" placeholder="Drop Developer portrait"></image-slot>
+</div>
+</div>
+</a>
+
+<img class="cs-glyph cs-anim-glyph" src="../../assets/logo-light.svg" alt="Mikaelleon" style="position:absolute;left:50%;top:50%;z-index:1;width:96px;height:auto;opacity:0.95;pointer-events:none">
+
+<a class="cs-card cs-card-right cs-anim-cardR" href="#artist" aria-label="Select Artist profile" style="position:relative;z-index:2;width:280px">
+<div class="cs-tarot" style="aspect-ratio:3/4.4">
+<div class="cs-frame" style="width:100%;height:100%">
+<span class="cs-numeral">&#8226; II &#8226;</span>
+<span class="cs-side-label left">The Artist</span>
+<span class="cs-side-label right">Ink &amp; Illusion</span>
+<image-slot id="cs-artist-portrait" shape="rect" style="position:absolute;inset:0;width:100%;height:100%" placeholder="Drop Artist portrait"></image-slot>
+</div>
+</div>
+<div class="cs-label cs-anim-labelR" style="text-align:center;margin-top:14px;font-family:var(--font-heading);font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold)">Artist</div>
+</a>
+
+</div>
+</div>
+</x-dc>
+</body>
+</html>

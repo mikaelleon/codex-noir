@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@500;600;700&family=Cinzel:wght@500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/codex-noir.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <title>Queue — Mikaelleon</title>
+</head>
+<body>
+  <div class="site">
+    <header class="site-header">
+      <div class="container nav-inner">
+        <a class="nav-logo" href="index.html" aria-label="Mikaelleon home">
+          <img class="logo-dark" src="images/logo/logo-dark.svg" alt="Mikaelleon" />
+          <img class="logo-light" src="images/logo/logo-light.svg" alt="Mikaelleon" />
+        </a>
+        <nav data-nav>
+          <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="portfolio.html">Portfolio</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="commissions.html">Commissions</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+        <div class="nav-actions">
+          <button type="button" class="btn btn-ghost" data-theme-toggle aria-label="Toggle theme"><span data-theme-icon>☾</span></button>
+          <button type="button" class="btn btn-ghost nav-menu-btn" data-nav-open aria-label="Open menu">☰</button>
+        </div>
+      </div>
+    </header>
+    <div class="nav-sheet" data-nav-sheet>
+      <div class="nav-sheet-backdrop" data-nav-close></div>
+      <div class="nav-sheet-panel">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="nav-sheet-title">Menu</span>
+          <button type="button" class="btn btn-ghost" data-nav-close aria-label="Close">✕</button>
+        </div>
+        <ul class="nav-sheet-links" data-nav>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="portfolio.html">Portfolio</a></li>
+          <li><a href="projects.html">Projects</a></li>
+          <li><a href="commissions.html">Commissions</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <main class="site-main">
+      <div class="page-body">
+        <div class="container narrow-4xl">
+          <nav class="breadcrumbs"><a href="index.html">Home</a> › <span class="current">Queue</span></nav>
+          <header class="page-header">
+            <p class="eyebrow">Studio Board</p>
+            <h1 class="page-h1">Commission Queue</h1>
+            <p class="italic-line">Live snapshot of slots — demo data for the archive rebuild.</p>
+          </header>
+
+          <div class="card status-card" style="margin-top:0;margin-bottom:2rem;max-width:none">
+            <h2 class="section-h2" style="font-size:1rem;margin-bottom:0.5rem">Track your order</h2>
+            <p class="text-muted" style="margin:0 0 1rem">Have an ID? Look it up on the track page — demo IDs work without a backend.</p>
+            <a class="btn btn-outline" href="track.html">Go to Track</a>
+          </div>
+
+          <div class="stats-row">
+            <div class="card stat-card"><div class="num">4</div><div class="lbl">Queued</div></div>
+            <div class="card stat-card"><div class="num">2</div><div class="lbl">In progress</div></div>
+            <div class="card stat-card"><div class="num">1</div><div class="lbl">Review</div></div>
+            <div class="card stat-card"><div class="num">8</div><div class="lbl">Done</div></div>
+          </div>
+
+          <div class="legend">
+            <span class="filter-pill active">Queued</span>
+            <span class="filter-pill">In progress</span>
+            <span class="filter-pill">Review</span>
+            <span class="filter-pill">Done</span>
+            <span class="filter-pill">On hold</span>
+          </div>
+
+          <div class="queue-list">
+            <div class="card queue-item">
+              <div>
+                <strong>C2026-001</strong>
+                <p class="text-muted" style="margin:0.25rem 0 0;font-size:0.875rem">Half Body · client A</p>
+              </div>
+              <span class="badge">In progress</span>
+            </div>
+            <div class="card queue-item">
+              <div>
+                <strong>C2026-002</strong>
+                <p class="text-muted" style="margin:0.25rem 0 0;font-size:0.875rem">Bust Portrait · client B</p>
+              </div>
+              <span class="badge">Queued</span>
+            </div>
+            <div class="card queue-item">
+              <div>
+                <strong>C2026-003</strong>
+                <p class="text-muted" style="margin:0.25rem 0 0;font-size:0.875rem">Full Body · client C</p>
+              </div>
+              <span class="badge">Queued</span>
+            </div>
+            <div class="card queue-item">
+              <div>
+                <strong>C2026-004</strong>
+                <p class="text-muted" style="margin:0.25rem 0 0;font-size:0.875rem">Bust Portrait · client D</p>
+              </div>
+              <span class="badge">Review</span>
+            </div>
+            <div class="card queue-item">
+              <div>
+                <strong>C2025-118</strong>
+                <p class="text-muted" style="margin:0.25rem 0 0;font-size:0.875rem">Half Body · client E</p>
+              </div>
+              <span class="badge">Done</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-main">
+        <div class="footer-brand">
+          <a class="footer-logo" href="index.html">
+            <img class="logo-dark" src="images/logo/logo-dark.svg" alt="Mikaelleon" />
+            <img class="logo-light" src="images/logo/logo-light.svg" alt="Mikaelleon" />
+          </a>
+          <p>Kimberly Claire A. Aliwate</p>
+          <p>Digital Artist &amp; Web Developer</p>
+        </div>
+        <div class="footer-col">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="portfolio.html">Portfolio</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="commissions.html">Commissions</a></li>
+            <li><a href="queue.html">Queue</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="track.html">Track Order</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Connect</h3>
+          <ul>
+            <li><a href="https://twitter.com" target="_blank" rel="noopener">Twitter</a></li>
+            <li><a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a></li>
+            <li><a href="https://github.com" target="_blank" rel="noopener">GitHub</a></li>
+            <li><a href="https://linkedin.com" target="_blank" rel="noopener">LinkedIn</a></li>
+          </ul>
+          <p class="footer-email">hello@mikaelleon.art</p>
+        </div>
+      </div>
+      <div class="footer-copy">© <span class="year"></span> Mikaelleon. All rights reserved.</div>
+    </footer>
+    <button type="button" class="scroll-top" data-scroll-top aria-label="Scroll to top">↑</button>
+    <div class="toast" data-toast role="status"></div>
+  </div>
+  <script>document.querySelectorAll('.year').forEach(el => el.textContent = new Date().getFullYear());</script>
+  <script src="js/main.js"></script>
+</body>
+</html>

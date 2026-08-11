@@ -1,0 +1,782 @@
+/* Character select — final art + dialogue / loading modal / unlock (§12–14) */
+
+.cs-root {
+  --card-border-outer: #2a2430;
+  --card-border-inner: #b8935b;
+  --label-idle: #8a7433;
+  --label-focused: #e8c77a;
+  --cs-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --cs-ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --cs-focus-ms: 280ms;
+  --cs-exit-ms: 250ms;
+
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 560px;
+  overflow: hidden;
+  background: #0c0a10;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.cs-root.is-gone {
+  display: none;
+}
+
+body.realm-gate {
+  overflow: hidden;
+}
+
+body.realm-gate .site-header,
+body.realm-gate .site-footer,
+body.realm-gate .scroll-top,
+body.realm-gate .site-main > :not(.cs-root):not(.realm-select) {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+body.realm-gate .site-main {
+  min-height: 100vh;
+}
+
+.cs-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    url("../images/bg3.png") center / cover no-repeat,
+    #0c0a10;
+  opacity: 0.9;
+  filter: contrast(1.05) brightness(0.95);
+  transition: filter 400ms var(--cs-ease), opacity 400ms var(--cs-ease);
+}
+
+.cs-root.is-modal-open .cs-bg,
+.cs-root.is-confirming .cs-bg {
+  filter: contrast(1.05) brightness(0.35) blur(6px);
+  opacity: 0.4;
+}
+
+.cs-root.is-modal-open .cs-stage,
+.cs-root.is-confirming .cs-stage {
+  filter: blur(4px) brightness(0.55);
+  transition: filter 280ms var(--cs-ease);
+}
+
+/* —— §12 Dialogue —— */
+.cs-dialogue {
+  position: relative;
+  z-index: 2;
+  margin: 0 0 clamp(28px, 5vh, 48px);
+  min-height: 1.4em;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-style: italic;
+  letter-spacing: 0.14em;
+  color: var(--label-idle);
+  opacity: 0;
+}
+
+.cs-dialogue.is-ready {
+  opacity: 1;
+  transition: opacity 200ms var(--cs-ease);
+}
+
+.cs-dialogue__caret {
+  display: inline-block;
+  width: 0.55em;
+  border-right: 1px solid var(--label-focused);
+  margin-left: 1px;
+  animation: csCaret 0.9s steps(1) infinite;
+  opacity: 0;
+}
+
+.cs-dialogue.is-typing .cs-dialogue__caret {
+  opacity: 1;
+}
+
+@keyframes csCaret {
+  50% {
+    border-color: transparent;
+  }
+}
+
+.cs-stage {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(64px, 10vw, 120px);
+  padding: 0 40px;
+  width: 100%;
+}
+
+/* Cards — enter after dialogue */
+.cs-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(280px, 38vw);
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0;
+  transition: opacity var(--cs-focus-ms) var(--cs-ease);
+}
+
+/* Outer: levitate. Depth wrap: CodePen parallax perspective. */
+.cs-bob {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  will-change: transform;
+  transform: translateY(0);
+}
+
+.cs-card.is-hot .cs-bob,
+.cs-card:hover .cs-bob {
+  animation-play-state: paused;
+}
+
+.cs-root.is-cards-in .cs-card {
+  animation: csEnter 560ms var(--cs-ease-enter) both;
+}
+
+.cs-root.is-cards-in .cs-card--dev {
+  animation-delay: 80ms;
+}
+
+.cs-root.is-cards-in .cs-card--artist {
+  animation-delay: 180ms;
+}
+
+.cs-root.is-cards-in:not(.is-confirming):not(.cs-reduced) .cs-card:not(.is-unselected) .cs-bob {
+  animation: csBobFloat 3.8s ease-in-out infinite;
+}
+
+.cs-root.is-cards-in:not(.is-confirming):not(.cs-reduced) .cs-card--artist:not(.is-unselected) .cs-bob {
+  animation-duration: 4.6s;
+  animation-delay: -1.2s;
+}
+
+.cs-root.is-confirming .cs-card.is-confirming .cs-bob {
+  animation: none;
+  transform: translateY(-8px);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cs-root.is-confirming .cs-card.is-unselected .cs-bob {
+  animation: none;
+}
+
+@keyframes csEnter {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes csBobFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-16px);
+  }
+}
+
+.cs-card:focus-visible {
+  outline: 2px solid var(--label-focused);
+  outline-offset: 10px;
+}
+
+/* —— Parallax Depth Cards hover (CodePen XNMWvQ) — layout stays tarot —— */
+.cs-depth {
+  --cs-hover-ease: cubic-bezier(0.23, 1, 0.32, 1);
+  --cs-return-ease: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  transform: perspective(800px);
+  transform-style: preserve-3d;
+}
+
+.cs-tarot {
+  display: block;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4.4;
+  clip-path: polygon(18% 0, 82% 0, 100% 10%, 100% 90%, 82% 100%, 18% 100%, 0 90%, 0 10%);
+  background: var(--card-border-outer);
+  padding: 10px;
+  box-sizing: border-box;
+  transform-style: preserve-3d;
+  transform: rotateY(0deg) rotateX(0deg);
+  filter: saturate(1) brightness(1);
+  box-shadow:
+    rgba(0, 0, 0, 0.66) 0 30px 60px 0,
+    inset #2a2430 0 0 0 5px,
+    inset rgba(184, 147, 91, 0.45) 0 0 0 6px;
+  transition: 1s var(--cs-return-ease);
+  will-change: transform;
+}
+
+/* CodePen: .card-wrap:hover .card */
+.cs-depth:hover .cs-tarot,
+.cs-card.is-hot .cs-tarot,
+.cs-card:focus-visible .cs-tarot {
+  transition: 0.6s var(--cs-hover-ease);
+  box-shadow:
+    rgba(232, 199, 122, 0.22) 0 0 40px 5px,
+    rgba(184, 147, 91, 0.85) 0 0 0 1px,
+    rgba(0, 0, 0, 0.66) 0 30px 60px 0,
+    inset #2a2430 0 0 0 5px,
+    inset rgba(232, 199, 122, 0.9) 0 0 0 6px;
+}
+
+.cs-tarot.is-confirm-pulse {
+  animation: csConfirmPulse 420ms var(--cs-ease-enter) both, csPulseGold 2.2s ease-in-out 420ms infinite;
+}
+
+@keyframes csConfirmPulse {
+  0% {
+    transform: rotateY(0deg) rotateX(0deg) scale(1);
+  }
+  40% {
+    transform: rotateY(0deg) rotateX(0deg) scale(1.045);
+  }
+  100% {
+    transform: rotateY(0deg) rotateX(0deg) scale(1);
+  }
+}
+
+@keyframes csPulseGold {
+  0%,
+  100% {
+    filter: saturate(1.05) brightness(1.02);
+  }
+  50% {
+    filter: saturate(1.12) brightness(1.08);
+  }
+}
+
+.cs-fx {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.cs-spark {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  margin: -2px 0 0 -2px;
+  border-radius: 50%;
+  background: var(--label-focused);
+  box-shadow: 0 0 8px rgba(232, 199, 122, 0.8);
+  pointer-events: none;
+}
+
+.cs-frame {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(18% 0, 82% 0, 100% 10%, 100% 90%, 82% 100%, 18% 100%, 0 90%, 0 10%);
+  border: 1.5px solid var(--card-border-inner);
+  background: #161219;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* CodePen .card-bg — oversized bg-image layer (not layout) */
+.cs-card-bg {
+  opacity: 0.5;
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  box-sizing: content-box;
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+  pointer-events: none;
+  transform: translateX(0) translateY(0);
+  transition:
+    1s var(--cs-return-ease),
+    opacity 5s 1s var(--cs-return-ease);
+  filter: saturate(1) brightness(1);
+}
+
+.cs-depth:hover .cs-card-bg,
+.cs-card.is-hot .cs-card-bg,
+.cs-card:focus-visible .cs-card-bg {
+  opacity: 0.85;
+  transition:
+    0.6s var(--cs-hover-ease),
+    opacity 5s var(--cs-hover-ease);
+}
+
+/* CodePen .card-info */
+.cs-card-info {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  margin: 0;
+  padding: 18px 16px 20px;
+  color: #fff;
+  transform: translateY(40%);
+  transition: 0.6s 1.2s cubic-bezier(0.215, 0.61, 0.355, 1);
+  pointer-events: none;
+}
+
+.cs-card-info::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.72) 100%);
+  background-blend-mode: overlay;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: 5s 1s var(--cs-return-ease);
+}
+
+.cs-card-info__title,
+.cs-card-info__text {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin: 0;
+  text-shadow: rgba(0, 0, 0, 0.85) 0 2px 6px;
+}
+
+.cs-card-info__title {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--label-focused);
+  margin-bottom: 6px;
+}
+
+.cs-card-info__text {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.88);
+  opacity: 0;
+  transition: 0.6s 1.2s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.cs-depth:hover .cs-card-info,
+.cs-card.is-hot .cs-card-info,
+.cs-card:focus-visible .cs-card-info {
+  transform: translateY(0);
+  transition: 0.6s var(--cs-hover-ease);
+}
+
+.cs-depth:hover .cs-card-info__text,
+.cs-card.is-hot .cs-card-info__text,
+.cs-card:focus-visible .cs-card-info__text {
+  opacity: 1;
+  transition: 0.6s var(--cs-hover-ease);
+}
+
+.cs-depth:hover .cs-card-info::after,
+.cs-card.is-hot .cs-card-info::after,
+.cs-card:focus-visible .cs-card-info::after {
+  opacity: 1;
+  transform: translateY(0);
+  transition: 5s var(--cs-hover-ease);
+}
+
+.cs-numeral {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--card-border-inner);
+  background: var(--card-border-outer);
+  padding: 2px 8px;
+  pointer-events: none;
+}
+
+.cs-side-label {
+  position: absolute;
+  top: 50%;
+  writing-mode: vertical-rl;
+  font-family: var(--font-heading);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--card-border-inner);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.cs-side-label.left {
+  left: 8px;
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.cs-side-label.right {
+  right: 8px;
+  transform: translateY(-50%);
+}
+
+.cs-ext-label {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--label-idle);
+  text-align: center;
+  transition:
+    color var(--cs-focus-ms) var(--cs-ease),
+    font-size var(--cs-focus-ms) var(--cs-ease),
+    font-weight var(--cs-focus-ms) var(--cs-ease),
+    letter-spacing var(--cs-focus-ms) var(--cs-ease),
+    opacity var(--cs-focus-ms) var(--cs-ease);
+}
+
+.cs-ext-label--above {
+  margin-bottom: 14px;
+}
+
+.cs-ext-label--below {
+  margin-top: 14px;
+}
+
+.cs-root[data-focused="developer"] .cs-card--dev .cs-card-bg,
+.cs-root[data-focused="developer"] .cs-card--dev .cs-tarot {
+  filter: saturate(1.05) brightness(1.02);
+}
+
+.cs-root[data-focused="developer"] .cs-card--dev .cs-ext-label {
+  color: var(--label-focused);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+}
+
+.cs-root[data-focused="developer"] .cs-card--artist .cs-card-bg,
+.cs-root[data-focused="developer"] .cs-card--artist .cs-tarot {
+  filter: saturate(0) brightness(0.55);
+}
+
+.cs-root[data-focused="developer"] .cs-card--artist .cs-ext-label {
+  color: var(--label-idle);
+  opacity: 0.65;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+}
+
+.cs-root[data-focused="artist"] .cs-card--artist .cs-card-bg,
+.cs-root[data-focused="artist"] .cs-card--artist .cs-tarot {
+  filter: saturate(1.05) brightness(1.02);
+}
+
+.cs-root[data-focused="artist"] .cs-card--artist .cs-ext-label {
+  color: var(--label-focused);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+}
+
+.cs-root[data-focused="artist"] .cs-card--dev .cs-card-bg,
+.cs-root[data-focused="artist"] .cs-card--dev .cs-tarot {
+  filter: saturate(0) brightness(0.55);
+}
+
+.cs-root[data-focused="artist"] .cs-card--dev .cs-ext-label {
+  color: var(--label-idle);
+  opacity: 0.65;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+}
+
+.cs-root.is-confirming .cs-card.is-unselected {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--cs-exit-ms) var(--cs-ease);
+}
+
+.cs-root.is-confirming .cs-dialogue {
+  opacity: 0;
+  transition: opacity 200ms var(--cs-ease);
+}
+
+/* —— §13 Loading modal —— */
+.cs-modal {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(12, 10, 16, 0.72);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms var(--cs-ease);
+}
+
+.cs-modal[hidden] {
+  display: none;
+}
+
+.cs-root.is-modal-open .cs-modal {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.cs-modal__inner {
+  text-align: center;
+}
+
+.cs-modal__glyph {
+  display: block;
+  font-family: var(--font-brand);
+  font-size: 42px;
+  color: var(--label-focused);
+  line-height: 1;
+  margin-bottom: 18px;
+  animation: csSpin 2.4s linear infinite;
+}
+
+.cs-modal.is-flash .cs-modal__glyph {
+  animation: none;
+  filter: brightness(2);
+  transform: scale(1.15);
+  transition: filter 150ms var(--cs-ease), transform 150ms var(--cs-ease);
+}
+
+@keyframes csSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.cs-modal__status {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--label-focused);
+}
+
+/* —— §14 Unlock —— */
+.cs-unlock {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  pointer-events: none;
+}
+
+.cs-unlock[hidden] {
+  display: none;
+}
+
+.cs-unlock__bloom {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 45%, rgba(232, 199, 122, 0.45), transparent 55%);
+  opacity: 0;
+}
+
+.cs-unlock.is-bloom .cs-unlock__bloom {
+  animation: csBloom 200ms var(--cs-ease) forwards;
+}
+
+@keyframes csBloom {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.cs-unlock__gate {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(220px, 40vw);
+  aspect-ratio: 3 / 4.4;
+  transform: translate(-50%, -50%) scale(0.85);
+  clip-path: polygon(18% 0, 82% 0, 100% 10%, 100% 90%, 82% 100%, 18% 100%, 0 90%, 0 10%);
+  border: 2px solid var(--card-border-inner);
+  box-shadow: inset 0 0 0 8px var(--card-border-outer);
+  opacity: 0;
+}
+
+.cs-unlock.is-open .cs-unlock__gate {
+  animation: csGateOpen 480ms var(--cs-ease) forwards;
+}
+
+@keyframes csGateOpen {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(3.2);
+  }
+}
+
+/* Shell reveal during unlock */
+body.cs-unlocking .pf-shell {
+  display: flex !important;
+  animation: csShellIn 420ms var(--cs-ease-enter) both;
+}
+
+@keyframes csShellIn {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.realm-reopen {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 40;
+  font-family: var(--font-heading);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--card-border-inner);
+  background: #161219;
+  border: 1px solid rgba(184, 147, 91, 0.35);
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.realm-reopen:hover,
+.realm-reopen:focus-visible {
+  border-color: var(--card-border-inner);
+  color: var(--label-focused);
+  outline: none;
+}
+
+body.realm-gate .realm-reopen {
+  display: none !important;
+}
+
+@media (max-width: 860px) {
+  .cs-stage {
+    flex-direction: column;
+    gap: 40px;
+    padding: 24px;
+  }
+
+  .cs-card {
+    width: min(280px, 78vw);
+  }
+
+  .cs-root[data-focused="developer"] .cs-card--dev .cs-ext-label,
+  .cs-root[data-focused="artist"] .cs-card--artist .cs-ext-label {
+    font-size: 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-card,
+  .cs-root.is-cards-in .cs-card,
+  .cs-root.is-cards-in .cs-card .cs-bob {
+    animation: none !important;
+    opacity: 1;
+  }
+
+  /* Depth-card hover transforms stay live (Vue / CodePen effect) */
+  .cs-bob,
+  .cs-card-info,
+  .cs-card-info__text,
+  .cs-card-info::after {
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .cs-ext-label,
+  .cs-root.is-confirming .cs-card.is-unselected,
+  .cs-modal,
+  .cs-dialogue {
+    transition-duration: 50ms !important;
+  }
+
+  .cs-ext-label {
+    transition-property: color, opacity, font-weight !important;
+  }
+
+  .cs-root[data-focused="developer"] .cs-card--dev .cs-ext-label,
+  .cs-root[data-focused="artist"] .cs-card--artist .cs-ext-label {
+    letter-spacing: 0.2em;
+  }
+
+  .cs-modal__glyph,
+  .cs-unlock__gate,
+  .cs-unlock__bloom,
+  .cs-spark,
+  .cs-bg,
+  body.cs-unlocking .pf-shell {
+    animation: none !important;
+  }
+
+  .cs-dialogue__caret {
+    display: none;
+  }
+
+  .cs-root.is-modal-open .cs-bg,
+  .cs-root.is-confirming .cs-bg {
+    filter: brightness(0.4);
+  }
+
+  .cs-root.is-modal-open .cs-stage,
+  .cs-root.is-confirming .cs-stage {
+    filter: brightness(0.55);
+  }
+}

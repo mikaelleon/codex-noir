@@ -1,0 +1,25 @@
+:root{
+  --ink-black:#0C0A10;
+  --panel:#161219;
+  --panel-raised:#1D1822;
+  --bone:#EDE6D6;
+  --taupe:#B8AF9C;
+  --gold:#B8935B;
+  --gold-bright:#D9BE8C;
+  --oxblood:#5B1A22;
+  --oxblood-bright:#7A2530;
+  --hairline:rgba(184,147,91,0.35);
+  --shadow-color:rgba(0,0,0,0.55);
+
+  --surface-bg:var(--ink-black);
+  --surface-panel:var(--panel);
+  --surface-panel-raised:var(--panel-raised);
+  --text-primary:var(--bone);
+  --text-secondary:var(--taupe);
+  --text-accent:var(--gold);
+  --text-accent-hover:var(--gold-bright);
+  --border-default:var(--hairline);
+  --border-strong:var(--gold);
+  --signal-unlock:var(--oxblood);
+  --signal-unlock-bright:var(--oxblood-bright);
+}

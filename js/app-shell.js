@@ -1,0 +1,953 @@
+/* Codex Noir shell — one job per view; content from SiteData (no duplicate dumps) */
+(function () {
+  const root = document.querySelector("[data-pf-shell]");
+  if (!root) return;
+
+  const D = window.SiteData;
+  if (!D) {
+    console.error("SiteData missing — load js/site-data.js first");
+    return;
+  }
+
+  const live = root.querySelector("[data-pf-live]");
+  const PROFILE_KEY = "home-profile-mode";
+  const SECTIONS = ["home", "about", "projects", "contact"];
+
+  /* IA:
+   * Home    → unlock hero, intro, CTAs, featured preview, jump links
+   * About   → full bio / journey / tools / education
+   * Work    → projects (dev) or gallery (art)
+   * Contact → letter, commission status, FAQ (once)
+   */
+
+  const state = {
+    section: "home",
+    projectIdx: 0,
+    faqOpen: 0,
+    galleryFilter: "featured",
+    nameUnlocked: false,
+    aboutOpen: "about",
+    cvOpen: { skills: false, interests: false },
+    spoilers: { address: false, phone: false, dob: false },
+  };
+
+  function icon(name) {
+    const common =
+      'xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
+    const paths = {
+      mail: '<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>',
+      clock:
+        '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+      heart:
+        '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>',
+      briefcase:
+        '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>',
+      github:
+        '<path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>',
+      linkedin:
+        '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>',
+      twitter:
+        '<path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/>',
+      instagram:
+        '<rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>',
+      send: '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',
+      unlock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>',
+      lock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+      star: '<path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4L12 2z" fill="currentColor" stroke="none"/>',
+      copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+    };
+    return "<svg " + common + ">" + (paths[name] || "") + "</svg>";
+  }
+
+  function escapeHtml(s) {
+    return String(s || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function mode() {
+    return document.body.dataset.profile === "developer" ? "developer" : "artist";
+  }
+
+  function isDev() {
+    return mode() === "developer";
+  }
+
+  function profile() {
+    return D.profiles[mode()];
+  }
+
+  function announce(msg) {
+    if (!live) return;
+    live.textContent = "";
+    requestAnimationFrame(() => {
+      live.textContent = msg;
+    });
+  }
+
+  function isNarrow() {
+    return window.matchMedia("(max-width: 900px)").matches;
+  }
+
+  function footHtml() {
+    const s = D.socials;
+    return (
+      '<footer class="pf-site-foot">' +
+      '<div><div class="pf-site-foot__brand">' +
+      escapeHtml(D.brand.name) +
+      '</div><span class="pf-site-foot__role">' +
+      escapeHtml(D.brand.tagline) +
+      "</span></div>" +
+      '<div class="pf-site-foot__links">' +
+      '<a href="' +
+      escapeHtml(s.email) +
+      '">' +
+      escapeHtml(D.brand.email) +
+      "</a>" +
+      '<a href="' +
+      escapeHtml(s.github) +
+      '" target="_blank" rel="noopener">GitHub</a>' +
+      '<a href="' +
+      escapeHtml(s.instagram) +
+      '" target="_blank" rel="noopener">Instagram</a>' +
+      '<a href="' +
+      escapeHtml(s.linkedin) +
+      '" target="_blank" rel="noopener">LinkedIn</a>' +
+      "</div>" +
+      '<div class="pf-site-foot__copy">© 2026 ' +
+      escapeHtml(D.brand.name) +
+      ". All rights reserved.</div></footer>"
+    );
+  }
+
+  function ctaButtonsHtml(ctas) {
+    return (
+      '<div class="pf-btn-row">' +
+      ctas
+        .map((c, i) => {
+          const solid = i === 0;
+          if (c.href) {
+            return (
+              '<a class="pf-btn ' +
+              (solid ? "pf-btn--solid" : "pf-btn--ghost") +
+              '" href="' +
+              escapeHtml(c.href) +
+              '"' +
+              (c.download ? " download" : "") +
+              ">" +
+              escapeHtml(c.label) +
+              "</a>"
+            );
+          }
+          return (
+            '<button type="button" class="pf-btn ' +
+            (solid ? "pf-btn--solid" : "pf-btn--ghost") +
+            '" data-pf-nav="' +
+            escapeHtml(c.action) +
+            '">' +
+            escapeHtml(c.label) +
+            "</button>"
+          );
+        })
+        .join("") +
+      "</div>"
+    );
+  }
+
+  /* —— HOME: teaser only —— */
+  function featuredPreviewHtml() {
+    const p = profile();
+    if (isDev()) {
+      const items = D.projects.slice(0, 3);
+      return (
+        '<div class="pf-sec">' +
+        '<h3 class="pf-sec__head pf-sec__head--plus">' +
+        escapeHtml(p.featuredEyebrow) +
+        "</h3>" +
+        '<p class="pf-body" style="margin-bottom:18px">' +
+        escapeHtml(p.featuredSub) +
+        "</p>" +
+        '<div class="pf-project-grid">' +
+        items
+          .map(
+            (proj) =>
+              '<article class="pf-pcard">' +
+              '<div class="pf-pcard__meta">' +
+              escapeHtml(proj.meta) +
+              "</div>" +
+              '<h4 class="pf-pcard__title">' +
+              escapeHtml(proj.title) +
+              "</h4>" +
+              '<p class="pf-pcard__desc">' +
+              escapeHtml(proj.description) +
+              "</p></article>"
+          )
+          .join("") +
+        "</div>" +
+        '<div style="text-align:center;margin-top:28px">' +
+        '<button type="button" class="pf-btn pf-btn--ghost" data-pf-nav="projects">View all projects —▸</button>' +
+        "</div></div>"
+      );
+    }
+
+    const items = D.gallery.filter((g) => g.featured).slice(0, 6);
+    return (
+      '<div class="pf-sec">' +
+      '<h3 class="pf-sec__head pf-sec__head--plus">' +
+      escapeHtml(p.featuredEyebrow) +
+      "</h3>" +
+      '<p class="pf-body" style="margin-bottom:18px">' +
+      escapeHtml(p.featuredSub) +
+      "</p>" +
+      '<div class="pf-gallery-grid">' +
+      items
+        .map(
+          (g) =>
+            '<button type="button" class="pf-gcell" data-pf-nav="projects" title="' +
+            escapeHtml(g.title) +
+            '"><img src="' +
+            escapeHtml(D.galleryImage(g.id)) +
+            '" alt="' +
+            escapeHtml(g.title) +
+            '" /></button>'
+        )
+        .join("") +
+      "</div>" +
+      '<div style="text-align:center;margin-top:28px">' +
+      '<button type="button" class="pf-btn pf-btn--ghost" data-pf-nav="projects">View full portfolio —▸</button>' +
+      "</div></div>"
+    );
+  }
+
+  function jumpHtml() {
+    return (
+      '<nav class="pf-tabs pf-jumps" aria-label="Continue">' +
+      '<button type="button" data-pf-nav="about">About</button>' +
+      '<button type="button" data-pf-nav="projects">Work</button>' +
+      '<button type="button" data-pf-nav="contact">Contact</button>' +
+      "</nav>"
+    );
+  }
+
+  function renderHome() {
+    const mount = root.querySelector("[data-pf-home]");
+    if (!mount) return;
+    const p = profile();
+    const portrait = isDev() ? D.brand.avatarDev : D.brand.avatarArtist;
+
+    mount.innerHTML =
+      '<header class="pf-hero-unlock">' +
+      '<p class="pf-hero-unlock__kicker">Portfolio</p>' +
+      '<h1 class="pf-hero-unlock__title">Unlocked</h1>' +
+      "</header>" +
+      '<div class="pf-intro">' +
+      "<div>" +
+      '<h2 class="pf-intro__name">' +
+      escapeHtml(D.brand.name) +
+      "</h2>" +
+      '<p class="pf-about-role" style="margin-bottom:12px">' +
+      escapeHtml(p.tagline) +
+      "</p>" +
+      '<p class="pf-body">' +
+      escapeHtml(p.heroIntro) +
+      "</p>" +
+      ctaButtonsHtml(p.ctas) +
+      '</div><div class="pf-intro__portrait"><img src="' +
+      escapeHtml(portrait) +
+      '" alt="" /></div></div>' +
+      jumpHtml() +
+      featuredPreviewHtml() +
+      '<div class="pf-cta-band">' +
+      "<h2>Have a project in mind?</h2>" +
+      "<p>Commissions and collabs land in one inbox.</p>" +
+      '<button type="button" class="pf-btn pf-btn--solid" data-pf-nav="contact">Get in touch —▸</button>' +
+      "</div>" +
+      footHtml();
+  }
+
+  /* —— ABOUT: timeline + tools/dev columns + unlockable name —— */
+  function timelineInnerHtml() {
+    return (
+      '<ol class="pf-timeline">' +
+      D.education
+        .map(
+          (e) =>
+            '<li class="pf-timeline__item">' +
+            '<span class="pf-timeline__dot" aria-hidden="true"></span>' +
+            '<div class="pf-timeline__years">' +
+            escapeHtml(e.years) +
+            "</div>" +
+            '<div class="pf-timeline__school">' +
+            escapeHtml(e.school) +
+            "</div>" +
+            '<div class="pf-timeline__detail">' +
+            escapeHtml(e.detail) +
+            "</div></li>"
+        )
+        .join("") +
+      "</ol>"
+    );
+  }
+
+  function workExperienceInnerHtml() {
+    const items = D.workExperience || [];
+    return (
+      '<ol class="pf-timeline pf-timeline--work">' +
+      items
+        .map(
+          (w) =>
+            '<li class="pf-timeline__item">' +
+            '<span class="pf-timeline__dot" aria-hidden="true"></span>' +
+            '<div class="pf-timeline__school">' +
+            escapeHtml(w.title) +
+            "</div>" +
+            '<div class="pf-timeline__years pf-timeline__years--meta">' +
+            escapeHtml(w.meta) +
+            "</div>" +
+            '<ul class="pf-timeline__bullets">' +
+            (w.bullets || [])
+              .map((b) => "<li>" + escapeHtml(b) + "</li>")
+              .join("") +
+            "</ul></li>"
+        )
+        .join("") +
+      "</ol>"
+    );
+  }
+
+  function personalDataInnerHtml() {
+    const pd = D.personalData || {};
+    const phone = (pd.phones || []).join(" / ");
+
+    function spoilerCell(key, plain) {
+      const open = !!state.spoilers[key];
+      return (
+        '<dd><button type="button" class="pf-spoiler' +
+        (open ? " is-open" : "") +
+        '" data-spoiler="' +
+        key +
+        '" aria-expanded="' +
+        open +
+        '" title="' +
+        (open ? "Hide" : "Reveal") +
+        '">' +
+        (open
+          ? '<span class="pf-spoiler__value">' + escapeHtml(plain) + "</span>"
+          : '<span class="pf-spoiler__mask" aria-hidden="true">············</span><span class="pf-sr">Hidden — click to reveal</span>') +
+        "</button></dd>"
+      );
+    }
+
+    const rows = [
+      { label: "Address", key: "address", value: pd.address, spoiler: true },
+      { label: "Phone", key: "phone", value: phone, spoiler: true },
+      { label: "Email", key: "email", value: pd.email, spoiler: false },
+      { label: "Date of Birth", key: "dob", value: pd.dateOfBirth, spoiler: true },
+      { label: "Citizenship", key: "citizenship", value: pd.citizenship, spoiler: false },
+      { label: "Gender", key: "gender", value: pd.gender, spoiler: false },
+      { label: "Civil Status", key: "civilStatus", value: pd.civilStatus, spoiler: false },
+    ].filter((r) => r.value);
+
+    return (
+      '<dl class="pf-data-list">' +
+      rows
+        .map((r) => {
+          let dd;
+          if (r.spoiler) {
+            dd = spoilerCell(r.key, r.value);
+          } else if (r.key === "email") {
+            dd =
+              '<dd><a href="mailto:' +
+              escapeHtml(r.value) +
+              '">' +
+              escapeHtml(r.value) +
+              "</a></dd>";
+          } else {
+            dd = "<dd>" + escapeHtml(r.value) + "</dd>";
+          }
+          return (
+            '<div class="pf-data-list__row"><dt>' +
+            escapeHtml(r.label) +
+            "</dt>" +
+            dd +
+            "</div>"
+          );
+        })
+        .join("") +
+      "</dl>"
+    );
+  }
+
+  function listBodyHtml(items) {
+    return (
+      '<ul class="pf-spec-list">' +
+      (items || []).map((s) => "<li>" + escapeHtml(s) + "</li>").join("") +
+      "</ul>"
+    );
+  }
+
+  function chipRowHtml(items) {
+    return (
+      '<div class="pf-chip-wrap">' +
+      items.map((t) => '<span class="pf-chip">' + escapeHtml(t) + "</span>").join("") +
+      "</div>"
+    );
+  }
+
+  /* starSide: "left" | "right"; group: "story" | "cv" */
+  function aboutAcc(id, title, bodyHtml, starSide, group) {
+    const g = group || "story";
+    const open = g === "cv" ? !!state.cvOpen[id] : state.aboutOpen === id;
+    const star =
+      '<span class="pf-acc__star" aria-hidden="true">' + icon("star") + "</span>";
+    const label = '<span class="pf-acc__label">' + escapeHtml(title) + "</span>";
+    return (
+      '<div class="pf-acc' +
+      (open ? " open" : "") +
+      (starSide === "right" ? " pf-acc--star-end" : " pf-acc--star-start") +
+      '">' +
+      '<button type="button" class="pf-acc__head" data-about-acc="' +
+      id +
+      '" data-about-group="' +
+      g +
+      '" aria-expanded="' +
+      open +
+      '">' +
+      (starSide === "right" ? label + star : star + label) +
+      "</button>" +
+      '<div class="pf-acc__panel"><div class="pf-acc__inner">' +
+      bodyHtml +
+      "</div></div></div>"
+    );
+  }
+
+  function aboutActionsHtml() {
+    const unlocked = state.nameUnlocked;
+    const reveal =
+      '<button type="button" class="pf-about-action' +
+      (unlocked ? " is-active" : "") +
+      '" data-unlock-name aria-pressed="' +
+      unlocked +
+      '">' +
+      icon(unlocked ? "unlock" : "lock") +
+      "<span>" +
+      (unlocked ? "Hide legal name" : "Reveal legal name") +
+      "</span></button>";
+    return (
+      '<div class="pf-about__actions">' +
+      reveal +
+      '<a class="pf-about-action" href="' +
+      escapeHtml(D.brand.cv) +
+      '" download>Download CV (PDF)</a></div>'
+    );
+  }
+
+  function renderAbout() {
+    const mount = root.querySelector("[data-pf-about]");
+    if (!mount) return;
+    const p = profile();
+    const portrait = isDev() ? D.brand.avatarDev : D.brand.avatarArtist;
+    const showLegal = state.nameUnlocked;
+    const displayName = showLegal ? D.brand.legalName : D.brand.name;
+    const skillsBody =
+      listBodyHtml(D.softSkills) +
+      (D.languages
+        ? '<p class="pf-about-panel__note"><span>Languages</span> ' +
+          escapeHtml(D.languages) +
+          "</p>"
+        : "");
+    const interestsBody = listBodyHtml(D.interests);
+    const cvAllOpen = !!(state.cvOpen.skills && state.cvOpen.interests);
+
+    const story =
+      aboutAcc(
+        "about",
+        "About Me",
+        '<p class="pf-body">' +
+          escapeHtml(D.bios.full) +
+          '</p><p class="pf-body pf-body--gap">' +
+          escapeHtml(p.shortBio) +
+          "</p>",
+        "left"
+      ) +
+      aboutAcc(
+        "journey",
+        "My Journey",
+        '<p class="pf-body">' + escapeHtml(D.bios.journey) + "</p>",
+        "left"
+      );
+
+    const personalBlock = showLegal
+      ? '<section class="pf-about-panel pf-about-panel--reveal" aria-labelledby="pdata-h">' +
+        '<h2 id="pdata-h" class="pf-about-panel__title">Personal Data</h2>' +
+        personalDataInnerHtml() +
+        "</section>"
+      : "";
+
+    mount.innerHTML =
+      '<div class="pf-about">' +
+      '<div class="pf-about__topbar pf-rise">' +
+      '<p class="pf-about__kicker">Archive: About</p>' +
+      aboutActionsHtml() +
+      "</div>" +
+      '<div class="pf-about__identity pf-rise pf-rise--2">' +
+      '<div class="pf-about__photo"><img src="' +
+      escapeHtml(portrait) +
+      '" alt="' +
+      escapeHtml(D.brand.name) +
+      '" /></div>' +
+      '<div class="pf-about__id-copy">' +
+      '<div class="pf-about__id-head">' +
+      "<div>" +
+      '<h1 class="pf-about-title' +
+      (showLegal ? " pf-about-title--unlocked" : "") +
+      '">' +
+      escapeHtml(displayName) +
+      "</h1>" +
+      '<p class="pf-about-role">' +
+      escapeHtml(p.tagline) +
+      "</p></div></div>" +
+      '<p class="pf-about__lede">' +
+      escapeHtml(D.bios.value || D.bios.full) +
+      "</p></div></div>" +
+      '<section class="pf-about-panel pf-rise pf-rise--3" aria-labelledby="obj-h">' +
+      '<h2 id="obj-h" class="pf-about-panel__title">Objectives</h2>' +
+      '<p class="pf-about-panel__text">' +
+      escapeHtml(D.bios.careerObjective || p.objective) +
+      "</p></section>" +
+      '<div class="pf-about__mid">' +
+      '<div class="pf-about__col pf-rise pf-rise--4">' +
+      '<section class="pf-about-panel" aria-labelledby="edu-h">' +
+      '<h2 id="edu-h" class="pf-about-panel__title">Education</h2>' +
+      timelineInnerHtml() +
+      "</section>" +
+      '<section class="pf-about-panel" aria-labelledby="work-h">' +
+      '<h2 id="work-h" class="pf-about-panel__title">Work Experience</h2>' +
+      workExperienceInnerHtml() +
+      "</section></div>" +
+      '<div class="pf-about__rail pf-rise pf-rise--5">' +
+      personalBlock +
+      '<div class="pf-about__rail-head">' +
+      '<span class="pf-about__rail-label">Details</span>' +
+      '<button type="button" class="pf-about-expand" data-expand-cv>' +
+      (cvAllOpen ? "Collapse all" : "Expand all") +
+      "</button></div>" +
+      aboutAcc("skills", "Skills", skillsBody, "right", "cv") +
+      aboutAcc("interests", "Interests", interestsBody, "right", "cv") +
+      '<div class="pf-about-stack">' +
+      '<h3 class="pf-about-stack__label">Tools</h3>' +
+      chipRowHtml(D.toolsColumn) +
+      "</div>" +
+      '<div class="pf-about-stack">' +
+      '<h3 class="pf-about-stack__label">Development</h3>' +
+      chipRowHtml(D.developmentColumn) +
+      "</div></div></div>" +
+      '<section class="pf-about__story pf-rise pf-rise--5" aria-label="Story">' +
+      '<h2 class="pf-about-panel__title">Story</h2>' +
+      '<div class="pf-acc-group" role="region">' +
+      story +
+      "</div></section>" +
+      footHtml() +
+      "</div>";
+  }
+
+  /* —— WORK: gallery (art) —— */
+  function renderGallery() {
+    const mount = root.querySelector("[data-pf-gallery]");
+    if (!mount) return;
+    let items = D.gallery;
+    if (state.galleryFilter === "featured") items = items.filter((g) => g.featured);
+
+    mount.innerHTML =
+      '<div class="pf-crumb">Home / <span>Work</span></div>' +
+      '<p class="pf-gallery-kicker">Archive: Portfolio</p>' +
+      '<h1 class="pf-gallery-title">Selected Work</h1>' +
+      '<div class="pf-tabs" style="margin-bottom:24px">' +
+      '<button type="button" data-gallery-filter="featured" class="' +
+      (state.galleryFilter === "featured" ? "active" : "") +
+      '">Featured</button>' +
+      '<button type="button" data-gallery-filter="all" class="' +
+      (state.galleryFilter === "all" ? "active" : "") +
+      '">All</button></div>' +
+      '<div class="pf-gallery-grid">' +
+      items
+        .map(
+          (g) =>
+            '<div class="pf-gcell" title="' +
+            escapeHtml(g.title) +
+            " — " +
+            escapeHtml(g.category) +
+            '"><img src="' +
+            escapeHtml(D.galleryImage(g.id)) +
+            '" alt="' +
+            escapeHtml(g.title) +
+            '" /></div>'
+        )
+        .join("") +
+      "</div>" +
+      footHtml();
+  }
+
+  /* —— WORK: projects (dev) —— */
+  function renderProjects() {
+    const list = root.querySelector("[data-pf-project-list]");
+    const detail = root.querySelector("[data-pf-project-detail]");
+    if (!list || !detail) return;
+    list.innerHTML = D.projects
+      .map((it, i) => {
+        const sel = i === state.projectIdx;
+        const idx = String(i + 1).padStart(2, "0");
+        return (
+          '<button type="button" class="pf-row' +
+          (sel ? " selected" : "") +
+          '" data-project-i="' +
+          i +
+          '" aria-selected="' +
+          sel +
+          '"><span class="pf-row-idx">' +
+          idx +
+          '</span><div><div class="pf-row-title">' +
+          escapeHtml(it.title) +
+          '</div><div class="pf-row-sub">' +
+          escapeHtml(it.tags.slice(0, 2).join(" · ")) +
+          "</div></div></button>"
+        );
+      })
+      .join("");
+    const p = D.projects[state.projectIdx];
+    const idx = String(state.projectIdx + 1).padStart(2, "0");
+    detail.innerHTML =
+      '<div class="pf-detail">' +
+      '<div class="pf-detail__tag">UNLOCKED: ' +
+      idx +
+      "</div>" +
+      '<h2 class="pf-detail__title">' +
+      escapeHtml(p.title) +
+      "</h2>" +
+      '<p class="pf-detail__quote">"' +
+      escapeHtml(p.quote) +
+      '"</p>' +
+      '<p class="pf-detail__desc">' +
+      escapeHtml(p.description) +
+      "</p>" +
+      '<div class="pf-tags">' +
+      p.tags.map((t) => '<span class="pf-tag">' + escapeHtml(t) + "</span>").join("") +
+      '</div><a class="pf-btn-primary" href="' +
+      escapeHtml(p.href) +
+      '">Open —▸</a></div>';
+  }
+
+  /* —— CONTACT: form left + info/socials right —— */
+  function renderContact() {
+    const mount = root.querySelector("[data-pf-contact]");
+    if (!mount) return;
+    const s = D.socials;
+    const status = D.commissionStatus;
+
+    const socialRow = [
+      ["mail", s.email, D.brand.email],
+      ["github", s.github, "GitHub"],
+      ["linkedin", s.linkedin, "LinkedIn"],
+      ["twitter", s.twitter, "Twitter / X"],
+      ["instagram", s.instagram, "Instagram"],
+    ]
+      .map(
+        ([ic, href, label]) =>
+          '<a class="pf-social-link" href="' +
+          escapeHtml(href) +
+          '"' +
+          (href.startsWith("mailto:") ? "" : ' target="_blank" rel="noopener"') +
+          ">" +
+          icon(ic) +
+          "<span>" +
+          escapeHtml(label) +
+          "</span></a>"
+      )
+      .join("");
+
+    mount.innerHTML =
+      '<div class="pf-crumb">Home / <span>Contact</span></div>' +
+      '<div class="pf-contact__kicker">' +
+      escapeHtml(D.contact.eyebrow) +
+      "</div>" +
+      '<h1 class="pf-about-title" style="font-size:clamp(32px,5vw,48px)">' +
+      escapeHtml(D.contact.title) +
+      "</h1>" +
+      '<p class="pf-body" style="margin-bottom:32px;font-style:italic">' +
+      "Drop me a quick message and I'll get back to you within 48 hours." +
+      "</p>" +
+      '<div class="pf-contact-grid">' +
+      '<form class="pf-form" data-inquiry-form>' +
+      '<label class="pf-form__label">What is this about?' +
+      '<select class="pf-form__control" name="about" required>' +
+      '<option value="">Select…</option>' +
+      '<option value="commission">Commission</option>' +
+      '<option value="collab">Collaboration</option>' +
+      '<option value="job">Job / hire</option>' +
+      '<option value="other">Other</option>' +
+      "</select></label>" +
+      '<div class="pf-form__row">' +
+      '<label class="pf-form__label">Name<input class="pf-form__control" name="name" type="text" placeholder="Your name" required /></label>' +
+      '<label class="pf-form__label">Email<input class="pf-form__control" name="email" type="email" placeholder="Your email" required /></label>' +
+      "</div>" +
+      '<label class="pf-form__label">Message<textarea class="pf-form__control pf-form__area" name="message" rows="6" placeholder="Tell me about your project…" required></textarea></label>' +
+      '<button type="submit" class="pf-btn pf-btn--ghost pf-form__submit">' +
+      icon("send") +
+      " Send Inquiry —▸</button></form>" +
+      '<aside class="pf-contact-side">' +
+      '<div class="pf-info-card">' +
+      icon("mail") +
+      '<div><strong>Email</strong><a href="mailto:' +
+      escapeHtml(D.brand.email) +
+      '">' +
+      escapeHtml(D.brand.email) +
+      "</a></div></div>" +
+      '<div class="pf-info-card">' +
+      icon("clock") +
+      "<div><strong>Response time</strong><span>" +
+      escapeHtml(D.contact.responseTime) +
+      "</span></div></div>" +
+      '<div class="pf-info-card">' +
+      icon("briefcase") +
+      "<div><strong>Business inquiries</strong><span>" +
+      (status.open
+        ? "Commissions open — use the builder or this form."
+        : "Commissions closed until " +
+          escapeHtml(status.nextOpening) +
+          ". Licensing and collabs still welcome.") +
+      "</span></div></div>" +
+      '<div class="pf-info-card">' +
+      icon("heart") +
+      '<div><strong>Tips and donations</strong><span>Ko-Fi · PayPal · GCash</span>' +
+      '<div class="pf-tip-row">' +
+      '<a class="pf-chip" href="' +
+      escapeHtml(s.kofi) +
+      '" target="_blank" rel="noopener">Ko-Fi</a>' +
+      '<button type="button" class="pf-chip" data-copy-gcash>' +
+      icon("copy") +
+      " GCash</button></div></div></div>" +
+      '<div class="pf-connect"><h3 class="pf-stack-cols__label">Connect</h3>' +
+      socialRow +
+      "</div></aside></div>" +
+      '<div class="pf-sec"><h3 class="pf-sec__head pf-sec__head--plus">Frequently Asked Questions</h3>' +
+      '<p class="pf-body" style="margin-bottom:16px;font-style:italic">' +
+      escapeHtml(D.faqItalic) +
+      "</p>" +
+      '<div class="pf-faq">' +
+      D.faq
+        .map((it, i) => {
+          const open = state.faqOpen === i;
+          return (
+            '<div class="pf-faq__item' +
+            (open ? " open" : "") +
+            '">' +
+            '<button type="button" class="pf-faq__q" data-faq-i="' +
+            i +
+            '" aria-expanded="' +
+            open +
+            '">' +
+            escapeHtml(it.q) +
+            "<span>" +
+            (open ? "−" : "+") +
+            "</span></button>" +
+            '<div class="pf-faq__a">' +
+            escapeHtml(it.a) +
+            "</div></div>"
+          );
+        })
+        .join("") +
+      "</div></div>" +
+      footHtml();
+  }
+
+  function syncModeButtons() {
+    const m = mode();
+    root.querySelectorAll("[data-pf-mode]").forEach((btn) => {
+      btn.setAttribute("aria-pressed", btn.dataset.pfMode === m ? "true" : "false");
+    });
+    root.classList.toggle("pf-shell--artist", m === "artist");
+    root.classList.toggle("pf-shell--developer", m === "developer");
+  }
+
+  function renderAll() {
+    syncModeButtons();
+    renderHome();
+    renderAbout();
+    renderProjects();
+    renderGallery();
+    renderContact();
+  }
+
+  function normalizeSection(id) {
+    const map = { portfolio: "projects", work: "projects", commissions: "home", gallery: "projects" };
+    const next = map[id] || id;
+    return SECTIONS.includes(next) ? next : "home";
+  }
+
+  function setSection(id, opts) {
+    id = normalizeSection(id);
+    state.section = id;
+    root.querySelectorAll("[data-pf-view]").forEach((el) => {
+      el.classList.toggle("active", el.dataset.pfView === id);
+    });
+    root.querySelectorAll(".pf-rail-btn[data-pf-nav]").forEach((btn) => {
+      const on = btn.dataset.pfNav === id;
+      btn.classList.toggle("active", on);
+      btn.setAttribute("aria-current", on ? "page" : "false");
+    });
+    root.querySelectorAll(".pf-ld").forEach((el) => el.classList.remove("drill"));
+    const hash = "#" + id;
+    if (location.hash !== hash) history.replaceState(null, "", hash);
+    if (!opts?.silent) announce(id.charAt(0).toUpperCase() + id.slice(1));
+  }
+
+  function setMode(next) {
+    const m = next === "developer" ? "developer" : "artist";
+    document.body.dataset.profile = m;
+    localStorage.setItem(PROFILE_KEY, m);
+    state.faqOpen = 0;
+    renderAll();
+    announce(m === "developer" ? "Developer mode" : "Artist mode");
+  }
+
+  root.addEventListener("submit", (e) => {
+    const form = e.target.closest("[data-inquiry-form]");
+    if (!form) return;
+    e.preventDefault();
+    const msg =
+      (D.contact && D.contact.toastForm) ||
+      "Thanks for reaching out — I'll respond within 48 hours.";
+    if (window.Mikaelleon?.toast) window.Mikaelleon.toast(msg);
+    else announce(msg);
+    form.reset();
+  });
+
+  root.addEventListener("click", (e) => {
+    const modeBtn = e.target.closest("[data-pf-mode]");
+    if (modeBtn) {
+      setMode(modeBtn.dataset.pfMode);
+      return;
+    }
+
+    const nav = e.target.closest("[data-pf-nav]");
+    if (nav) {
+      e.preventDefault();
+      setSection(nav.dataset.pfNav);
+      return;
+    }
+
+    const gf = e.target.closest("[data-gallery-filter]");
+    if (gf) {
+      state.galleryFilter = gf.dataset.galleryFilter;
+      renderGallery();
+      return;
+    }
+
+    const unlock = e.target.closest("[data-unlock-name]");
+    if (unlock) {
+      state.nameUnlocked = !state.nameUnlocked;
+      if (!state.nameUnlocked) {
+        state.spoilers = { address: false, phone: false, dob: false };
+      }
+      renderAbout();
+      announce(state.nameUnlocked ? "Legal name revealed" : "Legal name hidden");
+      return;
+    }
+
+    const spoilerBtn = e.target.closest("[data-spoiler]");
+    if (spoilerBtn) {
+      const key = spoilerBtn.dataset.spoiler;
+      state.spoilers[key] = !state.spoilers[key];
+      renderAbout();
+      return;
+    }
+
+    const expandCv = e.target.closest("[data-expand-cv]");
+    if (expandCv) {
+      const allOpen = !!(state.cvOpen.skills && state.cvOpen.interests);
+      state.cvOpen.skills = !allOpen;
+      state.cvOpen.interests = !allOpen;
+      renderAbout();
+      return;
+    }
+
+    const aboutAccBtn = e.target.closest("[data-about-acc]");
+    if (aboutAccBtn) {
+      const id = aboutAccBtn.dataset.aboutAcc;
+      const group = aboutAccBtn.dataset.aboutGroup || "story";
+      if (group === "cv") {
+        state.cvOpen[id] = !state.cvOpen[id];
+      } else {
+        state.aboutOpen = state.aboutOpen === id ? "" : id;
+      }
+      renderAbout();
+      return;
+    }
+
+    const faq = e.target.closest("[data-faq-i]");
+    if (faq) {
+      const i = Number(faq.dataset.faqI);
+      state.faqOpen = state.faqOpen === i ? -1 : i;
+      renderContact();
+      return;
+    }
+
+    const copy = e.target.closest("[data-copy-gcash]");
+    if (copy) {
+      navigator.clipboard?.writeText(D.contact.gcash).then(() => {
+        if (window.Mikaelleon?.toast) window.Mikaelleon.toast(D.contact.toastCopy);
+        else announce(D.contact.toastCopy);
+      });
+      return;
+    }
+
+    const proj = e.target.closest("[data-project-i]");
+    if (proj) {
+      state.projectIdx = Number(proj.dataset.projectI);
+      renderProjects();
+      announce(D.projects[state.projectIdx].title);
+      if (isNarrow()) root.querySelector("[data-pf-work-dev]")?.classList.add("drill");
+      return;
+    }
+
+    if (e.target.closest("[data-pf-back]")) {
+      root.querySelector("[data-pf-work-dev]")?.classList.remove("drill");
+    }
+  });
+
+  root.addEventListener("keydown", (e) => {
+    const projList = e.target.closest("[data-pf-project-list]");
+    if (projList && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+      e.preventDefault();
+      const dlt = e.key === "ArrowDown" ? 1 : -1;
+      state.projectIdx = Math.max(0, Math.min(D.projects.length - 1, state.projectIdx + dlt));
+      renderProjects();
+      projList.querySelector('[data-project-i="' + state.projectIdx + '"]')?.focus();
+    }
+  });
+
+  window.addEventListener("hashchange", () => {
+    const id = normalizeSection((location.hash || "#home").slice(1));
+    if (id !== state.section) setSection(id, { silent: true });
+  });
+
+  window.addEventListener("resize", () => {
+    if (!isNarrow()) root.querySelectorAll(".pf-ld").forEach((el) => el.classList.remove("drill"));
+  });
+
+  new MutationObserver(() => {
+    syncModeButtons();
+    renderAll();
+  }).observe(document.body, { attributes: true, attributeFilter: ["data-profile"] });
+
+  renderAll();
+  setSection(normalizeSection((location.hash || "#home").slice(1)), { silent: true });
+
+  window.AppShell = {
+    setView: setSection,
+    applyProfileCopy: renderAll,
+    setMode,
+  };
+})();

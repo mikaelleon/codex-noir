@@ -1,0 +1,5 @@
+*{box-sizing:border-box}
+html,body{background:var(--surface-bg);color:var(--text-primary);font-family:var(--font-body);margin:0;padding:0}
+a{color:var(--text-accent);text-decoration:none}
+a:hover{color:var(--text-accent-hover);text-decoration:underline}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}

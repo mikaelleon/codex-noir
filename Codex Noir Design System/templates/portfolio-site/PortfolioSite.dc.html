@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<!-- @template name="Codex Noir Portfolio (App Shell)" description="Icon-rail app shell: Home (Hub), About/Projects (List/Detail), Contact (form)" -->
+<helmet><script src="./ds-base.js"></script><script src="./image-slot.js"></script><style>
+@keyframes pfFade{from{opacity:0}to{opacity:1}}
+.pf-view{animation:pfFade 220ms cubic-bezier(.4,0,.2,1) both}
+.pf-detail{animation:pfFade 150ms cubic-bezier(.4,0,.2,1) both}
+.pf-rail-btn{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%;padding:14px 0;background:transparent;border:none;cursor:pointer;color:var(--taupe);font-family:var(--font-mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;transition:color 150ms var(--ease-standard),background 150ms var(--ease-standard)}
+.pf-rail-btn:hover{color:var(--gold-bright);background:rgba(184,147,91,0.08)}
+.pf-rail-btn.active{color:var(--gold);background:rgba(184,147,91,0.14);box-shadow:inset 2px 0 0 var(--gold)}
+.pf-glyph{font-family:var(--font-display);font-size:20px;line-height:1}
+.pf-row{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--hairline);background:var(--panel);cursor:pointer;transition:background 150ms var(--ease-standard),border-color 150ms var(--ease-standard);text-align:left;width:100%}
+.pf-exp-head{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1px solid var(--hairline);background:var(--panel);cursor:pointer;transition:background 150ms var(--ease-standard),border-color 150ms var(--ease-standard);text-align:left;width:100%}
+.pf-exp-head:hover{background:var(--panel-raised)}
+.pf-exp-head.open{border-color:var(--gold);background:var(--panel-raised)}
+.pf-exp-chevron{margin-left:auto;color:var(--gold);font-family:var(--font-mono);font-size:14px;transition:transform 150ms var(--ease-standard)}
+.pf-exp-chevron.open{transform:rotate(180deg)}
+.pf-exp-body{border:1px solid var(--gold);border-top:none;padding:16px 16px 20px;animation:pfFade 200ms cubic-bezier(.4,0,.2,1) both}
+.pf-row:hover{background:var(--panel-raised)}
+.pf-row.selected{border-color:var(--gold);background:var(--panel-raised)}
+.pf-row-idx{font-family:var(--font-mono);color:var(--gold);font-size:13px;font-weight:700;flex-shrink:0;width:24px}
+.pf-row-title{font-family:var(--font-heading);font-size:13px;letter-spacing:0.06em;text-transform:uppercase;color:var(--bone)}
+.pf-row-sub{font-family:var(--font-body);font-size:13px;color:var(--taupe);margin-top:2px}
+@media(max-width:900px){.pf-list-col{display:none!important}.pf-list-col.mobile-show{display:flex!important}.pf-detail-col.mobile-hide{display:none!important}}
+</style></helmet>
+
+<div style="display:flex;height:100vh;min-height:600px;background:var(--ink-black);overflow:hidden">
+
+<nav aria-label="Sections" style="width:72px;flex-shrink:0;border-right:1px solid var(--hairline);display:flex;flex-direction:column;align-items:center;padding:20px 0;background:var(--panel)">
+<div style="font-family:var(--font-display);font-weight:600;font-size:22px;color:var(--gold);border:1px solid var(--gold);width:34px;height:34px;display:flex;align-items:center;justify-content:center;margin-bottom:28px">M</div>
+<button class="pf-rail-btn {{ homeActive }}" onClick="{{ goHome }}" aria-current="{{ homeCurrent }}"><span class="pf-glyph">&#10022;</span>Home</button>
+<button class="pf-rail-btn {{ aboutActive }}" onClick="{{ goAbout }}" aria-current="{{ aboutCurrent }}"><span class="pf-glyph">&#9776;</span>About</button>
+<button class="pf-rail-btn {{ projectsActive }}" onClick="{{ goProjects }}" aria-current="{{ projectsCurrent }}"><span class="pf-glyph">&#9670;</span>Work</button>
+<button class="pf-rail-btn {{ contactActive }}" onClick="{{ goContact }}" aria-current="{{ contactCurrent }}"><span class="pf-glyph">&#9993;</span>Contact</button>
+</nav>
+
+<main style="flex:1;overflow-y:auto">
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+<div class="pf-view" style="display:grid;grid-template-columns:1fr 380px;gap:0;height:100%;min-height:100%">
+<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px;text-align:center;border-right:1px solid var(--hairline)">
+<div style="width:220px;height:280px;border:1px solid var(--gold);margin-bottom:28px;position:relative"><image-slot id="home-portrait" shape="rect" style="position:absolute;inset:0;width:100%;height:100%" placeholder="Drop portrait"></image-slot></div>
+<div style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.3em;color:var(--gold);margin-bottom:10px">DEVELOPER &amp; DIGITAL ARTIST</div>
+<h1 style="margin:0 0 14px;font-family:var(--font-display);font-weight:600;font-size:44px;color:var(--bone)">Kim Mikaelleon</h1>
+<p style="margin:0;font-family:var(--font-body);font-size:17px;line-height:1.6;color:var(--taupe);max-width:440px">I build interfaces the way old scribes bound books — with structure, and a little reverence for the craft. 4th-year BSIT student working in React, Node, and Firebase.</p>
+</div>
+<div style="padding:40px 32px;display:flex;flex-direction:column;gap:14px;overflow-y:auto">
+<div style="font-family:var(--font-heading);font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);margin-bottom:6px">Explore</div>
+<sc-for list="{{ exploreItems }}" as="item" hint-placeholder-count="3">
+<div>
+<button class="pf-exp-head {{ item.openClass }}" onClick="{{ item.toggle }}" aria-expanded="{{ item.isOpen }}"><span class="pf-row-idx">{{ item.idx }}</span><div><div class="pf-row-title">{{ item.label }}</div><div class="pf-row-sub">{{ item.hint }}</div></div><span class="pf-exp-chevron {{ item.openClass }}">&#9662;</span></button>
+<sc-if value="{{ item.isOpen }}" hint-placeholder-val="{{ false }}">
+<div class="pf-exp-body">
+<p style="margin:0 0 14px;font-family:var(--font-body);font-size:15px;line-height:1.6;color:var(--taupe)">{{ item.detail }}</p>
+<button onClick="{{ item.goTo }}" style="font-family:var(--font-heading);font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold-bright);background:none;border:none;cursor:pointer;padding:0">View {{ item.label }} &#8594;</button>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAbout }}" hint-placeholder-val="{{ false }}">
+<div class="pf-view" style="display:grid;grid-template-columns:300px 1fr;height:100%;min-height:100%">
+<div class="pf-list-col" style="border-right:1px solid var(--hairline);padding:28px 20px;display:flex;flex-direction:column;gap:10px;overflow-y:auto">
+<div style="font-family:var(--font-heading);font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:var(--bone);margin-bottom:6px">About Me</div>
+<sc-for list="{{ aboutItems }}" as="item" hint-placeholder-count="4">
+<button class="pf-row {{ item.selClass }}" onClick="{{ item.onClick }}"><div><div class="pf-row-title">{{ item.label }}</div><div class="pf-row-sub">{{ item.hint }}</div></div></button>
+</sc-for>
+</div>
+<div class="pf-detail-col" style="padding:48px;overflow-y:auto">
+<div key="{{ selectedAbout.label }}" class="pf-detail">
+<div style="font-family:var(--font-mono);font-size:12px;letter-spacing:0.2em;color:var(--gold);margin-bottom:10px">{{ selectedAbout.tag }}</div>
+<h2 style="margin:0 0 20px;font-family:var(--font-heading);font-weight:600;font-size:26px;letter-spacing:0.03em;text-transform:uppercase;color:var(--bone)">{{ selectedAbout.label }}</h2>
+<p style="margin:0;font-family:var(--font-body);font-size:18px;line-height:1.7;color:var(--taupe);max-width:560px">{{ selectedAbout.value }}</p>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isProjects }}" hint-placeholder-val="{{ false }}">
+<div class="pf-view" style="display:grid;grid-template-columns:320px 1fr;height:100%;min-height:100%">
+<div class="pf-list-col" style="border-right:1px solid var(--hairline);padding:28px 20px;display:flex;flex-direction:column;gap:10px;overflow-y:auto">
+<div style="font-family:var(--font-heading);font-size:12px;letter-spacing:0.14em;text-transform:uppercase;color:var(--bone);margin-bottom:6px">Projects</div>
+<sc-for list="{{ projectItems }}" as="item" hint-placeholder-count="3">
+<button class="pf-row {{ item.selClass }}" onClick="{{ item.onClick }}"><span class="pf-row-idx">{{ item.idx }}</span><div><div class="pf-row-title">{{ item.title }}</div><div class="pf-row-sub">{{ item.hint }}</div></div></button>
+</sc-for>
+</div>
+<div class="pf-detail-col" style="padding:48px;overflow-y:auto">
+<div key="{{ selectedProject.title }}" class="pf-detail">
+<div style="font-family:var(--font-mono);font-weight:700;font-size:13px;letter-spacing:0.2em;color:var(--gold);margin-bottom:10px">UNLOCKED: {{ selectedProject.idx }}</div>
+<h2 style="margin:0 0 16px;font-family:var(--font-heading);font-weight:600;font-size:32px;letter-spacing:0.03em;text-transform:uppercase;color:var(--gold-bright)">{{ selectedProject.title }}</h2>
+<p style="margin:0 0 18px;font-family:var(--font-body);font-style:italic;font-size:17px;line-height:1.6;color:var(--bone);max-width:560px">"{{ selectedProject.quote }}"</p>
+<p style="margin:0 0 24px;font-family:var(--font-body);font-size:17px;line-height:1.6;color:var(--taupe);max-width:560px">{{ selectedProject.description }}</p>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px">
+<sc-for list="{{ selectedProject.tags }}" as="tag" hint-placeholder-count="3">
+<span style="font-family:var(--font-mono);font-size:12px;color:var(--gold-bright);border:1px solid var(--hairline);padding:4px 10px">{{ tag }}</span>
+</sc-for>
+</div>
+<x-import component-from-global-scope="CodexNoirDesignSystem_72fc46.Button" variant="primary" hint-size="160px,46px">View Project</x-import>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isContact }}" hint-placeholder-val="{{ false }}">
+<div class="pf-view" style="display:flex;align-items:center;justify-content:center;height:100%;min-height:100%;padding:48px">
+<div style="max-width:480px;width:100%;text-align:center">
+<div style="font-family:var(--font-mono);font-size:11px;letter-spacing:0.3em;color:var(--gold);margin-bottom:14px">CORRESPONDENCE</div>
+<h2 style="margin:0 0 28px;font-family:var(--font-display);font-weight:600;font-size:36px;color:var(--bone)">Send a <span style="color:var(--gold-bright);font-style:italic">letter</span></h2>
+<div style="display:flex;flex-direction:column;gap:16px;border:1px solid var(--gold);padding:32px;text-align:left">
+<a href="mailto:kim@mikaelleon.dev" style="font-family:var(--font-body);font-size:17px;color:var(--bone)">kim@mikaelleon.dev</a>
+<a href="https://github.com/kim" style="font-family:var(--font-body);font-size:17px;color:var(--bone)">github.com/kim</a>
+<a href="https://linkedin.com/in/kim" style="font-family:var(--font-body);font-size:17px;color:var(--bone)">linkedin.com/in/kim</a>
+</div>
+</div>
+</div>
+</sc-if>
+
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { section: 'home', aboutIdx: 0, projectIdx: 0, homeOpen: -1 };
+    this.goHome = () => this.setState({ section: 'home' });
+    this.goAbout = () => this.setState({ section: 'about' });
+    this.goProjects = () => this.setState({ section: 'projects' });
+    this.goContact = () => this.setState({ section: 'contact' });
+  }
+
+  aboutData = [
+    { label: 'Educational Background', tag: 'RECORD 01', value: 'BSIT, 4th Year — [University Name].', hint: 'University record' },
+    { label: 'Programming Interests', tag: 'RECORD 02', value: 'Full-stack web (React, Node.js, Firebase), Git-based workflows, and generative/procedural illustration.', hint: 'What drives the work' },
+    { label: 'Career Goals', tag: 'RECORD 03', value: 'Ship production-grade freelance work while building an independent illustration practice alongside a development career.', hint: 'Where this is headed' },
+    { label: 'Technical Skills', tag: 'RECORD 04', value: 'HTML, CSS, JavaScript, Node.js, Git, GitHub, Firebase, VS Code.', hint: 'Tools of the trade' },
+  ];
+  projectData = [
+    { title: 'Grimoire CMS', quote: 'Entries in, illuminated manuscript out.', description: 'A Firebase-backed content system styled as an ancient tome.', tags: ['React', 'Firebase', 'Node'] },
+    { title: 'Tarot Component Kit', quote: 'Every card a component, every draw a render.', description: 'A React component library for card-based UIs, built for indie RPG web tools.', tags: ['React', 'JavaScript', 'Git'] },
+    { title: 'Codex Noir Portfolio', quote: 'Two identities, one interface.', description: 'This site — a gothic grimoire hacked with a developer terminal, built solo end-to-end.', tags: ['React', 'Node', 'Firebase', 'Git'] },
+  ];
+
+  renderVals() {
+    const s = this.state.section;
+    return {
+      isHome: s === 'home', isAbout: s === 'about', isProjects: s === 'projects', isContact: s === 'contact',
+      homeActive: s === 'home' ? 'active' : '', aboutActive: s === 'about' ? 'active' : '', projectsActive: s === 'projects' ? 'active' : '', contactActive: s === 'contact' ? 'active' : '',
+      homeCurrent: s === 'home', aboutCurrent: s === 'about', projectsCurrent: s === 'projects', contactCurrent: s === 'contact',
+      goHome: this.goHome, goAbout: this.goAbout, goProjects: this.goProjects, goContact: this.goContact,
+      exploreItems: [
+        { idx: '01', label: 'About Me', hint: 'Education, interests, and goals', detail: 'A closer look at educational background, programming interests, and career goals — the full stat card lives in the About section.', goTo: this.goAbout },
+        { idx: '02', label: 'Projects', hint: '3 shipped case studies', hidden: false, detail: 'Three case studies spanning content systems, component libraries, and this portfolio itself — each with stack tags and a project brief.', goTo: this.goProjects },
+        { idx: '03', label: 'Contact', hint: 'Email, GitHub, LinkedIn', detail: 'Reach out directly by email, or find the work on GitHub and LinkedIn.', goTo: this.goContact },
+      ].map((it, i) => ({ ...it, isOpen: this.state.homeOpen === i, openClass: this.state.homeOpen === i ? 'open' : '', toggle: () => this.setState({ homeOpen: this.state.homeOpen === i ? -1 : i }) })),
+      aboutItems: this.aboutData.map((it, i) => ({ ...it, selClass: i === this.state.aboutIdx ? 'selected' : '', onClick: () => this.setState({ aboutIdx: i }) })),
+      selectedAbout: this.aboutData[this.state.aboutIdx],
+      projectItems: this.projectData.map((it, i) => ({ ...it, idx: String(i + 1).padStart(2, '0'), selClass: i === this.state.projectIdx ? 'selected' : '', onClick: () => this.setState({ projectIdx: i }) })),
+      selectedProject: { ...this.projectData[this.state.projectIdx], idx: String(this.state.projectIdx + 1).padStart(2, '0') },
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@500;600;700&family=Cinzel:wght@500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&display=swap');
+:root{
+  --font-display:'Cormorant SC',serif;
+  --font-heading:'Cinzel',serif;
+  --font-body:'EB Garamond',serif;
+  --font-mono:'Space Mono',monospace;
+}

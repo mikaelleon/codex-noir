@@ -1,0 +1,309 @@
+/* Codex Noir — design system tokens + site bridge
+   Source: Codex Noir Design System/tokens/* */
+
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@500;600;700&family=Cinzel:wght@500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&display=swap");
+
+:root {
+  /* —— Codex Noir primitives —— */
+  --ink-black: #0c0a10;
+  --panel: #161219;
+  --panel-raised: #1d1822;
+  --bone: #ede6d6;
+  --taupe: #b8af9c;
+  --gold: #b8935b;
+  --gold-bright: #d9be8c;
+  --oxblood: #5b1a22;
+  --oxblood-bright: #7a2530;
+  --hairline: rgba(184, 147, 91, 0.35);
+  --shadow-color: rgba(0, 0, 0, 0.55);
+
+  --surface-bg: var(--ink-black);
+  --surface-panel: var(--panel);
+  --surface-panel-raised: var(--panel-raised);
+  --text-primary: var(--bone);
+  --text-secondary: var(--taupe);
+  --text-accent: var(--gold);
+  --text-accent-hover: var(--gold-bright);
+  --border-default: var(--hairline);
+  --border-strong: var(--gold);
+  --signal-unlock: var(--oxblood);
+  --signal-unlock-bright: var(--oxblood-bright);
+
+  --font-brand: "Cormorant SC", serif;
+  --font-ds-display: "Cormorant SC", serif;
+  --font-heading: "Cinzel", serif;
+  --font-display: "Cinzel", serif; /* site headings use this name */
+  --font-body: "EB Garamond", serif;
+  --font-mono: "Space Mono", monospace;
+  --font-site-heading: var(--font-heading);
+
+  --text-xs: 13px;
+  --text-sm: 15px;
+  --text-body: 17px;
+  --text-body-lg: 18px;
+  --text-lg: 22px;
+  --text-xl: 28px;
+  --text-2xl: 38px;
+  --text-3xl: 56px;
+
+  --leading-tight: 1.15;
+  --leading-heading: 1.25;
+  --leading-body: 1.6;
+
+  --tracking-wide: 0.08em;
+  --tracking-wider: 0.14em;
+  --tracking-normal: 0.01em;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius: 0.125rem;
+
+  --border-width: 1px;
+  --border-width-heavy: 2px;
+
+  --container-max: 1120px;
+  --container-narrow: 720px;
+
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 150ms;
+  --duration-unlock: 400ms;
+  --shadow-panel: 0 8px 24px var(--shadow-color);
+  --shadow-none: none;
+
+  /* —— Bridge → existing site HSL role tokens —— */
+  --bg: 270 23% 5%; /* ≈ #0C0A10 */
+  --text-primary-hsl: 43 35% 88%; /* ≈ #EDE6D6 */
+  --accent-color: 36 36% 54%; /* ≈ #B8935B */
+  --surface-1: 285 14% 9%; /* ≈ #161219 */
+  --surface-2: 280 15% 12%; /* ≈ #1D1822 */
+  --border-token: 285 10% 20%; /* quiet edge — gold accents via --primary / --gold */
+  --text-muted: 40 15% 67%; /* ≈ #B8AF9C */
+  --accent-hover: 39 49% 70%; /* ≈ #D9BE8C */
+  --destructive: 352 55% 23%; /* oxblood */
+
+  --background: var(--bg);
+  --foreground: var(--text-primary-hsl);
+  --card: var(--surface-1);
+  --card-foreground: var(--text-primary-hsl);
+  --primary: var(--accent-color);
+  --primary-foreground: var(--bg);
+  --secondary: var(--surface-2);
+  --muted: var(--surface-1);
+  --muted-foreground: var(--text-muted);
+  --border: var(--border-token);
+  --input: var(--border-token);
+  --ring: var(--accent-hover);
+}
+
+/* Light theme — Codex Noir inverted (bone field, ink type) */
+.light {
+  --surface-bg: var(--bone);
+  --surface-panel: #e4dcc8;
+  --surface-panel-raised: #d9d0b8;
+  --text-primary: var(--ink-black);
+  --text-secondary: #4a4338;
+  --text-accent: #8f6f3c;
+  --text-accent-hover: #6e542c;
+  --border-default: rgba(12, 10, 16, 0.22);
+  --hairline: rgba(12, 10, 16, 0.22);
+
+  --bg: 43 35% 88%;
+  --text-primary-hsl: 270 23% 5%;
+  --accent-color: 36 41% 40%;
+  --surface-1: 43 28% 83%;
+  --surface-2: 42 22% 76%;
+  --border-token: 270 10% 35%;
+  --text-muted: 30 12% 28%;
+  --accent-hover: 36 41% 30%;
+  --primary-foreground: 43 35% 88%;
+}
+
+/* Base resets aligned to DS */
+html {
+  background: var(--surface-bg);
+  color: var(--text-primary);
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-body);
+  background: var(--surface-bg);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--text-accent);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+a:hover {
+  color: var(--text-accent-hover);
+}
+
+/* TEMP: disabled so starfield / gate motion can run while OS prefers-reduced-motion
+@media (prefers-reduced-motion: reduce) {
+  *:not(.cs-stars__layer),
+  *:not(.cs-stars__layer)::before,
+  *:not(.cs-stars__layer)::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+*/
+
+/* Utility classes from DS language */
+.font-brand {
+  font-family: var(--font-brand);
+}
+
+.font-display,
+.font-heading,
+.font-site-display {
+  font-family: var(--font-heading);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.cn-hairline {
+  height: 1px;
+  background: var(--hairline);
+  border: 0;
+}
+
+.cn-sparkle::before {
+  content: "✦";
+  margin-right: 0.4em;
+  color: var(--gold);
+  font-family: var(--font-brand);
+}
+
+/* Chrome overrides — Codex Noir surfaces */
+.site-footer {
+  border-top: 1px solid var(--hairline);
+  background: var(--surface-bg);
+}
+
+.form-control {
+  border-color: var(--hairline);
+  background: var(--panel);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+}
+
+.form-control:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold-bright);
+}
+
+.btn {
+  border-radius: var(--radius-sm);
+  transition: background var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
+}
+
+.btn-outline {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.btn-outline:hover {
+  background: var(--gold);
+  color: var(--ink-black);
+}
+
+.light .btn-outline:hover {
+  color: var(--bone);
+}
+
+.prose-link {
+  color: var(--gold);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.prose-link:hover {
+  color: var(--gold-bright);
+  text-decoration: underline;
+}
+
+.eyebrow {
+  font-family: var(--font-heading);
+  color: var(--taupe);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  color: var(--text-primary);
+}
+
+.nav-links a {
+  font-family: var(--font-body);
+  color: var(--taupe);
+  transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  color: var(--bone);
+}
+
+.light .nav-links a:hover,
+.light .nav-links a.active {
+  color: var(--ink-black);
+}
+
+.monogram {
+  background: var(--panel);
+  color: color-mix(in srgb, var(--gold) 50%, transparent);
+}
+
+.section-bordered {
+  border-color: var(--hairline);
+}
+
+.hero-overlay {
+  background: color-mix(in srgb, var(--ink-black) 80%, transparent);
+}
+
+.comm-tabs {
+  background: var(--surface-bg);
+  backdrop-filter: none;
+}
+
+.comm-dialog {
+  background: var(--panel);
+  border-color: var(--hairline);
+  color: var(--bone);
+}

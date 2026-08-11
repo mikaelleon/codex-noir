@@ -1,0 +1,259 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "components/core/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Cormorant SC|Cinzel|EB Garamond|Space Mono))/i]",
+        "message": "Font not provided by the design system. Available: Cormorant SC, Cinzel, EB Garamond, Space Mono."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='AccordionItem'] > JSXAttribute > JSXIdentifier[name!=/^(?:q|a|key|ref|className|style|children)$/]",
+        "message": "<AccordionItem> doesn't accept that prop. Declared props: q, a."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute > JSXIdentifier[name!=/^(?:children|variant|onClick|disabled|key|ref|className|style|children)$/]",
+        "message": "<Button> doesn't accept that prop. Declared props: children, variant, onClick, disabled."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='variant'] > Literal[value!=/^(?:primary|ghost)$/]",
+        "message": "<Button> variant must be one of 'primary' | 'ghost'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ContactLink'] > JSXAttribute > JSXIdentifier[name!=/^(?:href|children|key|ref|className|style|children)$/]",
+        "message": "<ContactLink> doesn't accept that prop. Declared props: href, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='IndexNumber'] > JSXAttribute > JSXIdentifier[name!=/^(?:n|key|ref|className|style|children)$/]",
+        "message": "<IndexNumber> doesn't accept that prop. Declared props: n."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ProjectCard'] > JSXAttribute > JSXIdentifier[name!=/^(?:index|title|description|quote|tags|onUnlocked|key|ref|className|style|children)$/]",
+        "message": "<ProjectCard> doesn't accept that prop. Declared props: index, title, description, quote, tags, onUnlocked."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='SectionHeader'] > JSXAttribute > JSXIdentifier[name!=/^(?:children|sparkle|key|ref|className|style|children)$/]",
+        "message": "<SectionHeader> doesn't accept that prop. Declared props: children, sparkle."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StatCard'] > JSXAttribute > JSXIdentifier[name!=/^(?:education|interests|goals|key|ref|className|style|children)$/]",
+        "message": "<StatCard> doesn't accept that prop. Declared props: education, interests, goals."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Tag'] > JSXAttribute > JSXIdentifier[name!=/^(?:children|key|ref|className|style|children)$/]",
+        "message": "<Tag> doesn't accept that prop. Declared props: children."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {
+      "AccordionItem": {
+        "replaces": []
+      },
+      "Button": {
+        "replaces": []
+      },
+      "ContactLink": {
+        "replaces": []
+      },
+      "Divider": {
+        "replaces": []
+      },
+      "IndexNumber": {
+        "replaces": []
+      },
+      "ProjectCard": {
+        "replaces": []
+      },
+      "SectionHeader": {
+        "replaces": []
+      },
+      "StatCard": {
+        "replaces": []
+      },
+      "Tag": {
+        "replaces": []
+      }
+    },
+    "tokens": [
+      "--bone",
+      "--border-default",
+      "--border-strong",
+      "--border-width",
+      "--border-width-heavy",
+      "--container-max",
+      "--container-narrow",
+      "--duration-fast",
+      "--duration-unlock",
+      "--ease-standard",
+      "--font-body",
+      "--font-display",
+      "--font-heading",
+      "--font-mono",
+      "--gold",
+      "--gold-bright",
+      "--hairline",
+      "--ink-black",
+      "--leading-body",
+      "--leading-heading",
+      "--leading-tight",
+      "--oxblood",
+      "--oxblood-bright",
+      "--panel",
+      "--panel-raised",
+      "--radius-none",
+      "--radius-sm",
+      "--shadow-color",
+      "--shadow-none",
+      "--shadow-panel",
+      "--signal-unlock",
+      "--signal-unlock-bright",
+      "--space-1",
+      "--space-10",
+      "--space-2",
+      "--space-3",
+      "--space-4",
+      "--space-5",
+      "--space-6",
+      "--space-7",
+      "--space-8",
+      "--space-9",
+      "--surface-bg",
+      "--surface-panel",
+      "--surface-panel-raised",
+      "--taupe",
+      "--text-2xl",
+      "--text-3xl",
+      "--text-accent",
+      "--text-accent-hover",
+      "--text-body",
+      "--text-body-lg",
+      "--text-lg",
+      "--text-primary",
+      "--text-secondary",
+      "--text-sm",
+      "--text-xl",
+      "--text-xs",
+      "--tracking-normal",
+      "--tracking-wide",
+      "--tracking-wider",
+      "--weight-bold",
+      "--weight-medium",
+      "--weight-regular",
+      "--weight-semibold"
+    ],
+    "tokenKinds": {
+      "--font-display": "font",
+      "--font-heading": "font",
+      "--font-body": "font",
+      "--font-mono": "font",
+      "--ink-black": "color",
+      "--panel": "color",
+      "--panel-raised": "color",
+      "--bone": "color",
+      "--taupe": "color",
+      "--gold": "color",
+      "--gold-bright": "color",
+      "--oxblood": "color",
+      "--oxblood-bright": "color",
+      "--hairline": "color",
+      "--shadow-color": "shadow",
+      "--surface-bg": "color",
+      "--surface-panel": "color",
+      "--surface-panel-raised": "color",
+      "--text-primary": "font",
+      "--text-secondary": "font",
+      "--text-accent": "font",
+      "--text-accent-hover": "font",
+      "--border-default": "color",
+      "--border-strong": "color",
+      "--signal-unlock": "color",
+      "--signal-unlock-bright": "color",
+      "--text-xs": "font",
+      "--text-sm": "font",
+      "--text-body": "font",
+      "--text-body-lg": "font",
+      "--text-lg": "font",
+      "--text-xl": "font",
+      "--text-2xl": "font",
+      "--text-3xl": "font",
+      "--leading-tight": "font",
+      "--leading-heading": "font",
+      "--leading-body": "font",
+      "--tracking-wide": "font",
+      "--tracking-wider": "font",
+      "--tracking-normal": "font",
+      "--weight-regular": "font",
+      "--weight-medium": "font",
+      "--weight-semibold": "font",
+      "--weight-bold": "font",
+      "--space-1": "spacing",
+      "--space-2": "spacing",
+      "--space-3": "spacing",
+      "--space-4": "spacing",
+      "--space-5": "spacing",
+      "--space-6": "spacing",
+      "--space-7": "spacing",
+      "--space-8": "spacing",
+      "--space-9": "spacing",
+      "--space-10": "spacing",
+      "--radius-none": "radius",
+      "--radius-sm": "radius",
+      "--border-width": "spacing",
+      "--border-width-heavy": "spacing",
+      "--container-max": "spacing",
+      "--container-narrow": "spacing",
+      "--ease-standard": "other",
+      "--duration-fast": "other",
+      "--duration-unlock": "other",
+      "--shadow-panel": "shadow",
+      "--shadow-none": "shadow"
+    },
+    "fontFamilies": [
+      "Cinzel",
+      "Cormorant SC",
+      "EB Garamond",
+      "Space Mono"
+    ]
+  }
+}

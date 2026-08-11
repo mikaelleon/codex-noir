@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@500;600;700&family=Cinzel:wght@500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/codex-noir.css" />
+  <link rel="stylesheet" href="css/main.css" />
+  <title>Track Order — Mikaelleon</title>
+</head>
+<body>
+  <div class="site">
+    <header class="site-header">
+      <div class="container nav-inner">
+        <a class="nav-logo" href="index.html" aria-label="Mikaelleon home">
+          <img class="logo-dark" src="images/logo/logo-dark.svg" alt="Mikaelleon" />
+          <img class="logo-light" src="images/logo/logo-light.svg" alt="Mikaelleon" />
+        </a>
+        <nav data-nav>
+          <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="portfolio.html">Portfolio</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="commissions.html">Commissions</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+        <div class="nav-actions">
+          <button type="button" class="btn btn-ghost" data-theme-toggle aria-label="Toggle theme"><span data-theme-icon>☾</span></button>
+          <button type="button" class="btn btn-ghost nav-menu-btn" data-nav-open aria-label="Open menu">☰</button>
+        </div>
+      </div>
+    </header>
+    <div class="nav-sheet" data-nav-sheet>
+      <div class="nav-sheet-backdrop" data-nav-close></div>
+      <div class="nav-sheet-panel">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="nav-sheet-title">Menu</span>
+          <button type="button" class="btn btn-ghost" data-nav-close aria-label="Close">✕</button>
+        </div>
+        <ul class="nav-sheet-links" data-nav>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="portfolio.html">Portfolio</a></li>
+          <li><a href="projects.html">Projects</a></li>
+          <li><a href="commissions.html">Commissions</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <main class="site-main">
+      <div class="page-body">
+        <div class="container narrow-3xl">
+          <nav class="breadcrumbs"><a href="index.html">Home</a> › <a href="queue.html">Queue</a> › <span class="current">Track</span></nav>
+          <header class="page-header">
+            <p class="eyebrow">Order Lookup</p>
+            <h1 class="page-h1">Track Order</h1>
+            <p class="italic-line">Enter your commission ID to view demo status.</p>
+          </header>
+
+          <form class="card" style="padding:1.5rem" data-track-form>
+            <div class="form-group">
+              <label class="form-label" for="order">Order ID</label>
+              <input class="form-control" type="text" id="order" name="order" placeholder="e.g. C2026-001" required autocomplete="off" />
+            </div>
+            <p class="text-muted" style="font-size:0.875rem;margin:0 0 1rem">Demo IDs: <span class="text-primary-accent">C2026-001</span>, <span class="text-primary-accent">C2026-002</span></p>
+            <button type="submit" class="btn btn-outline">Look up</button>
+          </form>
+
+          <div data-track-result style="margin-top:1.5rem"></div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-main">
+        <div class="footer-brand">
+          <a class="footer-logo" href="index.html">
+            <img class="logo-dark" src="images/logo/logo-dark.svg" alt="Mikaelleon" />
+            <img class="logo-light" src="images/logo/logo-light.svg" alt="Mikaelleon" />
+          </a>
+          <p>Kimberly Claire A. Aliwate</p>
+          <p>Digital Artist &amp; Web Developer</p>
+        </div>
+        <div class="footer-col">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="portfolio.html">Portfolio</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="commissions.html">Commissions</a></li>
+            <li><a href="queue.html">Queue</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="track.html">Track Order</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h3>Connect</h3>
+          <ul>
+            <li><a href="https://twitter.com" target="_blank" rel="noopener">Twitter</a></li>
+            <li><a href="https://instagram.com" target="_blank" rel="noopener">Instagram</a></li>
+            <li><a href="https://github.com" target="_blank" rel="noopener">GitHub</a></li>
+            <li><a href="https://linkedin.com" target="_blank" rel="noopener">LinkedIn</a></li>
+          </ul>
+          <p class="footer-email">hello@mikaelleon.art</p>
+        </div>
+      </div>
+      <div class="footer-copy">© <span class="year"></span> Mikaelleon. All rights reserved.</div>
+    </footer>
+    <button type="button" class="scroll-top" data-scroll-top aria-label="Scroll to top">↑</button>
+    <div class="toast" data-toast role="status"></div>
+  </div>
+  <script>document.querySelectorAll('.year').forEach(el => el.textContent = new Date().getFullYear());</script>
+  <script src="js/main.js"></script>
+</body>
+</html>
