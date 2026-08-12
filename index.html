@@ -10,81 +10,33 @@
   <link rel="manifest" href="images/site.webmanifest" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="image" href="images/opt/bg4.webp" type="image/webp" />
+  <link rel="preload" as="image" href="images/opt/profile1.webp" type="image/webp" />
+  <link rel="preload" as="image" href="images/opt/profile2.webp" type="image/webp" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@500;600;700&family=Cinzel:wght@500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/codex-noir.css" />
   <link rel="stylesheet" href="css/main.css" />
   <link rel="stylesheet" href="css/character-select.css" />
   <link rel="stylesheet" href="css/cs-stars.css?v=3" />
   <link rel="stylesheet" href="css/app-shell.css" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: "class",
-      corePlugins: { preflight: false },
-      theme: {
-        extend: {
-          colors: {
-            noir: {
-              ink: "#0c0a10",
-              panel: "#161219",
-              gold: "#b8935b",
-              bright: "#e8c77a",
-              muted: "#8a7433",
-            },
-          },
-          transitionTimingFunction: {
-            cs: "cubic-bezier(0.4, 0, 0.2, 1)",
-            "cs-enter": "cubic-bezier(0.16, 1, 0.3, 1)",
-          },
-          keyframes: {
-            "cs-float": {
-              "0%, 100%": { transform: "translateY(0) scale(var(--bob-scale, 1))" },
-              "50%": { transform: "translateY(-14px) scale(var(--bob-scale, 1))" },
-            },
-            "cs-pulse-gold": {
-              "0%, 100%": { boxShadow: "0 0 0 0 rgba(232,199,122,0.35)" },
-              "50%": { boxShadow: "0 0 28px 4px rgba(232,199,122,0.22)" },
-            },
-            "cs-shimmer": {
-              "0%": { opacity: "0.35", transform: "scale(0.92)" },
-              "50%": { opacity: "1", transform: "scale(1.05)" },
-              "100%": { opacity: "0.35", transform: "scale(0.92)" },
-            },
-            "cs-spark": {
-              "0%": { opacity: "0", transform: "translate(0,0) scale(0.4)" },
-              "30%": { opacity: "1" },
-              "100%": { opacity: "0", transform: "translate(var(--sx), var(--sy)) scale(1)" },
-            },
-            "cs-confirm": {
-              "0%": { transform: "scale(1)" },
-              "40%": { transform: "scale(1.04)" },
-              "100%": { transform: "scale(1)" },
-            },
-            "cs-bg-drift": {
-              "0%, 100%": { transform: "scale(1.02) translate(0, 0)" },
-              "50%": { transform: "scale(1.06) translate(-1.2%, 0.8%)" },
-            },
-          },
-          animation: {
-            "cs-float": "cs-float 4.5s ease-in-out infinite",
-            "cs-float-slow": "cs-float 6s ease-in-out infinite",
-            "cs-pulse-gold": "cs-pulse-gold 2.2s ease-in-out infinite",
-            "cs-shimmer": "cs-shimmer 1.6s ease-in-out infinite",
-            "cs-spark": "cs-spark 700ms ease-out forwards",
-            "cs-confirm": "cs-confirm 420ms cubic-bezier(0.16,1,0.3,1) both",
-            "cs-bg-drift": "cs-bg-drift 18s ease-in-out infinite",
-          },
-        },
-      },
-    };
-  </script>
   <title>Mikaelleon — Codex Noir</title>
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("mikaelleon-theme");
+        if (t === "light") {
+          document.documentElement.classList.add("light");
+          document.documentElement.classList.remove("dark");
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body class="realm-gate" data-profile="artist">
   <div class="site shell-site">
     <main class="site-main">
       <section class="cs-root" data-realm-select data-focused="null" aria-label="Choose a profile">
-        <div class="cs-bg animate-cs-bg-drift will-change-transform" aria-hidden="true"></div>
+        <div class="cs-bg cs-bg--drift" aria-hidden="true"></div>
         <div class="cs-stars" aria-hidden="true">
           <div class="cs-stars__layer cs-stars__layer--sm"></div>
           <div class="cs-stars__layer cs-stars__layer--md"></div>
@@ -92,7 +44,7 @@
         </div>
         <div class="cs-fx" data-cs-fx aria-hidden="true"></div>
 
-        <p class="cs-dialogue transition-opacity duration-300 ease-cs" data-cs-dialogue aria-live="polite">
+        <p class="cs-dialogue cs-dialogue--fade" data-cs-dialogue aria-live="polite">
           <span class="cs-dialogue__text" data-cs-dialogue-text></span><span class="cs-dialogue__caret" aria-hidden="true"></span>
         </p>
 
@@ -102,7 +54,7 @@
         <!-- §13 Loading modal → §14 Unlock (continuous) -->
         <div class="cs-modal" data-cs-modal hidden aria-hidden="true" role="status">
           <div class="cs-modal__inner">
-            <span class="cs-modal__glyph animate-cs-shimmer" aria-hidden="true">✦</span>
+            <span class="cs-modal__glyph cs-modal__glyph--shimmer" aria-hidden="true">✦</span>
             <p class="cs-modal__status" data-cs-modal-status></p>
           </div>
         </div>
@@ -117,8 +69,14 @@
       <div class="pf-shell" data-pf-shell data-app-shell>
         <nav class="pf-rail" aria-label="Sections">
           <a class="pf-rail__mark" href="#home" data-pf-nav="home" aria-label="Home">
-            <img class="logo-dark pf-rail__logo" src="images/mainlogo1.svg" alt="" width="44" height="44" />
-            <img class="logo-light pf-rail__logo" src="images/mainlogo2.svg" alt="" width="44" height="44" />
+            <picture class="logo-dark pf-rail__logo">
+              <source type="image/webp" srcset="images/opt/mainlogo1.webp" />
+              <img src="images/opt/mainlogo1.png" alt="" width="44" height="44" decoding="async" />
+            </picture>
+            <picture class="logo-light pf-rail__logo">
+              <source type="image/webp" srcset="images/opt/mainlogo2.webp" />
+              <img src="images/opt/mainlogo2.png" alt="" width="44" height="44" decoding="async" loading="lazy" />
+            </picture>
           </a>
           <button type="button" class="pf-rail-btn" data-pf-nav="home" aria-label="Home">
             <span class="pf-glyph" aria-hidden="true">✦</span>Home
@@ -186,11 +144,11 @@
     <div class="toast" data-toast role="status"></div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.prod.js"></script>
-  <script src="js/main.js"></script>
-  <script src="js/site-data.js"></script>
-  <script src="js/cs-vue.js?v=3"></script>
-  <script src="js/character-select.js"></script>
-  <script src="js/app-shell.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.prod.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/site-data.js" defer></script>
+  <script src="js/cs-vue.js?v=4" defer></script>
+  <script src="js/character-select.js" defer></script>
+  <script src="js/app-shell.js" defer></script>
 </body>
 </html>

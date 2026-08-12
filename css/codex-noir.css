@@ -1,7 +1,5 @@
 /* Codex Noir — design system tokens + site bridge
-   Source: Codex Noir Design System/tokens/* */
-
-@import url("https://fonts.googleapis.com/css2?family=Cormorant+SC:wght@500;600;700&family=Cinzel:wght@500;600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Space+Mono:wght@400;700&display=swap");
+   Fonts are loaded once from each HTML page <head> (avoid CSS @import blocking). */
 
 :root {
   /* —— Codex Noir primitives —— */

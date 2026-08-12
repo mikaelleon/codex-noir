@@ -274,7 +274,7 @@
             escapeHtml(D.galleryImage(g.id)) +
             '" alt="' +
             escapeHtml(g.title) +
-            '" /></button>'
+            '" loading="lazy" decoding="async" /></button>'
         )
         .join("") +
       "</div>" +
@@ -827,7 +827,7 @@
       ctaButtonsHtml(p.ctas) +
       '</div><div class="pf-intro__portrait"><img src="' +
       escapeHtml(portrait) +
-      '" alt="" /></div></div>' +
+      '" alt="" width="640" height="800" decoding="async" fetchpriority="low" /></div></div>' +
       jumpHtml() +
       githubActivityHtml() +
       featuredPreviewHtml() +
@@ -839,8 +839,15 @@
       footHtml();
 
     if (isDev()) {
-      loadGithubChart();
-      loadGithubActivity();
+      const bootGithub = function () {
+        loadGithubChart();
+        loadGithubActivity();
+      };
+      if ("requestIdleCallback" in window) {
+        requestIdleCallback(bootGithub, { timeout: 1800 });
+      } else {
+        setTimeout(bootGithub, 250);
+      }
     }
   }
 
@@ -1074,7 +1081,7 @@
       escapeHtml(portrait) +
       '" alt="' +
       escapeHtml(D.brand.name) +
-      '" /></div>' +
+      '" width="640" height="800" decoding="async" loading="lazy" /></div>' +
       '<div class="pf-about__id-copy">' +
       '<div class="pf-about__id-head">' +
       "<div>" +
@@ -1160,7 +1167,7 @@
             escapeHtml(D.galleryImage(g.id)) +
             '" alt="' +
             escapeHtml(g.title) +
-            '" /></div>'
+            '" loading="lazy" decoding="async" /></div>'
         )
         .join("") +
       "</div>" +

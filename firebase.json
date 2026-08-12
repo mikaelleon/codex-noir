@@ -4,7 +4,60 @@
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**"
+      "**/node_modules/**",
+      "Codex Noir Design System/**",
+      "scripts/**",
+      "package.json",
+      "package-lock.json",
+      "images/mainlogo1.svg",
+      "images/mainlogo2.svg",
+      "images/mainlogo1.png",
+      "images/mainlogo2.png",
+      "images/bg5.png",
+      "images/bg4.png",
+      "images/bg1.png",
+      "images/bg3.png",
+      "images/logo/profile1.png",
+      "images/logo/profile2.png",
+      "images/logo/1.svg",
+      "images/logo/2.svg",
+      "images/logo/3.svg",
+      "images/logo/4.svg",
+      "images/logo/bg2.png",
+      "images/logo/frame1.png",
+      "images/character-select/**",
+      "images/landing/**",
+      "**/*.md",
+      "**/README*"
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(jpg|jpeg|gif|png|webp|svg|ico|woff2)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public,max-age=31536000,immutable"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(js|css)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public,max-age=604800"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(html)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public,max-age=0,must-revalidate"
+          }
+        ]
+      }
     ],
     "rewrites": [
       {

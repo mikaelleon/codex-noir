@@ -480,6 +480,13 @@ textarea.form-control {
   display: block;
 }
 
+.logo-dark img,
+.logo-light img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
 /* Mobile sheet */
 .nav-sheet {
   position: fixed;

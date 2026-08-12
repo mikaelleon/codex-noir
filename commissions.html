@@ -21,8 +21,14 @@
   <div class="pf-shell pf-shell--artist pf-shell--page" data-comm-shell>
     <nav class="pf-rail" aria-label="Sections">
       <a class="pf-rail__mark" href="index.html#home" aria-label="Home">
-        <img class="logo-dark pf-rail__logo" src="images/mainlogo1.svg" alt="" width="44" height="44" />
-        <img class="logo-light pf-rail__logo" src="images/mainlogo2.svg" alt="" width="44" height="44" />
+        <picture class="logo-dark pf-rail__logo">
+          <source type="image/webp" srcset="images/opt/mainlogo1.webp" />
+          <img src="images/opt/mainlogo1.png" alt="" width="44" height="44" decoding="async" />
+        </picture>
+        <picture class="logo-light pf-rail__logo">
+          <source type="image/webp" srcset="images/opt/mainlogo2.webp" />
+          <img src="images/opt/mainlogo2.png" alt="" width="44" height="44" decoding="async" loading="lazy" />
+        </picture>
       </a>
       <a class="pf-rail-btn" href="index.html#home" aria-label="Home">
         <span class="pf-glyph" aria-hidden="true">✦</span>Home

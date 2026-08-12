@@ -170,6 +170,12 @@ body.realm-gate .realm-reopen {
 .pf-rail__logo {
   width: 44px;
   height: 44px;
+  display: block;
+}
+
+.pf-rail__logo img {
+  width: 44px;
+  height: 44px;
   object-fit: cover;
   display: block;
 }
@@ -333,7 +339,7 @@ html.light .logo-light.pf-rail__logo {
       rgba(12, 10, 16, 0.5) 62%,
       var(--ink-black) 100%
     ),
-    url("../images/bg4.png") center / cover no-repeat;
+    url("../images/opt/bg4.webp") center / cover no-repeat;
   opacity: 0.92;
 }
 
@@ -2679,7 +2685,7 @@ html.light .pf-view[data-pf-view="home"]::before {
       rgba(206, 180, 137, 0.4) 58%,
       #ceb489 100%
     ),
-    url("../images/bg5.png") center / cover no-repeat;
+    url("../images/opt/bg5.webp") center / cover no-repeat;
   opacity: 1;
 }
 

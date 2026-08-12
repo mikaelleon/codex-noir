@@ -80,11 +80,57 @@ body.realm-gate .site-main {
   z-index: 0;
   pointer-events: none;
   background:
-    url("../images/bg4.png") center / cover no-repeat,
+    url("../images/opt/bg4.webp") center / cover no-repeat,
     #0c0a10;
   opacity: 0.9;
   filter: contrast(1.05) brightness(0.95);
   transition: filter 400ms var(--cs-ease), opacity 400ms var(--cs-ease);
+}
+
+.cs-bg--drift {
+  will-change: transform;
+  animation: csBgDrift 18s ease-in-out infinite;
+}
+
+@keyframes csBgDrift {
+  0%,
+  100% {
+    transform: scale(1.02) translate(0, 0);
+  }
+  50% {
+    transform: scale(1.06) translate(-1.2%, 0.8%);
+  }
+}
+
+.cs-dialogue--fade {
+  transition: opacity 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cs-modal__glyph--shimmer {
+  animation: csModalShimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes csModalShimmer {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.92);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-bg--drift {
+    animation: none;
+    will-change: auto;
+  }
+
+  .cs-modal__glyph--shimmer {
+    animation: none;
+  }
 }
 
 .cs-root.is-modal-open .cs-bg,

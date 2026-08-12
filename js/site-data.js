@@ -17,9 +17,9 @@ window.SiteData = (function () {
     location: "Lipa City, Batangas",
     email: "hello@mikaelleon.art",
     cv: "cv/mikaelleon-cv.pdf",
-    avatar: "images/logo/profile1.png",
-    avatarArtist: "images/logo/profile2.png",
-    avatarDev: "images/logo/profile1.png",
+    avatar: "images/opt/profile1.webp",
+    avatarArtist: "images/opt/profile2.webp",
+    avatarDev: "images/opt/profile1.webp",
   };
 
   const socials = {
@@ -271,7 +271,7 @@ window.SiteData = (function () {
       body: "These two chibi stickers are the commission style I ship most: thick outlines, heart-eyed aliens, paired colorways. You bring the characters; I hand them back as something you can slap on a phone case tomorrow.",
       cta: "Commission this style —▸",
       href: "commissions.html",
-      image: "images/logo/profile2.png",
+      image: "images/opt/profile2.webp",
     },
     {
       id: "code",
@@ -281,7 +281,7 @@ window.SiteData = (function () {
       body: "The same restraint shows up in the code: typed React pages, a commission builder with a clear cart, and archive filters that don't make you guess.",
       cta: "View projects —▸",
       action: "projects",
-      image: "images/logo/profile1.png",
+      image: "images/opt/profile1.webp",
     },
     {
       id: "materials",
@@ -291,7 +291,7 @@ window.SiteData = (function () {
       body: "Finished plates, studies, and character sheets live in one portfolio — filterable and meant to be revisited, not scrolled past once.",
       cta: "Browse portfolio —▸",
       action: "projects",
-      image: "images/logo/profile2.png",
+      image: "images/opt/profile2.webp",
     },
     {
       id: "contact",
@@ -301,7 +301,7 @@ window.SiteData = (function () {
       body: "Commissions, collabs, and quiet questions land in the same inbox. Write when you already know the vibe — or when you don't, and need a second hand.",
       cta: "Send a message —▸",
       action: "contact",
-      image: "images/logo/profile1.png",
+      image: "images/opt/profile1.webp",
     },
   ];
 
@@ -318,7 +318,7 @@ window.SiteData = (function () {
   ];
 
   const galleryImage = (id) => {
-    const cycle = ["images/logo/profile2.png", "images/logo/profile1.png"];
+    const cycle = ["images/opt/profile2.webp", "images/opt/profile1.webp"];
     return cycle[(Number(id) - 1) % cycle.length];
   };
 
