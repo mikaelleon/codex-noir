@@ -55,6 +55,20 @@
       lock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
       star: '<path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4L12 2z" fill="currentColor" stroke="none"/>',
       copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+      activity:
+        '<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>',
+      commit:
+        '<circle cx="12" cy="12" r="4"/><line x1="1.05" y1="12" x2="7" y2="12"/><line x1="17.01" y1="12" x2="22.96" y2="12"/>',
+      "git-branch":
+        '<line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/>',
+      "git-pull-request":
+        '<circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><line x1="6" y1="9" x2="6" y2="21"/>',
+      "git-fork":
+        '<circle cx="12" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9v2c0 2.5-2 4-6 4s-6-1.5-6-4V9"/>',
+      "git-issue":
+        '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+      "star-outline":
+        '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
     };
     return "<svg " + common + ">" + (paths[name] || "") + "</svg>";
   }
@@ -231,6 +245,513 @@
     );
   }
 
+  function githubActivityHtml() {
+    if (!isDev()) return "";
+    const gh = D.github || {};
+    const user = gh.username || "mikaelleon";
+    const profileUrl = gh.profileUrl || "https://github.com/" + user;
+
+    return (
+      '<section class="pf-sec pf-gh" data-pf-gh aria-label="Coding activity">' +
+      '<header class="pf-gh__head">' +
+      "<div>" +
+      '<p class="pf-gh__kicker">' +
+      escapeHtml(gh.eyebrow || "Activity") +
+      "</p>" +
+      '<h3 class="pf-gh__title">' +
+      escapeHtml(gh.title || "Coding Activity") +
+      "</h3>" +
+      '<p class="pf-gh__sub">' +
+      escapeHtml(gh.sub || "My contributions over the last year.") +
+      "</p></div>" +
+      '<div class="pf-gh__head-stats" aria-live="polite">' +
+      '<div class="pf-gh__stat"><strong data-pf-gh-total>—</strong><span>Total</span></div>' +
+      '<div class="pf-gh__stat"><strong data-pf-gh-streak>—</strong><span>Streak</span></div>' +
+      "</div></header>" +
+      '<div class="pf-gh__chart" data-pf-gh-chart role="img" aria-label="GitHub contribution chart for @' +
+      escapeHtml(user) +
+      '">' +
+      '<p class="pf-gh__status">Loading contribution graph…</p>' +
+      "</div>" +
+      '<div class="pf-gh__split">' +
+      '<div class="pf-gh__recent">' +
+      '<h4 class="pf-gh__col-head">' +
+      icon("activity") +
+      " Recent Activity</h4>" +
+      '<ul class="pf-gh__feed" data-pf-gh-feed>' +
+      '<li class="pf-gh__status">Loading recent activity…</li>' +
+      "</ul></div>" +
+      '<div class="pf-gh__overview">' +
+      '<h4 class="pf-gh__col-head">' +
+      icon("star-outline") +
+      " Overview</h4>" +
+      '<div class="pf-gh__cards" data-pf-gh-overview>' +
+      '<p class="pf-gh__status">Loading overview…</p>' +
+      "</div></div></div>" +
+      '<div class="pf-gh__actions">' +
+      '<a class="pf-btn pf-btn--ghost" href="' +
+      escapeHtml(profileUrl) +
+      '" target="_blank" rel="noopener">' +
+      icon("github") +
+      " View @" +
+      escapeHtml(user) +
+      " on GitHub —▸</a>" +
+      "</div></section>"
+    );
+  }
+
+  function renderGithubChart(contributions) {
+    const mount = root.querySelector("[data-pf-gh-chart]");
+    if (!mount) return;
+
+    const levels = (D.github && D.github.chartLevels) || [
+      "#0C0A10",
+      "#5a4528",
+      "#8a6b35",
+      "#b8935b",
+      "#e8c77a",
+    ];
+
+    const byDate = new Map();
+    (contributions || []).forEach((c) => {
+      if (c && c.date) byDate.set(c.date, c);
+    });
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const end = new Date(today);
+    const start = new Date(today);
+    start.setDate(start.getDate() - 364);
+    while (start.getDay() !== 0) start.setDate(start.getDate() - 1);
+
+    const weeks = [];
+    const cursor = new Date(start);
+    while (cursor <= end) {
+      const week = [];
+      for (let d = 0; d < 7; d += 1) {
+        if (cursor > end) {
+          week.push(null);
+        } else {
+          const key =
+            cursor.getFullYear() +
+            "-" +
+            String(cursor.getMonth() + 1).padStart(2, "0") +
+            "-" +
+            String(cursor.getDate()).padStart(2, "0");
+          const hit = byDate.get(key);
+          const level = hit
+            ? Math.max(0, Math.min(4, Number(hit.level != null ? hit.level : hit.count > 0 ? 1 : 0)))
+            : 0;
+          week.push({
+            date: key,
+            level: cursor > today ? -1 : level,
+            count: hit ? hit.count || 0 : 0,
+          });
+        }
+        cursor.setDate(cursor.getDate() + 1);
+      }
+      weeks.push(week);
+    }
+
+    const cell = 11;
+    const gap = 3;
+    const left = 28;
+    const top = 18;
+    const width = left + weeks.length * (cell + gap);
+    const height = top + 7 * (cell + gap) + 4;
+    const months = [];
+    let lastMonth = -1;
+    weeks.forEach((week, wi) => {
+      const day = week.find((d) => d);
+      if (!day) return;
+      const m = Number(day.date.slice(5, 7)) - 1;
+      if (m !== lastMonth) {
+        months.push({
+          label: new Date(day.date + "T12:00:00").toLocaleString("en", {
+            month: "short",
+          }),
+          x: left + wi * (cell + gap),
+        });
+        lastMonth = m;
+      }
+    });
+
+    const dow = [
+      { label: "Mon", row: 1 },
+      { label: "Wed", row: 3 },
+      { label: "Fri", row: 5 },
+    ];
+
+    let total = 0;
+    let streak = 0;
+    let streakBroken = false;
+    const dayList = [];
+    weeks.forEach((week) => {
+      week.forEach((day) => {
+        if (day && day.level >= 0) dayList.push(day);
+      });
+    });
+    for (let i = dayList.length - 1; i >= 0; i -= 1) {
+      const day = dayList[i];
+      total += day.count || 0;
+      if (!streakBroken) {
+        if (day.count > 0) streak += 1;
+        else if (i !== dayList.length - 1) streakBroken = true;
+      }
+    }
+
+    const totalEl = root.querySelector("[data-pf-gh-total]");
+    const streakEl = root.querySelector("[data-pf-gh-streak]");
+    if (totalEl) totalEl.textContent = total.toLocaleString();
+    if (streakEl) streakEl.textContent = String(streak);
+
+    const year = today.getFullYear();
+
+    let cells = "";
+    weeks.forEach((week, wi) => {
+      week.forEach((day, di) => {
+        if (!day || day.level < 0) return;
+        const fill = levels[day.level] || levels[0];
+        const x = left + wi * (cell + gap);
+        const y = top + di * (cell + gap);
+        cells +=
+          '<rect x="' +
+          x +
+          '" y="' +
+          y +
+          '" width="' +
+          cell +
+          '" height="' +
+          cell +
+          '" rx="0" fill="' +
+          fill +
+          '" stroke="rgba(184,147,91,0.18)" stroke-width="0.5"><title>' +
+          escapeHtml(day.date) +
+          ": " +
+          day.count +
+          " contribution" +
+          (day.count === 1 ? "" : "s") +
+          "</title></rect>";
+      });
+    });
+
+    mount.innerHTML =
+      '<svg class="pf-gh__svg" viewBox="0 0 ' +
+      width +
+      " " +
+      height +
+      '" width="' +
+      width +
+      '" height="' +
+      height +
+      '" role="presentation">' +
+      months
+        .map(
+          (m) =>
+            '<text x="' +
+            m.x +
+            '" y="10" class="pf-gh__axis">' +
+            escapeHtml(m.label) +
+            "</text>"
+        )
+        .join("") +
+      dow
+        .map(
+          (d) =>
+            '<text x="0" y="' +
+            (top + d.row * (cell + gap) + cell - 1) +
+            '" class="pf-gh__axis">' +
+            d.label +
+            "</text>"
+        )
+        .join("") +
+      cells +
+      "</svg>" +
+      '<div class="pf-gh__chart-foot">' +
+      '<p class="pf-gh__chart-count">' +
+      total.toLocaleString() +
+      " activities in " +
+      year +
+      "</p>" +
+      '<div class="pf-gh__legend" aria-hidden="true">' +
+      '<span class="pf-gh__legend-label">Less</span>' +
+      levels
+        .map(
+          (c) =>
+            '<span class="pf-gh__swatch" style="background:' +
+            c +
+            '"></span>'
+        )
+        .join("") +
+      '<span class="pf-gh__legend-label">More</span>' +
+      "</div></div>";
+  }
+
+  async function loadGithubChart() {
+    const mount = root.querySelector("[data-pf-gh-chart]");
+    if (!mount || !isDev()) return;
+
+    const user = (D.github && D.github.username) || "mikaelleon";
+    try {
+      const res = await fetch(
+        "https://github-contributions-api.jogruber.de/v4/" +
+          encodeURIComponent(user) +
+          "?y=last"
+      );
+      if (!res.ok) throw new Error("chart " + res.status);
+      const data = await res.json();
+      const list = Array.isArray(data.contributions) ? data.contributions : [];
+      if (!list.length) throw new Error("empty chart");
+      renderGithubChart(list);
+    } catch (_) {
+      mount.innerHTML =
+        '<p class="pf-gh__status">Contribution graph unavailable right now.</p>';
+    }
+  }
+
+  function formatGhTime(iso) {
+    try {
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return "";
+      return d.toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    } catch (_) {
+      return "";
+    }
+  }
+
+  function relativeGhTime(iso) {
+    const then = new Date(iso).getTime();
+    if (Number.isNaN(then)) return "";
+    const sec = Math.max(0, Math.floor((Date.now() - then) / 1000));
+    if (sec < 60) return "just now";
+    if (sec < 3600) {
+      const n = Math.floor(sec / 60);
+      return n + " minute" + (n === 1 ? "" : "s") + " ago";
+    }
+    if (sec < 86400) {
+      const n = Math.floor(sec / 3600);
+      return n + " hour" + (n === 1 ? "" : "s") + " ago";
+    }
+    if (sec < 604800) {
+      const n = Math.floor(sec / 86400);
+      return n + " day" + (n === 1 ? "" : "s") + " ago";
+    }
+    return formatGhTime(iso);
+  }
+
+  function parseGhEvent(ev) {
+    const repo = ev.repo?.name || "repository";
+    const type = ev.type || "";
+    const payload = ev.payload || {};
+    const url = ev.repo?.name ? "https://github.com/" + ev.repo.name : "#";
+
+    if (type === "PushEvent") {
+      const n = (payload.commits && payload.commits.length) || payload.size || 1;
+      const ref = String(payload.ref || "main").replace(/^refs\/heads\//, "");
+      return {
+        icon: "commit",
+        repo: repo,
+        text: "Pushed " + n + " commit" + (n === 1 ? "" : "s"),
+        chip: ref,
+        url: url,
+      };
+    }
+    if (type === "CreateEvent") {
+      const kind = payload.ref_type || "repository";
+      return {
+        icon: kind === "branch" ? "git-branch" : "commit",
+        repo: repo,
+        text: "Created " + kind + (payload.ref ? " " + payload.ref : ""),
+        chip: payload.ref || kind,
+        url: url,
+      };
+    }
+    if (type === "ForkEvent") {
+      return { icon: "git-fork", repo: repo, text: "Forked repository", chip: "fork", url: url };
+    }
+    if (type === "WatchEvent") {
+      return { icon: "star-outline", repo: repo, text: "Starred repository", chip: "starred", url: url };
+    }
+    if (type === "IssuesEvent") {
+      const n = payload.issue?.number;
+      return {
+        icon: "git-issue",
+        repo: repo,
+        text: (payload.action || "Updated") + " issue" + (payload.issue?.title ? " — " + payload.issue.title : ""),
+        chip: n ? "#" + n : "issue",
+        url: payload.issue?.html_url || url,
+      };
+    }
+    if (type === "PullRequestEvent") {
+      const n = payload.pull_request?.number;
+      return {
+        icon: "git-pull-request",
+        repo: repo,
+        text:
+          (payload.action || "Updated") +
+          " pull request" +
+          (payload.pull_request?.title ? " — " + payload.pull_request.title : ""),
+        chip: n ? "#" + n : "pr",
+        url: payload.pull_request?.html_url || url,
+      };
+    }
+    if (type === "PullRequestReviewEvent") {
+      return {
+        icon: "git-pull-request",
+        repo: repo,
+        text: "Reviewed a pull request",
+        chip: "review",
+        url: url,
+      };
+    }
+    if (type === "ReleaseEvent") {
+      return {
+        icon: "star-outline",
+        repo: repo,
+        text: "Published a release",
+        chip: payload.release?.tag_name || "release",
+        url: url,
+      };
+    }
+    return {
+      icon: "activity",
+      repo: repo,
+      text: type.replace(/Event$/, "") + " on " + repo,
+      chip: "event",
+      url: url,
+    };
+  }
+
+  function ghFeedItemHtml(item) {
+    return (
+      '<li class="pf-gh__item">' +
+      '<a class="pf-gh__row" href="' +
+      escapeHtml(item.url) +
+      '" target="_blank" rel="noopener">' +
+      '<span class="pf-gh__ico">' +
+      icon(item.icon) +
+      "</span>" +
+      "<div>" +
+      '<p class="pf-gh__row-top">' +
+      '<span class="pf-gh__repo">' +
+      escapeHtml(item.repo) +
+      "</span>" +
+      '<span class="pf-gh__when">· ' +
+      escapeHtml(item.when) +
+      "</span></p>" +
+      '<p class="pf-gh__text">' +
+      escapeHtml(item.text) +
+      "</p>" +
+      (item.chip
+        ? '<span class="pf-gh__chip">' + escapeHtml(item.chip) + "</span>"
+        : "") +
+      "</div></a></li>"
+    );
+  }
+
+  function githubFallbackHtml() {
+    const items = (D.repos || []).slice(0, 4);
+    if (!items.length) {
+      return '<li class="pf-gh__status">Activity unavailable right now.</li>';
+    }
+    return items
+      .map((r) =>
+        ghFeedItemHtml({
+          icon: "commit",
+          repo: r.name,
+          when: r.language || "Repo",
+          text: r.description,
+          chip: r.language || "repo",
+          url: r.url,
+        })
+      )
+      .join("");
+  }
+
+  function overviewCardsHtml(stats) {
+    const cards = [
+      { label: "Public Repos", value: stats.repos, note: "On GitHub" },
+      { label: "Pull Requests", value: stats.prs, note: "In recent public events" },
+      { label: "Code Reviews", value: stats.reviews, note: "In recent public events" },
+    ];
+    return cards
+      .map(
+        (c) =>
+          '<article class="pf-gh__metric">' +
+          '<p class="pf-gh__metric-label">' +
+          escapeHtml(c.label) +
+          "</p>" +
+          '<p class="pf-gh__metric-value">' +
+          escapeHtml(String(c.value)) +
+          "</p>" +
+          '<p class="pf-gh__metric-note">' +
+          escapeHtml(c.note) +
+          "</p></article>"
+      )
+      .join("");
+  }
+
+  async function loadGithubActivity() {
+    const feed = root.querySelector("[data-pf-gh-feed]");
+    const overview = root.querySelector("[data-pf-gh-overview]");
+    if (!feed || !isDev()) return;
+
+    const user = (D.github && D.github.username) || "mikaelleon";
+    const headers = { Accept: "application/vnd.github+json" };
+
+    try {
+      const [evRes, userRes] = await Promise.all([
+        fetch(
+          "https://api.github.com/users/" +
+            encodeURIComponent(user) +
+            "/events/public?per_page=30",
+          { headers: headers }
+        ),
+        fetch("https://api.github.com/users/" + encodeURIComponent(user), {
+          headers: headers,
+        }),
+      ]);
+
+      const events = evRes.ok ? await evRes.json() : [];
+      const profile = userRes.ok ? await userRes.json() : {};
+      const list = Array.isArray(events) ? events : [];
+
+      if (!list.length) {
+        feed.innerHTML = githubFallbackHtml();
+      } else {
+        feed.innerHTML = list
+          .slice(0, 5)
+          .map((ev) => {
+            const parsed = parseGhEvent(ev);
+            parsed.when = relativeGhTime(ev.created_at);
+            return ghFeedItemHtml(parsed);
+          })
+          .join("");
+      }
+
+      if (overview) {
+        overview.innerHTML = overviewCardsHtml({
+          repos: profile.public_repos != null ? profile.public_repos : (D.repos || []).length,
+          prs: list.filter((e) => e.type === "PullRequestEvent").length,
+          reviews: list.filter((e) => e.type === "PullRequestReviewEvent").length,
+        });
+      }
+    } catch (_) {
+      feed.innerHTML = githubFallbackHtml();
+      if (overview) {
+        overview.innerHTML = overviewCardsHtml({
+          repos: (D.repos || []).length,
+          prs: "—",
+          reviews: "—",
+        });
+      }
+    }
+  }
+
   function renderHome() {
     const mount = root.querySelector("[data-pf-home]");
     if (!mount) return;
@@ -259,12 +780,18 @@
       '" alt="" /></div></div>' +
       jumpHtml() +
       featuredPreviewHtml() +
+      githubActivityHtml() +
       '<div class="pf-cta-band">' +
       "<h2>Have a project in mind?</h2>" +
       "<p>Commissions and collabs land in one inbox.</p>" +
       '<button type="button" class="pf-btn pf-btn--solid" data-pf-nav="contact">Get in touch —▸</button>' +
       "</div>" +
       footHtml();
+
+    if (isDev()) {
+      loadGithubChart();
+      loadGithubActivity();
+    }
   }
 
   /* —— ABOUT: timeline + tools/dev columns + unlockable name —— */

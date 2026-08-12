@@ -26,10 +26,19 @@ window.SiteData = (function () {
     twitter: "https://twitter.com",
     instagram: "https://instagram.com",
     deviantart: "https://deviantart.com",
-    github: "https://github.com",
+    github: "https://github.com/mikaelleon",
     linkedin: "https://linkedin.com",
     kofi: "https://ko-fi.com",
     email: "mailto:hello@mikaelleon.art",
+  };
+
+  const github = {
+    username: "mikaelleon",
+    profileUrl: "https://github.com/mikaelleon",
+    chartLevels: ["#0C0A10", "#5a4528", "#8a6b35", "#b8935b", "#e8c77a"],
+    eyebrow: "Activity",
+    title: "Coding Activity",
+    sub: "My contributions over the last year.",
   };
 
   const bios = {
@@ -418,6 +427,7 @@ window.SiteData = (function () {
   return {
     brand,
     socials,
+    github,
     bios,
     profiles,
     education,

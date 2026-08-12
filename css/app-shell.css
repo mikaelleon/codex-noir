@@ -191,6 +191,38 @@ body.realm-gate .realm-reopen {
   clip: rect(0, 0, 0, 0);
 }
 
+/* Home — same atmosphere as character select (hero / intro only) */
+.pf-view[data-pf-view="home"] {
+  position: relative;
+  isolation: isolate;
+  background: var(--ink-black);
+}
+
+.pf-view[data-pf-view="home"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: min(72vh, 720px);
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(12, 10, 16, 0.18) 0%,
+      rgba(12, 10, 16, 0.5) 62%,
+      var(--ink-black) 100%
+    ),
+    url("../images/bg4.png") center / cover no-repeat;
+  opacity: 0.92;
+}
+
+.pf-view[data-pf-view="home"] .pf-page {
+  position: relative;
+  z-index: 1;
+}
+
 /* —— Shared page chrome —— */
 .pf-page {
   max-width: 1100px;
@@ -586,6 +618,306 @@ body.realm-gate .realm-reopen {
   line-height: 1.55;
   color: var(--taupe);
   flex: 1;
+}
+
+/* —— GitHub activity (developer home) —— */
+.pf-gh__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 22px;
+}
+
+.pf-gh__kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 8px;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.pf-gh__kicker::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: var(--gold);
+}
+
+.pf-gh__title {
+  margin: 0 0 6px;
+  font-family: var(--font-brand);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+}
+
+.pf-gh__sub {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--taupe);
+}
+
+.pf-gh__head-stats {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  flex-shrink: 0;
+}
+
+.pf-gh__stat {
+  padding: 0 22px;
+  text-align: right;
+}
+
+.pf-gh__stat + .pf-gh__stat {
+  border-left: 1px solid var(--hairline);
+}
+
+.pf-gh__stat strong {
+  display: block;
+  font-family: var(--font-brand);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--bone);
+  line-height: 1.1;
+}
+
+.pf-gh__stat span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--taupe);
+}
+
+.pf-gh__chart {
+  margin: 0 0 28px;
+  padding: 18px 16px 14px;
+  border: 1px solid var(--gold);
+  background: var(--panel);
+  overflow-x: auto;
+}
+
+.pf-gh__svg {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto;
+}
+
+.pf-gh__axis {
+  fill: var(--taupe);
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+.pf-gh__chart-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.pf-gh__chart-count {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--taupe);
+}
+
+.pf-gh__legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pf-gh__legend-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--taupe);
+}
+
+.pf-gh__legend-label:first-child {
+  margin-right: 4px;
+}
+
+.pf-gh__legend-label:last-child {
+  margin-left: 4px;
+}
+
+.pf-gh__swatch {
+  width: 11px;
+  height: 11px;
+  border: 1px solid rgba(184, 147, 91, 0.35);
+  flex-shrink: 0;
+}
+
+.pf-gh__split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(220px, 0.9fr);
+  gap: 28px;
+  margin-bottom: 28px;
+}
+
+.pf-gh__col-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+  font-family: var(--font-heading);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bone);
+}
+
+.pf-gh__col-head svg {
+  width: 16px;
+  height: 16px;
+  color: var(--gold);
+}
+
+.pf-gh__feed {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pf-gh__item + .pf-gh__item {
+  margin-top: 4px;
+}
+
+.pf-gh__row {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 10px;
+  padding: 12px 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: background 150ms var(--ease-standard);
+}
+
+.pf-gh__row:hover {
+  background: rgba(184, 147, 91, 0.08);
+}
+
+.pf-gh__ico {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 2px;
+  color: var(--gold);
+}
+
+.pf-gh__ico svg {
+  width: 16px;
+  height: 16px;
+}
+
+.pf-gh__row-top {
+  margin: 0 0 4px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: baseline;
+}
+
+.pf-gh__repo {
+  font-family: var(--font-heading);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold-bright);
+}
+
+.pf-gh__when {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--taupe);
+}
+
+.pf-gh__text {
+  margin: 0 0 8px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--taupe);
+}
+
+.pf-gh__chip {
+  display: inline-block;
+  padding: 3px 8px;
+  background: rgba(184, 147, 91, 0.1);
+  border: 1px solid var(--gold);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--gold-bright);
+}
+
+.pf-gh__cards {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pf-gh__metric {
+  padding: 16px 18px;
+  border: 1px solid var(--gold);
+  background: var(--panel);
+}
+
+.pf-gh__metric-label {
+  margin: 0 0 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--taupe);
+}
+
+.pf-gh__metric-value {
+  margin: 0 0 4px;
+  font-family: var(--font-brand);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--bone);
+  line-height: 1;
+}
+
+.pf-gh__metric-note {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--taupe);
+}
+
+.pf-gh__status {
+  padding: 16px 4px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--taupe);
+}
+
+.pf-gh__actions {
+  display: flex;
+  justify-content: center;
+}
+
+.pf-gh__actions .pf-btn {
+  gap: 10px;
 }
 
 .pf-gallery-grid {
@@ -1049,6 +1381,24 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   }
 
   .pf-spec-list {
+    grid-template-columns: 1fr;
+  }
+
+  .pf-gh__head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pf-gh__head-stats {
+    width: 100%;
+  }
+
+  .pf-gh__stat {
+    text-align: left;
+    padding: 0 20px 0 0;
+  }
+
+  .pf-gh__split {
     grid-template-columns: 1fr;
   }
 
