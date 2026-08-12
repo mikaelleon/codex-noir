@@ -922,6 +922,10 @@ body.cs-unlocking .pf-shell {
   animation: csShellIn 420ms var(--cs-ease-enter) both;
 }
 
+body:not(.realm-gate) .pf-shell {
+  opacity: 1;
+}
+
 @keyframes csShellIn {
   from {
     opacity: 0;

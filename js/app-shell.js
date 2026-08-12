@@ -1408,6 +1408,19 @@
     if (incoming) incoming.scrollTop = 0;
   }
 
+  function reveal(id) {
+    id = normalizeSection(id || "home");
+    syncModeButtons();
+    renderAll();
+    clearTimeout(viewTimer);
+    viewTimer = null;
+    state.section = id;
+    showViewInstant(id);
+    syncRail(id);
+    const hash = "#" + id;
+    if (location.hash !== hash) history.replaceState(null, "", hash);
+  }
+
   function setSection(id, opts) {
     id = normalizeSection(id);
     const from = state.section;
@@ -1605,13 +1618,11 @@
   }).observe(document.body, { attributes: true, attributeFilter: ["data-profile"] });
 
   renderAll();
-  setSection(normalizeSection((location.hash || "#home").slice(1)), {
-    silent: true,
-    instant: true,
-  });
+  reveal(normalizeSection((location.hash || "#home").slice(1)));
 
   window.AppShell = {
     setView: setSection,
+    reveal,
     applyProfileCopy: renderAll,
     setMode,
   };
