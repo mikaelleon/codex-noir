@@ -85,6 +85,8 @@
   --duration-unlock: 400ms;
   --shadow-panel: 0 8px 24px var(--shadow-color);
   --shadow-none: none;
+  --on-gold: #0c0a10;
+  --gh-empty: #0c0a10;
 
   /* —— Bridge → existing site HSL role tokens —— */
   --bg: 270 23% 5%; /* ≈ #0C0A10 */
@@ -111,27 +113,31 @@
   --ring: var(--accent-hover);
 }
 
-/* Light theme — Codex Noir inverted (bone field, ink type) */
+/* Light theme — gold field, cream cards, ink type */
 .light {
-  --surface-bg: var(--bone);
+  --surface-bg: #ceb489;
   --surface-panel: #e4dcc8;
-  --surface-panel-raised: #d9d0b8;
-  --text-primary: var(--ink-black);
-  --text-secondary: #4a4338;
-  --text-accent: #8f6f3c;
-  --text-accent-hover: #6e542c;
-  --border-default: rgba(12, 10, 16, 0.22);
-  --hairline: rgba(12, 10, 16, 0.22);
+  --surface-panel-raised: #e4dcc8;
+  --text-primary: #161219;
+  --text-secondary: #161219;
+  --text-accent: #161219;
+  --text-accent-hover: #161219;
+  --border-default: #161219;
+  --hairline: rgba(22, 18, 25, 0.28);
 
-  --bg: 43 35% 88%;
-  --text-primary-hsl: 270 23% 5%;
-  --accent-color: 36 41% 40%;
-  --surface-1: 43 28% 83%;
-  --surface-2: 42 22% 76%;
-  --border-token: 270 10% 35%;
-  --text-muted: 30 12% 28%;
-  --accent-hover: 36 41% 30%;
-  --primary-foreground: 43 35% 88%;
+  --bg: 37 41% 67%;
+  --text-primary-hsl: 270 14% 9%;
+  --accent-color: 270 14% 9%;
+  --surface-1: 43 34% 84%;
+  --surface-2: 43 34% 84%;
+  --border-token: 270 14% 9%;
+  --text-muted: 270 14% 9%;
+  --accent-hover: 270 14% 9%;
+  --primary-foreground: 37 41% 67%;
+  --gold: #161219;
+  --gold-bright: #161219;
+  --on-gold: #e4dcc8;
+  --gh-empty: #ceb489;
 }
 
 /* Base resets aligned to DS */
@@ -240,7 +246,7 @@ a:hover {
 }
 
 .light .btn-outline:hover {
-  color: var(--bone);
+  color: var(--on-gold, #e4dcc8);
 }
 
 .prose-link {

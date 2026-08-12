@@ -116,7 +116,10 @@
 
       <div class="pf-shell" data-pf-shell data-app-shell>
         <nav class="pf-rail" aria-label="Sections">
-          <a class="pf-rail__mark" href="#home" data-pf-nav="home" aria-label="Home">M</a>
+          <a class="pf-rail__mark" href="#home" data-pf-nav="home" aria-label="Home">
+            <img class="logo-dark pf-rail__logo" src="images/mainlogo1.svg" alt="" width="44" height="44" />
+            <img class="logo-light pf-rail__logo" src="images/mainlogo2.svg" alt="" width="44" height="44" />
+          </a>
           <button type="button" class="pf-rail-btn" data-pf-nav="home" aria-label="Home">
             <span class="pf-glyph" aria-hidden="true">✦</span>Home
           </button>
@@ -132,9 +135,14 @@
           <button type="button" class="pf-rail-btn" data-pf-nav="contact" aria-label="Contact">
             <span class="pf-glyph" aria-hidden="true">✉</span>Contact
           </button>
-          <div class="pf-mode" role="group" aria-label="Profile mode">
-            <button type="button" class="pf-mode-btn" data-pf-mode="developer" aria-pressed="false">Dev</button>
-            <button type="button" class="pf-mode-btn" data-pf-mode="artist" aria-pressed="false">Art</button>
+          <div class="pf-rail__tools">
+            <button type="button" class="pf-theme" data-theme-toggle aria-label="Switch to light mode" aria-pressed="false">
+              <span data-theme-icon aria-hidden="true">☾</span>
+            </button>
+            <div class="pf-mode" role="group" aria-label="Profile mode">
+              <button type="button" class="pf-mode-btn" data-pf-mode="developer" aria-pressed="false">Dev</button>
+              <button type="button" class="pf-mode-btn" data-pf-mode="artist" aria-pressed="false">Art</button>
+            </div>
           </div>
         </nav>
 

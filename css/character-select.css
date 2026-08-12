@@ -33,6 +33,35 @@ body.realm-gate {
   overflow: hidden;
 }
 
+/* Light mode is shell-only — realm gate stays Codex Noir dark */
+html.light:has(body.realm-gate),
+html.light body.realm-gate {
+  --surface-bg: #0c0a10;
+  --text-primary: #ede6d6;
+  --text-secondary: #b8af9c;
+  --text-accent: #b8935b;
+  --gold: #b8935b;
+  --gold-bright: #d9be8c;
+  --hairline: rgba(184, 147, 91, 0.35);
+  background: #0c0a10;
+  color: #ede6d6;
+}
+
+html.light .cs-root {
+  --ink-black: #0c0a10;
+  --panel: #161219;
+  --bone: #ede6d6;
+  --taupe: #b8af9c;
+  --gold: #b8935b;
+  --gold-bright: #d9be8c;
+  --hairline: rgba(184, 147, 91, 0.35);
+  --surface-bg: #0c0a10;
+  --text-primary: #ede6d6;
+  background: #0c0a10;
+  color: #ede6d6;
+  color-scheme: dark;
+}
+
 body.realm-gate .site-header,
 body.realm-gate .site-footer,
 body.realm-gate .scroll-top,

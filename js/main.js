@@ -17,7 +17,10 @@
     localStorage.setItem(THEME_KEY, mode);
     document.querySelectorAll("[data-theme-icon]").forEach((el) => {
       el.textContent = mode === "light" ? "☀" : "☾";
-      el.setAttribute("aria-label", mode === "light" ? "Switch to dark" : "Switch to light");
+    });
+    document.querySelectorAll("[data-theme-toggle]").forEach((el) => {
+      el.setAttribute("aria-label", mode === "light" ? "Switch to dark mode" : "Switch to light mode");
+      el.setAttribute("aria-pressed", mode === "light" ? "true" : "false");
     });
   }
 

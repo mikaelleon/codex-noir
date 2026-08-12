@@ -20,7 +20,10 @@
 <body class="shell-site" data-profile="artist">
   <div class="pf-shell pf-shell--artist pf-shell--page" data-comm-shell>
     <nav class="pf-rail" aria-label="Sections">
-      <a class="pf-rail__mark" href="index.html#home" aria-label="Home">M</a>
+      <a class="pf-rail__mark" href="index.html#home" aria-label="Home">
+        <img class="logo-dark pf-rail__logo" src="images/mainlogo1.svg" alt="" width="44" height="44" />
+        <img class="logo-light pf-rail__logo" src="images/mainlogo2.svg" alt="" width="44" height="44" />
+      </a>
       <a class="pf-rail-btn" href="index.html#home" aria-label="Home">
         <span class="pf-glyph" aria-hidden="true">✦</span>Home
       </a>
@@ -36,9 +39,14 @@
       <a class="pf-rail-btn" href="index.html#contact" aria-label="Contact">
         <span class="pf-glyph" aria-hidden="true">✉</span>Contact
       </a>
-      <div class="pf-mode" role="group" aria-label="Profile mode">
-        <a class="pf-mode-btn" href="index.html#home" data-mode-link="developer" aria-pressed="false">Dev</a>
-        <a class="pf-mode-btn" href="commissions.html" data-mode-link="artist" aria-pressed="true">Art</a>
+      <div class="pf-rail__tools">
+        <button type="button" class="pf-theme" data-theme-toggle aria-label="Switch to light mode" aria-pressed="false">
+          <span data-theme-icon aria-hidden="true">☾</span>
+        </button>
+        <div class="pf-mode" role="group" aria-label="Profile mode">
+          <a class="pf-mode-btn" href="index.html#home" data-mode-link="developer" aria-pressed="false">Dev</a>
+          <a class="pf-mode-btn" href="commissions.html" data-mode-link="artist" aria-pressed="true">Art</a>
+        </div>
       </div>
     </nav>
 

@@ -5,6 +5,50 @@
   to { opacity: 1; }
 }
 
+@keyframes pfViewInRight {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pfViewInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pfViewOutLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
+}
+
+@keyframes pfViewOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+}
+
 .pf-shell {
   display: none;
   height: 100vh;
@@ -53,16 +97,40 @@ body.realm-gate .realm-reopen {
   display: none;
   height: 100%;
   min-height: 100%;
-  animation: pfFade 220ms cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
-.pf-view.active {
+.pf-view.active,
+.pf-view.is-leave {
   display: block;
 }
 
-.pf-view.pf-work.active {
+.pf-view.pf-work.active,
+.pf-view.pf-work.is-leave {
   display: flex;
   flex-direction: column;
+}
+
+.pf-view.is-leave {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.pf-view.is-enter-from-right {
+  animation: pfViewInRight 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.pf-view.is-enter-from-left {
+  animation: pfViewInLeft 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.pf-view.is-leave-left {
+  animation: pfViewOutLeft 280ms var(--ease-standard) both;
+}
+
+.pf-view.is-leave-right {
+  animation: pfViewOutRight 280ms var(--ease-standard) both;
 }
 
 .pf-scroll {
@@ -88,18 +156,34 @@ body.realm-gate .realm-reopen {
 }
 
 .pf-rail__mark {
-  font-family: var(--font-brand);
-  font-weight: 600;
-  font-size: 22px;
-  color: var(--gold);
-  border: 1px solid var(--gold);
-  width: 34px;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 28px;
+  width: 44px;
+  height: 44px;
+  display: block;
+  margin-bottom: 24px;
+  flex-shrink: 0;
   text-decoration: none;
+  border: 1px solid var(--gold);
+  background: var(--ink-black);
+  overflow: hidden;
+}
+
+.pf-rail__logo {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  display: block;
+}
+
+.logo-light.pf-rail__logo {
+  display: none;
+}
+
+html.light .logo-dark.pf-rail__logo {
+  display: none;
+}
+
+html.light .logo-light.pf-rail__logo {
+  display: block;
 }
 
 .pf-rail-btn {
@@ -123,13 +207,13 @@ body.realm-gate .realm-reopen {
 .pf-rail-btn:hover,
 .pf-rail-btn:focus-visible {
   color: var(--gold-bright);
-  background: rgba(184, 147, 91, 0.08);
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
   outline: none;
 }
 
 .pf-rail-btn.active {
   color: var(--gold);
-  background: rgba(184, 147, 91, 0.14);
+  background: color-mix(in srgb, var(--gold) 14%, transparent);
   box-shadow: inset 2px 0 0 var(--gold);
 }
 
@@ -139,13 +223,48 @@ body.realm-gate .realm-reopen {
   line-height: 1;
 }
 
-.pf-mode {
+.pf-rail__tools {
   margin-top: auto;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  gap: 10px;
   width: 48px;
   padding-bottom: 4px;
+}
+
+.pf-theme {
+  width: 100%;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  transition: background 150ms var(--ease-standard), color 150ms var(--ease-standard);
+}
+
+.pf-theme:hover,
+.pf-theme:focus-visible {
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
+  color: var(--gold-bright);
+  outline: none;
+}
+
+.pf-theme[aria-pressed="true"] {
+  background: var(--gold);
+  color: var(--on-gold, var(--ink-black));
+}
+
+.pf-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
 }
 
 .pf-mode-btn {
@@ -168,11 +287,11 @@ body.realm-gate .realm-reopen {
 
 .pf-mode-btn[aria-pressed="true"] {
   background: var(--gold);
-  color: var(--ink-black);
+  color: var(--on-gold, var(--ink-black));
 }
 
 .pf-mode-btn:hover:not([aria-pressed="true"]) {
-  background: rgba(184, 147, 91, 0.12);
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
 }
 
 .pf-main {
@@ -324,12 +443,12 @@ body.realm-gate .realm-reopen {
 
 .pf-btn--solid {
   background: var(--gold);
-  color: var(--ink-black);
+  color: var(--on-gold, var(--ink-black));
 }
 
 .pf-btn--solid:hover {
   background: var(--gold-bright);
-  color: var(--ink-black);
+  color: var(--on-gold, var(--ink-black));
   text-decoration: none;
 }
 
@@ -339,7 +458,7 @@ body.realm-gate .realm-reopen {
 }
 
 .pf-btn--ghost:hover {
-  background: rgba(184, 147, 91, 0.12);
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
   color: var(--gold-bright);
   text-decoration: none;
 }
@@ -566,7 +685,7 @@ body.realm-gate .realm-reopen {
 .pf-tabs button.active,
 .pf-tabs button:hover {
   color: var(--gold);
-  background: rgba(184, 147, 91, 0.1);
+  background: color-mix(in srgb, var(--gold) 10%, transparent);
 }
 
 .pf-work-home__head {
@@ -604,11 +723,11 @@ body.realm-gate .realm-reopen {
 
 .pf-work-filter[aria-selected="true"] {
   background: var(--gold);
-  color: var(--ink-black);
+  color: var(--on-gold, var(--ink-black));
 }
 
 .pf-work-filter:hover:not([aria-selected="true"]) {
-  background: rgba(184, 147, 91, 0.12);
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
 }
 
 .pf-work-home__more {
@@ -651,7 +770,7 @@ body.realm-gate .realm-reopen {
 }
 
 .pf-pcard__badge {
-  background: rgba(184, 147, 91, 0.14);
+  background: color-mix(in srgb, var(--gold) 14%, transparent);
   color: var(--gold-bright);
 }
 
@@ -853,7 +972,7 @@ body.realm-gate .realm-reopen {
 .pf-gh__swatch {
   width: 11px;
   height: 11px;
-  border: 1px solid rgba(184, 147, 91, 0.35);
+  border: 1px solid color-mix(in srgb, var(--gold) 35%, transparent);
   flex-shrink: 0;
 }
 
@@ -903,7 +1022,7 @@ body.realm-gate .realm-reopen {
 }
 
 .pf-gh__row:hover {
-  background: rgba(184, 147, 91, 0.08);
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
 }
 
 .pf-gh__ico {
@@ -952,7 +1071,7 @@ body.realm-gate .realm-reopen {
 .pf-gh__chip {
   display: inline-block;
   padding: 3px 8px;
-  background: rgba(184, 147, 91, 0.1);
+  background: color-mix(in srgb, var(--gold) 10%, transparent);
   border: 1px solid var(--gold);
   font-family: var(--font-mono);
   font-size: 10px;
@@ -1021,7 +1140,7 @@ body.realm-gate .realm-reopen {
 
 .pf-gcell {
   aspect-ratio: 1;
-  border: 1px dashed rgba(184, 147, 91, 0.45);
+  border: 1px dashed color-mix(in srgb, var(--gold) 45%, transparent);
   background: var(--panel);
   overflow: hidden;
   padding: 0;
@@ -1393,7 +1512,7 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ink-black);
+  color: var(--on-gold, var(--ink-black));
   background: var(--gold);
   border: 1px solid var(--gold);
   text-decoration: none;
@@ -1401,7 +1520,7 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
 
 .pf-btn-primary:hover {
   background: var(--gold-bright);
-  color: var(--ink-black);
+  color: var(--on-gold, var(--ink-black));
   text-decoration: none;
 }
 
@@ -1558,6 +1677,20 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
     display: none;
   }
 
+  .pf-rail__tools {
+    margin: 0;
+    flex-direction: row;
+    width: auto;
+    padding: 0;
+    gap: 4px;
+  }
+
+  .pf-theme {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+  }
+
   .pf-mode {
     margin: 0;
     flex-direction: row;
@@ -1586,8 +1719,16 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
 
 @media (prefers-reduced-motion: reduce) {
   .pf-view,
+  .pf-view.is-enter-from-right,
+  .pf-view.is-enter-from-left,
+  .pf-view.is-leave-left,
+  .pf-view.is-leave-right,
   .pf-detail {
-    animation: none;
+    animation: none !important;
+  }
+
+  .pf-view.is-leave {
+    position: static;
   }
 }
 
@@ -1671,7 +1812,7 @@ body[data-profile="artist"] .pf-rail-comm {
 
 .pf-about-action:hover,
 .pf-about-action:focus-visible {
-  background: rgba(184, 147, 91, 0.1);
+  background: color-mix(in srgb, var(--gold) 10%, transparent);
   color: var(--gold-bright);
   outline: none;
   transform: translateY(-1px);
@@ -1689,7 +1830,7 @@ body[data-profile="artist"] .pf-rail-comm {
 }
 
 .pf-about-action.is-active {
-  background: rgba(184, 147, 91, 0.12);
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
   color: var(--gold-bright);
 }
 
@@ -1727,7 +1868,7 @@ body[data-profile="artist"] .pf-rail-comm {
 .pf-about-expand:focus-visible {
   color: var(--gold-bright);
   border-color: var(--gold);
-  background: rgba(184, 147, 91, 0.08);
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
   outline: none;
 }
 
@@ -1759,8 +1900,8 @@ body[data-profile="artist"] .pf-rail-comm {
   font-size: 12px;
   line-height: 1.45;
   color: var(--taupe);
-  background: rgba(184, 147, 91, 0.06);
-  border: 1px dashed rgba(184, 147, 91, 0.4);
+  background: color-mix(in srgb, var(--gold) 6%, transparent);
+  border: 1px dashed color-mix(in srgb, var(--gold) 40%, transparent);
   cursor: pointer;
   text-align: left;
   transition: background 160ms var(--ease-standard), border-color 160ms var(--ease-standard),
@@ -1770,13 +1911,13 @@ body[data-profile="artist"] .pf-rail-comm {
 .pf-spoiler:hover,
 .pf-spoiler:focus-visible {
   border-color: var(--gold);
-  background: rgba(184, 147, 91, 0.12);
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
   outline: none;
 }
 
 .pf-spoiler.is-open {
   border-style: solid;
-  border-color: rgba(184, 147, 91, 0.35);
+  border-color: color-mix(in srgb, var(--gold) 35%, transparent);
   background: transparent;
   color: var(--bone);
 }
@@ -1857,7 +1998,7 @@ body[data-profile="artist"] .pf-rail-comm {
 }
 
 .pf-about-panel:hover {
-  box-shadow: 0 0 0 1px rgba(184, 147, 91, 0.15);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--gold) 15%, transparent);
 }
 
 .pf-about-panel__title {
@@ -2050,7 +2191,7 @@ body[data-profile="artist"] .pf-rail-comm {
   list-style: none;
   margin: 8px 0 0;
   padding: 0 0 0 18px;
-  border-left: 1px solid rgba(184, 147, 91, 0.45);
+  border-left: 1px solid color-mix(in srgb, var(--gold) 45%, transparent);
 }
 
 .pf-timeline__item {
@@ -2187,7 +2328,7 @@ body[data-profile="artist"] .pf-rail-comm {
 .pf-chip:hover {
   border-color: var(--gold-bright);
   color: var(--gold-bright);
-  background: rgba(184, 147, 91, 0.08);
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
   transform: translateY(-1px);
   box-shadow: none;
 }
@@ -2245,7 +2386,7 @@ button.pf-chip:hover {
 
 .pf-name-lock:hover,
 .pf-name-lock:focus-visible {
-  background: rgba(184, 147, 91, 0.12);
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
   color: var(--gold-bright);
   outline: none;
 }
@@ -2405,7 +2546,7 @@ button.pf-chip:hover {
 
 .pf-acc.open {
   border-color: var(--gold-bright);
-  box-shadow: 0 0 0 1px rgba(184, 147, 91, 0.12);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--gold) 12%, transparent);
 }
 
 .pf-acc__head {
@@ -2453,7 +2594,7 @@ button.pf-chip:hover {
 
 .pf-acc__head:hover,
 .pf-acc__head:focus-visible {
-  background: rgba(184, 147, 91, 0.08);
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
   outline: none;
   color: var(--gold-bright);
 }
@@ -2510,6 +2651,40 @@ button.pf-chip:hover {
 
 .pf-shell--page .pf-main {
   overflow-y: auto;
+}
+
+/* Shell light theme — #CEB489 field, #E4DCC8 cards, #161219 type */
+html.light .pf-shell {
+  --ink-black: #ceb489;
+  --panel: #e4dcc8;
+  --panel-raised: #e4dcc8;
+  --bone: #161219;
+  --taupe: #161219;
+  --gold: #161219;
+  --gold-bright: #161219;
+  --hairline: rgba(22, 18, 25, 0.28);
+  --shadow-color: rgba(22, 18, 25, 0.16);
+  --on-gold: #e4dcc8;
+  --gh-empty: #ceb489;
+  background: #ceb489;
+  color: #161219;
+  color-scheme: light;
+}
+
+html.light .pf-view[data-pf-view="home"]::before {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(206, 180, 137, 0.12) 0%,
+      rgba(206, 180, 137, 0.4) 58%,
+      #ceb489 100%
+    ),
+    url("../images/bg5.png") center / cover no-repeat;
+  opacity: 1;
+}
+
+html.light .pf-rail__mark {
+  background: var(--ink-black);
 }
 
 @media (prefers-reduced-motion: reduce) {

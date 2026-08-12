@@ -27,12 +27,12 @@
 
 .comm-status-badge[data-state="closed"] {
   color: #c9a227;
-  border-color: rgba(184, 147, 91, 0.55);
+  border-color: color-mix(in srgb, var(--gold) 55%, transparent);
 }
 
 .comm-status-badge[data-state="open"] {
   color: var(--bone, #e8e0d5);
-  background: rgba(184, 147, 91, 0.2);
+  background: color-mix(in srgb, var(--gold) 20%, transparent);
 }
 
 .comm-stepper {

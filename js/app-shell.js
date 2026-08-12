@@ -353,13 +353,14 @@
     const mount = root.querySelector("[data-pf-gh-chart]");
     if (!mount) return;
 
-    const levels = (D.github && D.github.chartLevels) || [
+    const levels = ((D.github && D.github.chartLevels) || [
       "#0C0A10",
       "#5a4528",
       "#8a6b35",
       "#b8935b",
       "#e8c77a",
-    ];
+    ]).slice();
+    levels[0] = "var(--gh-empty, #0C0A10)";
 
     const byDate = new Map();
     (contributions || []).forEach((c) => {
@@ -1362,20 +1363,89 @@
     return SECTIONS.includes(next) ? next : "home";
   }
 
-  function setSection(id, opts) {
-    id = normalizeSection(id);
-    state.section = id;
-    root.querySelectorAll("[data-pf-view]").forEach((el) => {
-      el.classList.toggle("active", el.dataset.pfView === id);
-    });
+  const VIEW_MOTION = [
+    "is-enter-from-right",
+    "is-enter-from-left",
+    "is-leave",
+    "is-leave-left",
+    "is-leave-right",
+  ];
+
+  let viewTimer = null;
+
+  function prefersReduced() {
+    return !!(
+      window.Mikaelleon?.prefersReducedMotion?.() ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    );
+  }
+
+  function clearViewMotion(el) {
+    el.classList.remove.apply(el.classList, VIEW_MOTION);
+  }
+
+  function syncRail(id) {
     root.querySelectorAll(".pf-rail-btn[data-pf-nav]").forEach((btn) => {
       const on = btn.dataset.pfNav === id;
       btn.classList.toggle("active", on);
       btn.setAttribute("aria-current", on ? "page" : "false");
     });
+  }
+
+  function showViewInstant(id) {
+    root.querySelectorAll("[data-pf-view]").forEach((el) => {
+      clearViewMotion(el);
+      el.classList.toggle("active", el.dataset.pfView === id);
+    });
+    const incoming = root.querySelector('[data-pf-view="' + id + '"]');
+    if (incoming) incoming.scrollTop = 0;
+  }
+
+  function setSection(id, opts) {
+    id = normalizeSection(id);
+    const from = state.section;
+    const instant = !!(opts?.instant || prefersReduced());
+
+    syncRail(id);
     root.querySelectorAll(".pf-ld").forEach((el) => el.classList.remove("drill"));
     const hash = "#" + id;
     if (location.hash !== hash) history.replaceState(null, "", hash);
+
+    if (id === from && !opts?.force) {
+      if (!opts?.silent) announce(id.charAt(0).toUpperCase() + id.slice(1));
+      return;
+    }
+
+    const views = Array.from(root.querySelectorAll("[data-pf-view]"));
+    const outgoing = views.find((el) => el.dataset.pfView === from);
+    const incoming = views.find((el) => el.dataset.pfView === id);
+    state.section = id;
+
+    if (instant || !outgoing || !incoming || !outgoing.classList.contains("active")) {
+      clearTimeout(viewTimer);
+      showViewInstant(id);
+      if (!opts?.silent) announce(id.charAt(0).toUpperCase() + id.slice(1));
+      return;
+    }
+
+    const dir = SECTIONS.indexOf(id) >= SECTIONS.indexOf(from) ? 1 : -1;
+    clearTimeout(viewTimer);
+    views.forEach(clearViewMotion);
+
+    outgoing.classList.add("is-leave", dir === 1 ? "is-leave-left" : "is-leave-right");
+    incoming.classList.add(
+      "active",
+      dir === 1 ? "is-enter-from-right" : "is-enter-from-left"
+    );
+    incoming.scrollTop = 0;
+
+    viewTimer = setTimeout(() => {
+      outgoing.classList.remove("active");
+      clearViewMotion(outgoing);
+      clearViewMotion(incoming);
+      viewTimer = null;
+    }, 400);
+
     if (!opts?.silent) announce(id.charAt(0).toUpperCase() + id.slice(1));
   }
 
@@ -1526,7 +1596,10 @@
   }).observe(document.body, { attributes: true, attributeFilter: ["data-profile"] });
 
   renderAll();
-  setSection(normalizeSection((location.hash || "#home").slice(1)), { silent: true });
+  setSection(normalizeSection((location.hash || "#home").slice(1)), {
+    silent: true,
+    instant: true,
+  });
 
   window.AppShell = {
     setView: setSection,
