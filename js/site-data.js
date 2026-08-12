@@ -324,80 +324,131 @@ window.SiteData = (function () {
 
   const projects = [
     {
+      id: "bago-quadstack",
+      title: "BAGO.PH",
+      quote: "Barangay App for Garbage Operations in Philippines.",
+      description:
+        "Lipa City CENRO pilot for waste schedules, reports, and oversight across residents, collectors, officers, and superadmins — built to cut missed collections and give barangay leaders clearer data.",
+      longDescription:
+        "BAGO.PH helps four role groups work in one place: residents check schedules and submit waste reports; collectors verify field activity; Lipa City CENRO Officers monitor operations and compliance; superadmins approve LGU onboarding and review audit trails. Core auth, schedules, reports, announcements, eco-points, QR scan, analytics, and exports are live while remaining prototype screens migrate to full API data.",
+      tags: ["Node.js", "Express", "MySQL", "JavaScript", "XML/XSLT"],
+      kind: "fullstack",
+      featured: true,
+      meta: "Live · Render · Lipa City CENRO",
+      role: "COO / UI/UX Designer",
+      team: [
+        "Carlos Kent D. Del Rio — CEO / Lead Developer",
+        "Kimberly Claire A. Aliwate — COO / UI/UX Designer",
+        "Kenneth Elijah N. Castillo — CTO / Frontend Developer",
+        "Miguel Yuan M. Mercado — CPO / Database Administrator",
+      ],
+      highlights: [
+        "Role-based auth for residents, collectors, CENRO officers, and superadmins",
+        "Live schedules, waste reports, announcements, eco-points, and QR validation",
+        "72 Lipa City barangays with RA 9003 waste categories",
+        "Superadmin governance: LGU queue, invite codes, audit exports",
+        "XML/XSLT tools for schedule and barangay datasets",
+      ],
+      stack: ["HTML/CSS/JS", "Node.js + Express 5", "MySQL (Aiven)", "JWT · Leaflet", "XML 1.0 + XSLT 1.0"],
+      status: "Mixed live + prototype · M5 end-to-end data in progress · live on Render",
+      href: "https://bago-ph-frontend.onrender.com/",
+      demo: "https://bago-ph-frontend.onrender.com/",
+      source: "https://github.com/mikaelleon/bago.ph-quadstack",
+    },
+    {
+      id: "bakesync",
+      title: "BakeSync ERP",
+      quote: "Bakery ops in one Next.js surface.",
+      description:
+        "Next.js 14 ERP for bakery operations — inventory, recipes, POS, production planning, and financial analytics with role-based access for managers, bakers, and cashiers.",
+      longDescription:
+        "BakeSync is a comprehensive bakery ERP built with Next.js 14 App Router. It covers real-time inventory for raw materials and finished goods, recipe cost analysis, a responsive POS cart (cash, card, GCash), production batch scheduling, and financial analytics. Role-based access separates managers, bakers, and cashiers across desktop, tablet, and mobile.",
+      tags: ["Next.js 14", "TypeScript", "Tailwind CSS", "shadcn/ui"],
+      kind: "fullstack",
+      featured: true,
+      meta: "Live · Vercel",
+      highlights: [
+        "Inventory with live stock levels and low-stock alerts",
+        "Recipe management with ingredient costs and yield tracking",
+        "POS with responsive cart and multiple payment methods",
+        "Production planning for batches and consumption logs",
+        "Role-based access: Manager, Baker, Cashier",
+      ],
+      stack: [
+        "Next.js 14 (App Router)",
+        "TypeScript",
+        "Tailwind CSS",
+        "Radix UI + shadcn/ui",
+        "pnpm · Lucide React",
+      ],
+      status: "Live on Vercel · Playwright test suite with Page Object Model",
+      href: "https://bake-sync.vercel.app",
+      demo: "https://bake-sync.vercel.app",
+      source: "https://github.com/mikaelleon/BakeSync",
+    },
+    {
       id: "pawdar",
       title: "Pawdar",
       quote: "One registry for barangays, owners, and responders.",
       description:
-        "Community dog registry and incident reporting for Batangas LGUs — QR tags, role-based auth, feed and map cases, and vet co-sign flows.",
+        "Community dog registry and incident reporting for Batangas Province — owners, reporters, vets, LGU officials, rescue groups, and admins in one role-aware PHP/MySQL platform.",
+      longDescription:
+        "Pawdar helps six role groups work in one place: dog owners register pets with QR tags and vaccination records; community reporters flag incidents; veterinarians co-sign health data; LGU officials manage cases and barangay-scoped maps; rescue orgs track strays; admins approve Vet/LGU/Rescue accounts. Core auth, registry, feed, map, cases, and a 3-step sign-up wizard are live across five Batangas cities (287 barangays), with Resend email verification wired for production domain setup.",
       tags: ["PHP", "MySQL", "JavaScript", "Resend"],
       kind: "fullstack",
       featured: true,
-      meta: "WS101 · In progress",
-      href: "https://github.com/mikaelleon/Pawdar",
+      meta: "Live · InfinityFree · Batangas pilot",
+      role: "UI/UX & Product Design",
+      team: [
+        "Kimberly Claire A. Aliwate — UI/UX & Product Design",
+        "WS101 group — roster update before final submission",
+      ],
+      highlights: [
+        "Role-based auth with approval gates for Vet, LGU, and Rescue",
+        "Dog registry with breed data, vaccination records, and QR tags",
+        "Incident feed, map pins, and LGU case management",
+        "3-step sign-up: Account → Role & location → Email verify",
+        "5 Batangas cities / 287 barangays via cascading City → Barangay selectors",
+        "Resend-backed email verification and password reset",
+      ],
+      stack: [
+        "HTML/CSS/JS · Lucide",
+        "PHP 7.4+ (PDO)",
+        "MySQL / MariaDB",
+        "Resend API (cURL)",
+      ],
+      status:
+        "Core modules live · M7 production hardening & QA in progress · hosted on InfinityFree",
+      href: "https://kcaliwate.freedev.app/web/index.html",
+      demo: "https://kcaliwate.freedev.app/web/index.html",
       source: "https://github.com/mikaelleon/Pawdar",
-    },
-    {
-      id: "kim-portfolio",
-      title: "Mikaelleon Portfolio & Commission Storefront",
-      quote: "Two crafts, one storefront.",
-      description:
-        "Artist portfolio SPA with modular commission builder, cart, multi-currency pricing, gallery filters, and order tracking UI.",
-      tags: ["HTML", "CSS", "JavaScript", "Vue"],
-      kind: "frontend",
-      featured: true,
-      meta: "Release v1.0",
-      href: "index.html#home",
-      source: "https://github.com/mikaelleon/kim-portfolio",
-    },
-    {
-      id: "character-sheet-tool",
-      title: "Character Reference Sheet Workflow",
-      quote: "Options in, client-ready summary out.",
-      description:
-        "Commission pipeline helpers for turnaround sheets — structured options, preview slots, and client-facing summaries.",
-      tags: ["TypeScript", "React", "localStorage"],
-      kind: "frontend",
-      featured: false,
-      meta: "Release v0.9",
-      href: "commissions.html",
-      source: "https://github.com/mikaelleon/commission-sheet",
-    },
-    {
-      id: "gallery-archive",
-      title: "Filterable Art Archive",
-      quote: "Revisit, don't just scroll past.",
-      description:
-        "Portfolio grid with category/medium/year filters, persistent preferences, progressive images, and lightbox viewing.",
-      tags: ["React", "Tailwind CSS", "Framer Motion"],
-      kind: "frontend",
-      featured: false,
-      meta: "Release v1.0",
-      href: "index.html#projects",
-      source: "https://github.com/mikaelleon/gallery-archive",
     },
   ];
 
   const repos = [
     {
-      name: "kim-portfolio",
-      description: "Artist portfolio SPA with modular commission builder, gallery filters, and order tracking.",
-      language: "TypeScript",
-      topics: ["react", "vite", "portfolio"],
-      url: "https://github.com/mikaelleon/kim-portfolio",
+      name: "bago.ph-quadstack",
+      description:
+        "BAGO.PH — Barangay App for Garbage Operations; Lipa City CENRO waste ops platform.",
+      language: "JavaScript",
+      topics: ["nodejs", "express", "mysql", "lgu", "ra9003"],
+      url: "https://github.com/mikaelleon/bago.ph-quadstack",
     },
     {
-      name: "gallery-archive",
-      description: "Filterable art archive patterns — progressive images, lightbox, persistent filters.",
+      name: "BakeSync",
+      description:
+        "Next.js 14 bakery ERP — inventory, recipes, POS, production, and financials.",
       language: "TypeScript",
-      topics: ["react", "ui"],
-      url: "https://github.com/mikaelleon/gallery-archive",
+      topics: ["nextjs", "typescript", "erp", "pos"],
+      url: "https://github.com/mikaelleon/BakeSync",
     },
     {
-      name: "commission-sheet",
-      description: "Pricing matrices and modular commission config shared across storefront flows.",
-      language: "TypeScript",
-      topics: ["typescript"],
-      url: "https://github.com/mikaelleon/commission-sheet",
+      name: "Pawdar",
+      description:
+        "Batangas community dog registry and incident reporting for owners, vets, LGUs, and rescue groups.",
+      language: "PHP",
+      topics: ["php", "mysql", "lgu", "resend", "batangas"],
+      url: "https://github.com/mikaelleon/Pawdar",
     },
   ];
 

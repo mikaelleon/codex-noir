@@ -794,6 +794,19 @@ html.light .logo-light.pf-rail__logo {
   text-decoration: none;
 }
 
+.pf-pcard__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.pf-pcard__links .pf-pcard__source {
+  margin-top: 0;
+  padding-top: 0;
+}
+
 .pf-pcard__source:hover {
   color: var(--gold-bright);
 }
@@ -1491,6 +1504,66 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   line-height: 1.6;
   color: var(--taupe);
   max-width: 560px;
+}
+
+.pf-detail__role,
+.pf-detail__meta {
+  margin: 0 0 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.pf-detail__meta {
+  margin-bottom: 16px;
+  color: var(--taupe);
+}
+
+.pf-detail__block {
+  margin: 0 0 22px;
+  max-width: 560px;
+}
+
+.pf-detail__label {
+  margin: 0 0 10px;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.pf-detail__list {
+  margin: 0 0 22px;
+  padding-left: 1.15em;
+  max-width: 560px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--taupe);
+}
+
+.pf-detail__list li + li {
+  margin-top: 6px;
+}
+
+.pf-detail__list--plain {
+  list-style: none;
+  padding-left: 0;
+}
+
+.pf-detail__status {
+  margin: 0 0 20px;
+  max-width: 560px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+  color: var(--bone);
+  border-left: 2px solid var(--gold);
+  padding-left: 12px;
 }
 
 .pf-back {

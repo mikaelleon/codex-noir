@@ -174,7 +174,9 @@
   /* —— HOME: teaser only —— */
   function homeWorkProjects() {
     const f = state.homeWorkFilter || "all";
-    return (D.projects || []).filter((p) => f === "all" || p.kind === f);
+    return (D.projects || []).filter(
+      (p) => p.featured && (f === "all" || p.kind === f)
+    );
   }
 
   function featuredPreviewHtml() {
@@ -215,7 +217,9 @@
               .map((proj) => {
                 const kind = (proj.kind || "frontend").toUpperCase();
                 const source = proj.source || proj.href || "#";
-                const ext = /^https?:/i.test(source);
+                const demo = proj.demo || "";
+                const sourceExt = /^https?:/i.test(source);
+                const demoExt = /^https?:/i.test(demo);
                 return (
                   '<article class="pf-pcard">' +
                   '<div class="pf-pcard__topline">' +
@@ -237,13 +241,21 @@
                     .map((t) => '<span class="pf-tag">' + escapeHtml(t) + "</span>")
                     .join("") +
                   "</div>" +
+                  '<div class="pf-pcard__links">' +
+                  (demo
+                    ? '<a class="pf-pcard__source" href="' +
+                      escapeHtml(demo) +
+                      '"' +
+                      (demoExt ? ' target="_blank" rel="noopener"' : "") +
+                      ">Live —▸</a>"
+                    : "") +
                   '<a class="pf-pcard__source" href="' +
                   escapeHtml(source) +
                   '"' +
-                  (ext ? ' target="_blank" rel="noopener"' : "") +
+                  (sourceExt ? ' target="_blank" rel="noopener"' : "") +
                   ">" +
                   icon("git-branch") +
-                  " Source</a></article>"
+                  " Source</a></div></article>"
                 );
               })
               .join("")
@@ -1202,6 +1214,10 @@
       .join("");
     const p = D.projects[state.projectIdx];
     const idx = String(state.projectIdx + 1).padStart(2, "0");
+    const openHref = p.demo || p.href || p.source || "#";
+    const openExt = /^https?:/i.test(openHref);
+    const source = p.source || "";
+    const body = p.longDescription || p.description;
     detail.innerHTML =
       '<div class="pf-detail">' +
       '<div class="pf-detail__tag">UNLOCKED: ' +
@@ -1213,14 +1229,53 @@
       '<p class="pf-detail__quote">"' +
       escapeHtml(p.quote) +
       '"</p>' +
+      (p.role
+        ? '<p class="pf-detail__role">Role · ' + escapeHtml(p.role) + "</p>"
+        : "") +
+      (p.meta
+        ? '<p class="pf-detail__meta">' + escapeHtml(p.meta) + "</p>"
+        : "") +
       '<p class="pf-detail__desc">' +
-      escapeHtml(p.description) +
+      escapeHtml(body) +
       "</p>" +
+      (p.highlights && p.highlights.length
+        ? '<ul class="pf-detail__list">' +
+          p.highlights
+            .map((h) => "<li>" + escapeHtml(h) + "</li>")
+            .join("") +
+          "</ul>"
+        : "") +
+      (p.team && p.team.length
+        ? '<div class="pf-detail__block"><h3 class="pf-detail__label">Team</h3><ul class="pf-detail__list pf-detail__list--plain">' +
+          p.team.map((m) => "<li>" + escapeHtml(m) + "</li>").join("") +
+          "</ul></div>"
+        : "") +
+      (p.stack && p.stack.length
+        ? '<div class="pf-detail__block"><h3 class="pf-detail__label">Stack</h3><div class="pf-tags">' +
+          p.stack
+            .map((t) => '<span class="pf-tag">' + escapeHtml(t) + "</span>")
+            .join("") +
+          "</div></div>"
+        : "") +
+      (p.status
+        ? '<p class="pf-detail__status">' + escapeHtml(p.status) + "</p>"
+        : "") +
       '<div class="pf-tags">' +
       p.tags.map((t) => '<span class="pf-tag">' + escapeHtml(t) + "</span>").join("") +
-      '</div><a class="pf-btn-primary" href="' +
-      escapeHtml(p.href) +
-      '">Open —▸</a></div>';
+      '</div><div class="pf-btn-row">' +
+      '<a class="pf-btn-primary" href="' +
+      escapeHtml(openHref) +
+      '"' +
+      (openExt ? ' target="_blank" rel="noopener"' : "") +
+      ">" +
+      (p.demo ? "Open live —▸" : "Open —▸") +
+      "</a>" +
+      (source && source !== openHref
+        ? '<a class="pf-btn pf-btn--ghost" href="' +
+          escapeHtml(source) +
+          '" target="_blank" rel="noopener">Source —▸</a>'
+        : "") +
+      "</div></div>";
   }
 
   /* —— CONTACT: form left + info/socials right —— */
