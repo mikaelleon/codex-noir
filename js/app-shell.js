@@ -21,7 +21,7 @@
    */
 
   const state = {
-    section: "home",
+    section: null,
     projectIdx: 0,
     faqOpen: 0,
     galleryFilter: "featured",
@@ -1419,6 +1419,8 @@
     if (location.hash !== hash) history.replaceState(null, "", hash);
 
     if (id === from && !opts?.force) {
+      const current = root.querySelector('[data-pf-view="' + id + '"]');
+      if (!current?.classList.contains("active")) showViewInstant(id);
       if (!opts?.silent) announce(id.charAt(0).toUpperCase() + id.slice(1));
       return;
     }

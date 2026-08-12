@@ -53,9 +53,8 @@
       const boot = (location.hash || "#home").slice(1);
       const map = { portfolio: "projects", commissions: "home", work: "projects" };
       const id = map[boot] || boot;
-      window.AppShell.setView(
-        ["home", "about", "projects", "contact"].includes(id) ? id : "home"
-      );
+      const next = ["home", "about", "projects", "contact"].includes(id) ? id : "home";
+      window.AppShell.setView(next, { force: true, instant: true, silent: true });
     }
   }
 
