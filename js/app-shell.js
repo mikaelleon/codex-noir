@@ -25,6 +25,7 @@
     projectIdx: 0,
     faqOpen: 0,
     galleryFilter: "featured",
+    homeWorkFilter: "all",
     nameUnlocked: false,
     aboutOpen: "about",
     cvOpen: { skills: false, interests: false },
@@ -171,36 +172,84 @@
   }
 
   /* —— HOME: teaser only —— */
+  function homeWorkProjects() {
+    const f = state.homeWorkFilter || "all";
+    return (D.projects || []).filter((p) => f === "all" || p.kind === f);
+  }
+
   function featuredPreviewHtml() {
     const p = profile();
     if (isDev()) {
-      const items = D.projects.slice(0, 3);
+      const filter = state.homeWorkFilter || "all";
+      const items = homeWorkProjects();
+      const filters = [
+        { id: "all", label: "All" },
+        { id: "frontend", label: "Frontend" },
+        { id: "fullstack", label: "Fullstack" },
+      ];
+
       return (
-        '<div class="pf-sec">' +
-        '<h3 class="pf-sec__head pf-sec__head--plus">' +
-        escapeHtml(p.featuredEyebrow) +
-        "</h3>" +
-        '<p class="pf-body" style="margin-bottom:18px">' +
-        escapeHtml(p.featuredSub) +
-        "</p>" +
-        '<div class="pf-project-grid">' +
-        items
+        '<div class="pf-sec pf-work-home" data-pf-work-home>' +
+        '<header class="pf-work-home__head">' +
+        "<div>" +
+        '<p class="pf-gh__kicker">02. / Work</p>' +
+        '<h3 class="pf-gh__title">Selected Projects</h3>' +
+        "</div>" +
+        '<div class="pf-work-filters" role="tablist" aria-label="Project type">' +
+        filters
           .map(
-            (proj) =>
-              '<article class="pf-pcard">' +
-              '<div class="pf-pcard__meta">' +
-              escapeHtml(proj.meta) +
-              "</div>" +
-              '<h4 class="pf-pcard__title">' +
-              escapeHtml(proj.title) +
-              "</h4>" +
-              '<p class="pf-pcard__desc">' +
-              escapeHtml(proj.description) +
-              "</p></article>"
+            (f) =>
+              '<button type="button" class="pf-work-filter" data-home-work-filter="' +
+              f.id +
+              '" role="tab" aria-selected="' +
+              (filter === f.id) +
+              '">' +
+              escapeHtml(f.label) +
+              "</button>"
           )
           .join("") +
+        "</div></header>" +
+        '<div class="pf-project-grid">' +
+        (items.length
+          ? items
+              .map((proj) => {
+                const kind = (proj.kind || "frontend").toUpperCase();
+                const source = proj.source || proj.href || "#";
+                const ext = /^https?:/i.test(source);
+                return (
+                  '<article class="pf-pcard">' +
+                  '<div class="pf-pcard__topline">' +
+                  '<span class="pf-pcard__kind">' +
+                  escapeHtml(kind) +
+                  "</span>" +
+                  (proj.featured
+                    ? '<span class="pf-pcard__badge">Featured</span>'
+                    : "") +
+                  "</div>" +
+                  '<h4 class="pf-pcard__title">' +
+                  escapeHtml(proj.title) +
+                  "</h4>" +
+                  '<p class="pf-pcard__desc">' +
+                  escapeHtml(proj.description) +
+                  "</p>" +
+                  '<div class="pf-tags">' +
+                  (proj.tags || [])
+                    .map((t) => '<span class="pf-tag">' + escapeHtml(t) + "</span>")
+                    .join("") +
+                  "</div>" +
+                  '<a class="pf-pcard__source" href="' +
+                  escapeHtml(source) +
+                  '"' +
+                  (ext ? ' target="_blank" rel="noopener"' : "") +
+                  ">" +
+                  icon("git-branch") +
+                  " Source</a></article>"
+                );
+              })
+              .join("")
+          : '<p class="pf-gh__status">No projects in this filter.</p>') +
         "</div>" +
-        '<div style="text-align:center;margin-top:28px">' +
+        '<div class="pf-work-home__more">' +
         '<button type="button" class="pf-btn pf-btn--ghost" data-pf-nav="projects">View all projects —▸</button>' +
         "</div></div>"
       );
@@ -779,8 +828,8 @@
       escapeHtml(portrait) +
       '" alt="" /></div></div>' +
       jumpHtml() +
-      featuredPreviewHtml() +
       githubActivityHtml() +
+      featuredPreviewHtml() +
       '<div class="pf-cta-band">' +
       "<h2>Have a project in mind?</h2>" +
       "<p>Commissions and collabs land in one inbox.</p>" +
@@ -1369,6 +1418,13 @@
     if (gf) {
       state.galleryFilter = gf.dataset.galleryFilter;
       renderGallery();
+      return;
+    }
+
+    const wf = e.target.closest("[data-home-work-filter]");
+    if (wf) {
+      state.homeWorkFilter = wf.dataset.homeWorkFilter || "all";
+      renderHome();
       return;
     }
 

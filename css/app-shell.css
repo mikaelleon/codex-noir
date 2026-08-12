@@ -569,6 +569,53 @@ body.realm-gate .realm-reopen {
   background: rgba(184, 147, 91, 0.1);
 }
 
+.pf-work-home__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+
+.pf-work-filters {
+  display: flex;
+  border: 1px solid var(--gold);
+}
+
+.pf-work-filter {
+  appearance: none;
+  min-height: 36px;
+  padding: 0 16px;
+  border: none;
+  border-right: 1px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  font-family: var(--font-heading);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.pf-work-filter:last-child {
+  border-right: none;
+}
+
+.pf-work-filter[aria-selected="true"] {
+  background: var(--gold);
+  color: var(--ink-black);
+}
+
+.pf-work-filter:hover:not([aria-selected="true"]) {
+  background: rgba(184, 147, 91, 0.12);
+}
+
+.pf-work-home__more {
+  text-align: center;
+  margin-top: 28px;
+}
+
 .pf-project-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -583,6 +630,52 @@ body.realm-gate .realm-reopen {
   flex-direction: column;
   gap: 10px;
   min-height: 260px;
+}
+
+.pf-pcard__topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.pf-pcard__kind,
+.pf-pcard__badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1px solid var(--gold);
+  padding: 4px 8px;
+  color: var(--gold);
+}
+
+.pf-pcard__badge {
+  background: rgba(184, 147, 91, 0.14);
+  color: var(--gold-bright);
+}
+
+.pf-pcard__source {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-decoration: none;
+}
+
+.pf-pcard__source:hover {
+  color: var(--gold-bright);
+}
+
+.pf-pcard__source svg {
+  width: 14px;
+  height: 14px;
 }
 
 .pf-pcard__meta {
@@ -1400,6 +1493,10 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
 
   .pf-gh__split {
     grid-template-columns: 1fr;
+  }
+
+  .pf-work-home__head {
+    align-items: flex-start;
   }
 
   .pf-glance__row {

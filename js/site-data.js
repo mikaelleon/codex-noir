@@ -324,14 +324,30 @@ window.SiteData = (function () {
 
   const projects = [
     {
+      id: "pawdar",
+      title: "Pawdar",
+      quote: "One registry for barangays, owners, and responders.",
+      description:
+        "Community dog registry and incident reporting for Batangas LGUs — QR tags, role-based auth, feed and map cases, and vet co-sign flows.",
+      tags: ["PHP", "MySQL", "JavaScript", "Resend"],
+      kind: "fullstack",
+      featured: true,
+      meta: "WS101 · In progress",
+      href: "https://github.com/mikaelleon/Pawdar",
+      source: "https://github.com/mikaelleon/Pawdar",
+    },
+    {
       id: "kim-portfolio",
       title: "Mikaelleon Portfolio & Commission Storefront",
       quote: "Two crafts, one storefront.",
       description:
         "Artist portfolio SPA with modular commission builder, cart, multi-currency pricing, gallery filters, and order tracking UI.",
-      tags: ["React", "TypeScript", "Vite", "Tailwind CSS"],
+      tags: ["HTML", "CSS", "JavaScript", "Vue"],
+      kind: "frontend",
+      featured: true,
       meta: "Release v1.0",
       href: "index.html#home",
+      source: "https://github.com/mikaelleon/kim-portfolio",
     },
     {
       id: "character-sheet-tool",
@@ -340,8 +356,11 @@ window.SiteData = (function () {
       description:
         "Commission pipeline helpers for turnaround sheets — structured options, preview slots, and client-facing summaries.",
       tags: ["TypeScript", "React", "localStorage"],
+      kind: "frontend",
+      featured: false,
       meta: "Release v0.9",
       href: "commissions.html",
+      source: "https://github.com/mikaelleon/commission-sheet",
     },
     {
       id: "gallery-archive",
@@ -350,8 +369,11 @@ window.SiteData = (function () {
       description:
         "Portfolio grid with category/medium/year filters, persistent preferences, progressive images, and lightbox viewing.",
       tags: ["React", "Tailwind CSS", "Framer Motion"],
+      kind: "frontend",
+      featured: false,
       meta: "Release v1.0",
       href: "index.html#projects",
+      source: "https://github.com/mikaelleon/gallery-archive",
     },
   ];
 
