@@ -389,33 +389,35 @@ window.SiteData = (function () {
     {
       id: "pawdar",
       title: "Pawdar",
-      quote: "One registry for barangays, owners, and responders.",
+      quote: "Stray and Owned Dog Registry and Incident Reporting System.",
       description:
-        "Community dog registry and incident reporting for Batangas Province — owners, reporters, vets, LGU officials, rescue groups, and admins in one role-aware PHP/MySQL platform.",
+        "Community-driven civic platform for Batangas Province that connects dog owners, reporters, veterinarians, LGU officials, and rescue organizations — built on PHP and MySQL with no separate frontend framework.",
       longDescription:
-        "Pawdar helps six role groups work in one place: dog owners register pets with QR tags and vaccination records; community reporters flag incidents; veterinarians co-sign health data; LGU officials manage cases and barangay-scoped maps; rescue orgs track strays; admins approve Vet/LGU/Rescue accounts. Core auth, registry, feed, map, cases, and a 3-step sign-up wizard are live across five Batangas cities (287 barangays), with Resend email verification wired for production domain setup.",
-      tags: ["PHP", "MySQL", "JavaScript", "Resend"],
+        "Pawdar addresses the lack of central tracking for dog ownership, health records, and incident history by integrating community reporting, registry, and case management in one place. Six roles share one database with permissions scoped to each job: Community Reporter, Dog Owner, Veterinarian, LGU Official, Rescue Organization, and Admin. The system runs on PHP with MySQL using a server-rendered structure standard hosting supports — vanilla JavaScript handles the report drawer, map filters, and live notification counts without a build tool or bundler. External services fill specific gaps: Leaflet for maps, Resend for email, and a QR code API for dog tags.",
+      tags: ["PHP", "MySQL", "JavaScript", "Leaflet", "Resend"],
       kind: "fullstack",
       featured: true,
       meta: "Live · InfinityFree · Batangas pilot",
       role: "UI/UX & Product Design",
       team: [
-        "Kimberly Claire A. Aliwate — UI/UX & Product Design",
-        "WS101 group — roster update before final submission",
+        "Aliwate, Kimberly Claire — UI/UX & Product Design",
+        "Castillo, Brent Justine",
+        "Lat, Nib Hoxan",
       ],
       highlights: [
-        "Role-based auth with approval gates for Vet, LGU, and Rescue",
-        "Dog registry with breed data, vaccination records, and QR tags",
+        "Six roles on one shared database with job-scoped permissions",
+        "Dog registry, vaccination records, and QR registry tags",
         "Incident feed, map pins, and LGU case management",
-        "3-step sign-up: Account → Role & location → Email verify",
-        "5 Batangas cities / 287 barangays via cascading City → Barangay selectors",
-        "Resend-backed email verification and password reset",
+        "Server-rendered PHP/MySQL — no frontend framework or bundler",
+        "Vanilla JS for report drawer, map filters, and live notification counts",
+        "Leaflet maps · Resend email · QR code API for dog tags",
       ],
       stack: [
-        "HTML/CSS/JS · Lucide",
-        "PHP 7.4+ (PDO)",
-        "MySQL / MariaDB",
-        "Resend API (cURL)",
+        "PHP + MySQL (server-rendered)",
+        "Vanilla JavaScript (no bundler)",
+        "Leaflet (maps)",
+        "Resend (email)",
+        "QR code API (dog tags)",
       ],
       status:
         "Core modules live · M7 production hardening & QA in progress · hosted on InfinityFree",
@@ -445,9 +447,9 @@ window.SiteData = (function () {
     {
       name: "Pawdar",
       description:
-        "Batangas community dog registry and incident reporting for owners, vets, LGUs, and rescue groups.",
+        "Stray and owned dog registry and incident reporting for Batangas — PHP/MySQL, Leaflet, Resend.",
       language: "PHP",
-      topics: ["php", "mysql", "lgu", "resend", "batangas"],
+      topics: ["php", "mysql", "leaflet", "resend", "batangas"],
       url: "https://github.com/mikaelleon/Pawdar",
     },
   ];

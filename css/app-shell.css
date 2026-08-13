@@ -1835,23 +1835,6 @@ body[data-profile="artist"] .pf-rail-comm {
   margin-bottom: 20px;
 }
 
-@media (max-width: 560px) {
-  .pf-about__topbar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .pf-about__actions {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-
-  .pf-about-action {
-    min-width: 0;
-    flex: 1 1 auto;
-  }
-}
-
 .pf-about__kicker {
   margin: 0;
   font-family: var(--font-mono);
@@ -1863,10 +1846,12 @@ body[data-profile="artist"] .pf-rail-comm {
 
 .pf-about__actions {
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 8px;
-  flex-shrink: 0;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  margin-top: 18px;
 }
 
 .pf-about-action {
@@ -1874,27 +1859,54 @@ body[data-profile="artist"] .pf-rail-comm {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 8px 14px;
-  min-width: 180px;
-  font-family: var(--font-mono);
+  min-height: 44px;
+  padding: 0 18px;
+  font-family: var(--font-heading);
   font-size: 11px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   text-decoration: none;
+  cursor: pointer;
+  transition: background 160ms var(--ease-standard), color 160ms var(--ease-standard),
+    border-color 160ms var(--ease-standard);
+}
+
+.pf-about-action svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.pf-about-action--solid {
+  color: var(--on-gold, var(--ink-black));
+  background: var(--gold);
+  border: 1px solid var(--gold);
+}
+
+.pf-about-action--solid:hover,
+.pf-about-action--solid:focus-visible {
+  background: var(--gold-bright);
+  border-color: var(--gold-bright);
+  color: var(--on-gold, var(--ink-black));
+  outline: none;
+}
+
+.pf-about-action--ghost.is-active {
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
+  color: var(--gold-bright);
+}
+
+.pf-about-action--ghost {
   color: var(--gold);
   background: transparent;
   border: 1px solid var(--gold);
-  cursor: pointer;
-  transition: background 160ms var(--ease-standard), color 160ms var(--ease-standard),
-    border-color 160ms var(--ease-standard), transform 160ms var(--ease-standard);
 }
 
-.pf-about-action:hover,
-.pf-about-action:focus-visible {
+.pf-about-action--ghost:hover,
+.pf-about-action--ghost:focus-visible {
   background: color-mix(in srgb, var(--gold) 10%, transparent);
   color: var(--gold-bright);
   outline: none;
-  transform: translateY(-1px);
 }
 
 .pf-about-action--done {
@@ -1904,13 +1916,18 @@ body[data-profile="artist"] .pf-rail-comm {
 }
 
 .pf-about-action--done:hover {
-  transform: none;
   background: transparent;
 }
 
-.pf-about-action.is-active {
-  background: color-mix(in srgb, var(--gold) 12%, transparent);
-  color: var(--gold-bright);
+@media (max-width: 560px) {
+  .pf-about__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pf-about-action {
+    width: 100%;
+  }
 }
 
 .pf-about__rail-head {

@@ -52,8 +52,12 @@
       instagram:
         '<rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>',
       send: '<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>',
-      unlock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>',
-      lock: '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+      unlock:
+        '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>',
+      lock:
+        '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+      download:
+        '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/>',
       star: '<path d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4L12 2z" fill="currentColor" stroke="none"/>',
       copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
       activity:
@@ -182,35 +186,37 @@
   function featuredPreviewHtml() {
     const p = profile();
     if (isDev()) {
-      const filter = state.homeWorkFilter || "all";
       const items = homeWorkProjects();
-      const filters = [
-        { id: "all", label: "All" },
-        { id: "frontend", label: "Frontend" },
-        { id: "fullstack", label: "Fullstack" },
-      ];
+      // Temporarily hide project-type filters on home.
+      // const filter = state.homeWorkFilter || "all";
+      // const filters = [
+      //   { id: "all", label: "All" },
+      //   { id: "frontend", label: "Frontend" },
+      //   { id: "fullstack", label: "Fullstack" },
+      // ];
+      // const filtersHtml =
+      //   '<div class="pf-work-filters" role="tablist" aria-label="Project type">' +
+      //   filters
+      //     .map(
+      //       (f) =>
+      //         '<button type="button" class="pf-work-filter" data-home-work-filter="' +
+      //         f.id +
+      //         '" role="tab" aria-selected="' +
+      //         (filter === f.id) +
+      //         '">' +
+      //         escapeHtml(f.label) +
+      //         "</button>"
+      //     )
+      //     .join("") +
+      //   "</div>";
 
       return (
         '<div class="pf-sec pf-work-home" data-pf-work-home>' +
         '<header class="pf-work-home__head">' +
         "<div>" +
-        '<p class="pf-gh__kicker">02. / Work</p>' +
         '<h3 class="pf-gh__title">Selected Projects</h3>' +
         "</div>" +
-        '<div class="pf-work-filters" role="tablist" aria-label="Project type">' +
-        filters
-          .map(
-            (f) =>
-              '<button type="button" class="pf-work-filter" data-home-work-filter="' +
-              f.id +
-              '" role="tab" aria-selected="' +
-              (filter === f.id) +
-              '">' +
-              escapeHtml(f.label) +
-              "</button>"
-          )
-          .join("") +
-        "</div></header>" +
+        "</header>" +
         '<div class="pf-project-grid">' +
         (items.length
           ? items
@@ -1022,7 +1028,7 @@
   function aboutActionsHtml() {
     const unlocked = state.nameUnlocked;
     const reveal =
-      '<button type="button" class="pf-about-action' +
+      '<button type="button" class="pf-about-action pf-about-action--ghost' +
       (unlocked ? " is-active" : "") +
       '" data-unlock-name aria-pressed="' +
       unlocked +
@@ -1033,10 +1039,13 @@
       "</span></button>";
     return (
       '<div class="pf-about__actions">' +
-      reveal +
-      '<a class="pf-about-action" href="' +
+      '<a class="pf-about-action pf-about-action--solid" href="' +
       escapeHtml(D.brand.cv) +
-      '" download>Download CV (PDF)</a></div>'
+      '" download>' +
+      icon("download") +
+      "<span>Download CV</span></a>" +
+      reveal +
+      "</div>"
     );
   }
 
@@ -1086,7 +1095,6 @@
       '<div class="pf-about">' +
       '<div class="pf-about__topbar pf-rise">' +
       '<p class="pf-about__kicker">Archive: About</p>' +
-      aboutActionsHtml() +
       "</div>" +
       '<div class="pf-about__identity pf-rise pf-rise--2">' +
       '<div class="pf-about__photo"><img src="' +
@@ -1107,7 +1115,9 @@
       "</p></div></div>" +
       '<p class="pf-about__lede">' +
       escapeHtml(D.bios.value || D.bios.full) +
-      "</p></div></div>" +
+      "</p>" +
+      aboutActionsHtml() +
+      "</div></div>" +
       '<section class="pf-about-panel pf-rise pf-rise--3" aria-labelledby="obj-h">' +
       '<h2 id="obj-h" class="pf-about-panel__title">Objectives</h2>' +
       '<p class="pf-about-panel__text">' +
