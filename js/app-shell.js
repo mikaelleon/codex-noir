@@ -1197,9 +1197,115 @@
   }
 
   /* —— WORK: projects (dev) —— */
+  function normalizeTeamMember(m) {
+    if (m && typeof m === "object") {
+      return {
+        name: m.name || "Teammate",
+        role: m.role || "",
+        contribution: m.contribution || "",
+        commits: m.commits != null ? String(m.commits) : "—",
+      };
+    }
+    const raw = String(m || "");
+    const parts = raw.split(" — ");
+    return {
+      name: parts[0] || raw,
+      role: parts[1] || "",
+      contribution: "",
+      commits: "—",
+    };
+  }
+
+  function projectTeamHtml(team) {
+    if (!team || !team.length) return "";
+    return (
+      '<div class="pf-detail__block">' +
+      '<h3 class="pf-detail__label">Team</h3>' +
+      '<ul class="pf-work-team">' +
+      team
+        .map((raw) => {
+          const m = normalizeTeamMember(raw);
+          const line = [m.name, m.role].filter(Boolean).join(" — ");
+          const tip = m.contribution || line;
+          return (
+            '<li class="pf-work-team__row" title="' +
+            escapeHtml(tip) +
+            '">' +
+            '<span class="pf-work-team__star" aria-hidden="true">✦</span>' +
+            '<span class="pf-work-team__name">' +
+            escapeHtml(line) +
+            "</span></li>"
+          );
+        })
+        .join("") +
+      "</ul></div>"
+    );
+  }
+
+  function projectMediaHtml(p) {
+    const slots =
+      p.media && p.media.length
+        ? p.media
+        : [
+            { label: "Photo placeholder", kind: "photo" },
+            { label: "Photo / PDF preview", kind: "preview" },
+          ];
+    const source = p.source || "";
+    const demo = p.demo || "";
+    const openHref = demo || p.href || source || "#";
+    const openExt = /^https?:/i.test(openHref);
+    const sourceExt = /^https?:/i.test(source);
+
+    return (
+      '<div class="pf-work-media">' +
+      '<div class="pf-work-media__frames">' +
+      slots
+        .map((slot) => {
+          if (slot.src) {
+            return (
+              '<figure class="pf-work-media__frame pf-work-media__frame--filled">' +
+              '<img src="' +
+              escapeHtml(slot.src) +
+              '" alt="' +
+              escapeHtml(slot.label || p.title) +
+              '" loading="lazy" decoding="async" />' +
+              "</figure>"
+            );
+          }
+          return (
+            '<div class="pf-work-media__frame" role="img" aria-label="' +
+            escapeHtml(slot.label || "Media placeholder") +
+            '">' +
+            '<span class="pf-work-media__ph">' +
+            escapeHtml(slot.label || "Photo placeholder") +
+            "</span></div>"
+          );
+        })
+        .join("") +
+      "</div>" +
+      '<div class="pf-work-media__actions">' +
+      (source
+        ? '<a class="pf-btn pf-btn--ghost" href="' +
+          escapeHtml(source) +
+          '"' +
+          (sourceExt ? ' target="_blank" rel="noopener"' : "") +
+          ">GitHub Repository</a>"
+        : '<span class="pf-btn pf-btn--ghost pf-btn--disabled" aria-disabled="true">GitHub Repository</span>') +
+      (demo || openHref
+        ? '<a class="pf-btn pf-btn--solid" href="' +
+          escapeHtml(demo || openHref) +
+          '"' +
+          (openExt ? ' target="_blank" rel="noopener"' : "") +
+          ">Live Preview</a>"
+        : '<span class="pf-btn pf-btn--solid pf-btn--disabled" aria-disabled="true">Live Preview</span>') +
+      "</div></div>"
+    );
+  }
+
   function renderProjects() {
     const list = root.querySelector("[data-pf-project-list]");
     const detail = root.querySelector("[data-pf-project-detail]");
+    const media = root.querySelector("[data-pf-project-media]");
     if (!list || !detail) return;
     list.innerHTML = D.projects
       .map((it, i) => {
@@ -1223,69 +1329,46 @@
       })
       .join("");
     const p = D.projects[state.projectIdx];
+    if (!p) {
+      detail.innerHTML = "";
+      if (media) media.innerHTML = "";
+      return;
+    }
     const idx = String(state.projectIdx + 1).padStart(2, "0");
-    const openHref = p.demo || p.href || p.source || "#";
-    const openExt = /^https?:/i.test(openHref);
-    const source = p.source || "";
-    const body = p.longDescription || p.description;
+    const body = p.description || p.longDescription || "";
+    const features = p.highlights || [];
+
     detail.innerHTML =
       '<div class="pf-detail">' +
-      '<div class="pf-detail__tag">UNLOCKED: ' +
+      '<div class="pf-detail__tag">Unlocked: ' +
       idx +
       "</div>" +
       '<h2 class="pf-detail__title">' +
       escapeHtml(p.title) +
       "</h2>" +
-      '<p class="pf-detail__quote">"' +
-      escapeHtml(p.quote) +
-      '"</p>' +
-      (p.role
-        ? '<p class="pf-detail__role">Role · ' + escapeHtml(p.role) + "</p>"
-        : "") +
-      (p.meta
-        ? '<p class="pf-detail__meta">' + escapeHtml(p.meta) + "</p>"
-        : "") +
+      '<p class="pf-detail__quote">' +
+      escapeHtml(p.quote || "") +
+      "</p>" +
+      '<div class="pf-tags pf-tags--work">' +
+      (p.tags || [])
+        .map((t) => '<span class="pf-tag">' + escapeHtml(t) + "</span>")
+        .join("") +
+      "</div>" +
       '<p class="pf-detail__desc">' +
       escapeHtml(body) +
       "</p>" +
-      (p.highlights && p.highlights.length
-        ? '<ul class="pf-detail__list">' +
-          p.highlights
-            .map((h) => "<li>" + escapeHtml(h) + "</li>")
-            .join("") +
-          "</ul>"
+      (features.length
+        ? '<div class="pf-detail__block">' +
+          '<h3 class="pf-detail__label">Features</h3>' +
+          '<div class="pf-work-features">' +
+          '<ul class="pf-work-features__list">' +
+          features.map((h) => "<li>" + escapeHtml(h) + "</li>").join("") +
+          "</ul></div></div>"
         : "") +
-      (p.team && p.team.length
-        ? '<div class="pf-detail__block"><h3 class="pf-detail__label">Team</h3><ul class="pf-detail__list pf-detail__list--plain">' +
-          p.team.map((m) => "<li>" + escapeHtml(m) + "</li>").join("") +
-          "</ul></div>"
-        : "") +
-      (p.stack && p.stack.length
-        ? '<div class="pf-detail__block"><h3 class="pf-detail__label">Stack</h3><div class="pf-tags">' +
-          p.stack
-            .map((t) => '<span class="pf-tag">' + escapeHtml(t) + "</span>")
-            .join("") +
-          "</div></div>"
-        : "") +
-      (p.status
-        ? '<p class="pf-detail__status">' + escapeHtml(p.status) + "</p>"
-        : "") +
-      '<div class="pf-tags">' +
-      p.tags.map((t) => '<span class="pf-tag">' + escapeHtml(t) + "</span>").join("") +
-      '</div><div class="pf-btn-row">' +
-      '<a class="pf-btn-primary" href="' +
-      escapeHtml(openHref) +
-      '"' +
-      (openExt ? ' target="_blank" rel="noopener"' : "") +
-      ">" +
-      (p.demo ? "Open live —▸" : "Open —▸") +
-      "</a>" +
-      (source && source !== openHref
-        ? '<a class="pf-btn pf-btn--ghost" href="' +
-          escapeHtml(source) +
-          '" target="_blank" rel="noopener">Source —▸</a>'
-        : "") +
-      "</div></div>";
+      projectTeamHtml(p.team) +
+      "</div>";
+
+    if (media) media.innerHTML = projectMediaHtml(p);
   }
 
   /* —— CONTACT: form left + info/socials right —— */

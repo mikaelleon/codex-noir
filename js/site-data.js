@@ -331,16 +331,36 @@ window.SiteData = (function () {
         "Lipa City CENRO pilot for waste schedules, reports, and oversight across residents, collectors, officers, and superadmins — built to cut missed collections and give barangay leaders clearer data.",
       longDescription:
         "BAGO.PH helps four role groups work in one place: residents check schedules and submit waste reports; collectors verify field activity; Lipa City CENRO Officers monitor operations and compliance; superadmins approve LGU onboarding and review audit trails. Core auth, schedules, reports, announcements, eco-points, QR scan, analytics, and exports are live while remaining prototype screens migrate to full API data.",
-      tags: ["Node.js", "Express", "MySQL", "JavaScript", "XML/XSLT"],
+      tags: ["Node.js", "Express", "MySQL", "JavaScript", "XML/XSLT", "JWT"],
       kind: "fullstack",
       featured: true,
       meta: "Live · Render · Lipa City CENRO",
       role: "COO / UI/UX Designer",
       team: [
-        "Carlos Kent D. Del Rio — CEO / Lead Developer",
-        "Kimberly Claire A. Aliwate — COO / UI/UX Designer",
-        "Kenneth Elijah N. Castillo — CTO / Frontend Developer",
-        "Miguel Yuan M. Mercado — CPO / Database Administrator",
+        {
+          name: "Carlos Kent D. Del Rio",
+          role: "CEO / Lead Developer",
+          contribution: "Backend architecture, API design, deployment.",
+          commits: "—",
+        },
+        {
+          name: "Kimberly Claire A. Aliwate",
+          role: "COO / UI/UX Designer",
+          contribution: "Product UX, interface systems, role flows.",
+          commits: "—",
+        },
+        {
+          name: "Kenneth Elijah N. Castillo",
+          role: "CTO / Frontend Developer",
+          contribution: "Frontend pages, role navigation, client wiring.",
+          commits: "—",
+        },
+        {
+          name: "Miguel Yuan M. Mercado",
+          role: "CPO / Database Administrator",
+          contribution: "Schema, migrations, barangay/schedule data.",
+          commits: "—",
+        },
       ],
       highlights: [
         "Role-based auth for residents, collectors, CENRO officers, and superadmins",
@@ -351,6 +371,10 @@ window.SiteData = (function () {
       ],
       stack: ["HTML/CSS/JS", "Node.js + Express 5", "MySQL (Aiven)", "JWT · Leaflet", "XML 1.0 + XSLT 1.0"],
       status: "Mixed live + prototype · M5 end-to-end data in progress · live on Render",
+      media: [
+        { label: "Photo placeholder", kind: "photo" },
+        { label: "Photo / PDF preview", kind: "preview" },
+      ],
       href: "https://bago-ph-frontend.onrender.com/",
       demo: "https://bago-ph-frontend.onrender.com/",
       source: "https://github.com/mikaelleon/bago.ph-quadstack",
@@ -363,10 +387,19 @@ window.SiteData = (function () {
         "Next.js 14 ERP for bakery operations — inventory, recipes, POS, production planning, and financial analytics with role-based access for managers, bakers, and cashiers.",
       longDescription:
         "BakeSync is a comprehensive bakery ERP built with Next.js 14 App Router. It covers real-time inventory for raw materials and finished goods, recipe cost analysis, a responsive POS cart (cash, card, GCash), production batch scheduling, and financial analytics. Role-based access separates managers, bakers, and cashiers across desktop, tablet, and mobile.",
-      tags: ["Next.js 14", "TypeScript", "Tailwind CSS", "shadcn/ui"],
+      tags: ["Next.js 14", "TypeScript", "Tailwind CSS", "shadcn/ui", "pnpm", "Playwright"],
       kind: "fullstack",
       featured: true,
       meta: "Live · Vercel",
+      role: "Developer",
+      team: [
+        {
+          name: "Kimberly Claire A. Aliwate",
+          role: "Developer",
+          contribution: "ERP UI, inventory/POS flows, TypeScript app shell.",
+          commits: "—",
+        },
+      ],
       highlights: [
         "Inventory with live stock levels and low-stock alerts",
         "Recipe management with ingredient costs and yield tracking",
@@ -382,6 +415,10 @@ window.SiteData = (function () {
         "pnpm · Lucide React",
       ],
       status: "Live on Vercel · Playwright test suite with Page Object Model",
+      media: [
+        { label: "Photo placeholder", kind: "photo" },
+        { label: "Photo / PDF preview", kind: "preview" },
+      ],
       href: "https://bake-sync.vercel.app",
       demo: "https://bake-sync.vercel.app",
       source: "https://github.com/mikaelleon/BakeSync",
@@ -394,15 +431,30 @@ window.SiteData = (function () {
         "Community-driven civic platform for Batangas Province that connects dog owners, reporters, veterinarians, LGU officials, and rescue organizations — built on PHP and MySQL with no separate frontend framework.",
       longDescription:
         "Pawdar addresses the lack of central tracking for dog ownership, health records, and incident history by integrating community reporting, registry, and case management in one place. Six roles share one database with permissions scoped to each job: Community Reporter, Dog Owner, Veterinarian, LGU Official, Rescue Organization, and Admin. The system runs on PHP with MySQL using a server-rendered structure standard hosting supports — vanilla JavaScript handles the report drawer, map filters, and live notification counts without a build tool or bundler. External services fill specific gaps: Leaflet for maps, Resend for email, and a QR code API for dog tags.",
-      tags: ["PHP", "MySQL", "JavaScript", "Leaflet", "Resend"],
+      tags: ["PHP", "MySQL", "JavaScript", "Leaflet", "Resend", "QR API"],
       kind: "fullstack",
       featured: true,
       meta: "Live · InfinityFree · Batangas pilot",
       role: "UI/UX & Product Design",
       team: [
-        "Aliwate, Kimberly Claire — UI/UX & Product Design",
-        "Castillo, Brent Justine",
-        "Lat, Nib Hoxan",
+        {
+          name: "Aliwate, Kimberly Claire",
+          role: "UI/UX & Product Design",
+          contribution: "Product UX, design system, role flows, civic IA.",
+          commits: "—",
+        },
+        {
+          name: "Castillo, Brent Justine",
+          role: "Developer",
+          contribution: "Platform features and implementation support.",
+          commits: "—",
+        },
+        {
+          name: "Lat, Nib Hoxan",
+          role: "Developer",
+          contribution: "Platform features and implementation support.",
+          commits: "—",
+        },
       ],
       highlights: [
         "Six roles on one shared database with job-scoped permissions",
@@ -421,6 +473,10 @@ window.SiteData = (function () {
       ],
       status:
         "Core modules live · M7 production hardening & QA in progress · hosted on InfinityFree",
+      media: [
+        { label: "Photo placeholder", kind: "photo" },
+        { label: "Photo / PDF preview", kind: "preview" },
+      ],
       href: "https://kcaliwate.freedev.app/web/index.html",
       demo: "https://kcaliwate.freedev.app/web/index.html",
       source: "https://github.com/mikaelleon/Pawdar",
