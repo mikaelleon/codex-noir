@@ -19,7 +19,8 @@ window.SiteData = (function () {
     cv: "cv/mikaelleon-cv.pdf",
     avatar: "images/opt/profile1.webp",
     avatarArtist: "images/opt/profile2.webp",
-    avatarDev: "images/opt/profile1.webp",
+    avatarDev: "images/pfp.png",
+    workProfile: "images/pfp.png",
   };
 
   const socials = {
@@ -372,7 +373,7 @@ window.SiteData = (function () {
       stack: ["HTML/CSS/JS", "Node.js + Express 5", "MySQL (Aiven)", "JWT · Leaflet", "XML 1.0 + XSLT 1.0"],
       status: "Mixed live + prototype · M5 end-to-end data in progress · live on Render",
       media: [
-        { label: "Photo placeholder", kind: "photo" },
+        { label: "Work profile", kind: "photo", src: "images/pfp.png", fit: "profile" },
         { label: "Photo / PDF preview", kind: "preview" },
       ],
       href: "https://bago-ph-frontend.onrender.com/",
@@ -416,7 +417,7 @@ window.SiteData = (function () {
       ],
       status: "Live on Vercel · Playwright test suite with Page Object Model",
       media: [
-        { label: "Photo placeholder", kind: "photo" },
+        { label: "Work profile", kind: "photo", src: "images/pfp.png", fit: "profile" },
         { label: "Photo / PDF preview", kind: "preview" },
       ],
       href: "https://bake-sync.vercel.app",
@@ -474,7 +475,7 @@ window.SiteData = (function () {
       status:
         "Core modules live · M7 production hardening & QA in progress · hosted on InfinityFree",
       media: [
-        { label: "Photo placeholder", kind: "photo" },
+        { label: "Work profile", kind: "photo", src: "images/pfp.png", fit: "profile" },
         { label: "Photo / PDF preview", kind: "preview" },
       ],
       href: "https://kcaliwate.freedev.app/web/index.html",

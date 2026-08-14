@@ -1245,13 +1245,26 @@
   }
 
   function projectMediaHtml(p) {
-    const slots =
+    const profileSrc = D.brand.workProfile || D.brand.avatarDev || "";
+    const slots = (
       p.media && p.media.length
         ? p.media
         : [
-            { label: "Photo placeholder", kind: "photo" },
+            { label: "Work profile", kind: "photo" },
             { label: "Photo / PDF preview", kind: "preview" },
-          ];
+          ]
+    ).map((slot) => {
+      if (slot.src) return slot;
+      if (slot.kind === "photo" && profileSrc) {
+        return {
+          ...slot,
+          src: profileSrc,
+          label: slot.label || "Work profile",
+          fit: slot.fit || "profile",
+        };
+      }
+      return slot;
+    });
     const source = p.source || "";
     const demo = p.demo || "";
     const openHref = demo || p.href || source || "#";
@@ -1264,8 +1277,14 @@
       slots
         .map((slot) => {
           if (slot.src) {
+            const fitClass =
+              slot.fit === "profile" || slot.kind === "photo"
+                ? " pf-work-media__frame--profile"
+                : "";
             return (
-              '<figure class="pf-work-media__frame pf-work-media__frame--filled">' +
+              '<figure class="pf-work-media__frame pf-work-media__frame--filled' +
+              fitClass +
+              '">' +
               '<img src="' +
               escapeHtml(slot.src) +
               '" alt="' +

@@ -1656,6 +1656,15 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   padding: 0;
 }
 
+.pf-work-media__frame--profile {
+  background: #f4f4f4;
+}
+
+.pf-work-media__frame--profile img {
+  object-fit: cover;
+  object-position: center 18%;
+}
+
 .pf-work-media__frame img {
   width: 100%;
   height: 100%;
