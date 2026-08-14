@@ -1223,12 +1223,14 @@
       '<h3 class="pf-detail__label">Team</h3>' +
       '<ul class="pf-work-team">' +
       team
-        .map((raw) => {
+        .map((raw, ti) => {
           const m = normalizeTeamMember(raw);
           const line = [m.name, m.role].filter(Boolean).join(" — ");
           const tip = m.contribution || line;
           return (
-            '<li class="pf-work-team__row" title="' +
+            '<li class="pf-work-team__row" style="--pf-team-i:' +
+            ti +
+            '" title="' +
             escapeHtml(tip) +
             '">' +
             '<span class="pf-work-team__star" aria-hidden="true">✦</span>' +
@@ -1302,11 +1304,17 @@
     );
   }
 
-  function renderProjects() {
-    const list = root.querySelector("[data-pf-project-list]");
-    const detail = root.querySelector("[data-pf-project-detail]");
-    const media = root.querySelector("[data-pf-project-media]");
-    if (!list || !detail) return;
+  function renderProjectList(list) {
+    const rows = list.querySelectorAll("[data-project-i]");
+    if (rows.length === D.projects.length) {
+      rows.forEach((btn) => {
+        const i = Number(btn.dataset.projectI);
+        const sel = i === state.projectIdx;
+        btn.classList.toggle("selected", sel);
+        btn.setAttribute("aria-selected", sel ? "true" : "false");
+      });
+      return;
+    }
     list.innerHTML = D.projects
       .map((it, i) => {
         const sel = i === state.projectIdx;
@@ -1315,6 +1323,8 @@
           '<button type="button" class="pf-row' +
           (sel ? " selected" : "") +
           '" data-project-i="' +
+          i +
+          '" style="--pf-row-i:' +
           i +
           '" aria-selected="' +
           sel +
@@ -1328,6 +1338,14 @@
         );
       })
       .join("");
+  }
+
+  function renderProjects() {
+    const list = root.querySelector("[data-pf-project-list]");
+    const detail = root.querySelector("[data-pf-project-detail]");
+    const media = root.querySelector("[data-pf-project-media]");
+    if (!list || !detail) return;
+    renderProjectList(list);
     const p = D.projects[state.projectIdx];
     if (!p) {
       detail.innerHTML = "";
@@ -1339,7 +1357,7 @@
     const features = p.highlights || [];
 
     detail.innerHTML =
-      '<div class="pf-detail">' +
+      '<div class="pf-detail pf-detail--work" data-pf-work-panel>' +
       '<div class="pf-detail__tag">Unlocked: ' +
       idx +
       "</div>" +
@@ -1351,7 +1369,14 @@
       "</p>" +
       '<div class="pf-tags pf-tags--work">' +
       (p.tags || [])
-        .map((t) => '<span class="pf-tag">' + escapeHtml(t) + "</span>")
+        .map(
+          (t, ti) =>
+            '<span class="pf-tag" style="--pf-tag-i:' +
+            ti +
+            '">' +
+            escapeHtml(t) +
+            "</span>"
+        )
         .join("") +
       "</div>" +
       '<p class="pf-detail__desc">' +
@@ -1362,7 +1387,12 @@
           '<h3 class="pf-detail__label">Features</h3>' +
           '<div class="pf-work-features">' +
           '<ul class="pf-work-features__list">' +
-          features.map((h) => "<li>" + escapeHtml(h) + "</li>").join("") +
+          features
+            .map(
+              (h, hi) =>
+                '<li style="--pf-feat-i:' + hi + '">' + escapeHtml(h) + "</li>"
+            )
+            .join("") +
           "</ul></div></div>"
         : "") +
       projectTeamHtml(p.team) +

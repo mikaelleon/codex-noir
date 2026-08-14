@@ -49,6 +49,63 @@
   }
 }
 
+@keyframes pfWorkIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pfWorkSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pfWorkPop {
+  from {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pfWorkFrameIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pfWorkStarPulse {
+  0%,
+  100% {
+    transform: rotate(0deg) scale(1);
+  }
+  40% {
+    transform: rotate(12deg) scale(1.15);
+  }
+  70% {
+    transform: rotate(-6deg) scale(1.05);
+  }
+}
+
 .pf-shell {
   display: none;
   height: 100vh;
@@ -139,6 +196,10 @@ body.realm-gate .realm-reopen {
 }
 
 .pf-detail {
+  animation: none;
+}
+
+.pf-detail:not(.pf-detail--work) {
   animation: pfFade 150ms cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
@@ -1424,9 +1485,11 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   text-transform: uppercase;
   color: var(--gold);
   margin-bottom: 6px;
+  animation: pfWorkSlide 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .pf-row {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -1434,23 +1497,51 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   border: 1px solid var(--gold);
   background: transparent;
   cursor: pointer;
-  transition: background 150ms var(--ease-standard), border-color 150ms var(--ease-standard);
+  transition:
+    background 180ms var(--ease-standard),
+    border-color 180ms var(--ease-standard),
+    transform 180ms var(--ease-standard),
+    box-shadow 180ms var(--ease-standard);
   text-align: left;
   width: 100%;
   color: inherit;
   font: inherit;
+  animation: pfWorkSlide 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--pf-row-i, 0) * 55ms + 40ms);
+}
+
+.pf-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--gold-bright, var(--gold));
+  transform: scaleY(0);
+  transform-origin: center;
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .pf-row:hover,
 .pf-row:focus-visible {
   background: color-mix(in srgb, var(--gold) 8%, transparent);
   outline: none;
+  transform: translateX(3px);
+}
+
+.pf-row:active {
+  transform: translateX(1px) scale(0.995);
 }
 
 .pf-row.selected {
   border-color: var(--gold);
   background: color-mix(in srgb, var(--gold) 12%, transparent);
   box-shadow: inset 0 0 0 1px var(--gold);
+}
+
+.pf-row.selected::before {
+  transform: scaleY(1);
 }
 
 .pf-row-idx {
@@ -1460,6 +1551,13 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   font-weight: 700;
   flex-shrink: 0;
   width: 24px;
+  transition: color 180ms var(--ease-standard), transform 180ms var(--ease-standard);
+}
+
+.pf-row:hover .pf-row-idx,
+.pf-row.selected .pf-row-idx {
+  color: var(--gold-bright, var(--gold));
+  transform: scale(1.06);
 }
 
 .pf-row-title {
@@ -1533,6 +1631,25 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  transition:
+    border-color 220ms var(--ease-standard),
+    box-shadow 220ms var(--ease-standard),
+    transform 220ms var(--ease-standard);
+  animation: pfWorkFrameIn 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.pf-work-media__frames .pf-work-media__frame:nth-child(1) {
+  animation-delay: 40ms;
+}
+
+.pf-work-media__frames .pf-work-media__frame:nth-child(2) {
+  animation-delay: 110ms;
+}
+
+.pf-work-media__frame:hover {
+  border-color: var(--gold-bright, var(--gold));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--gold) 35%, transparent);
+  transform: translateY(-2px);
 }
 
 .pf-work-media__frame--filled {
@@ -1544,6 +1661,12 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 480ms cubic-bezier(0.16, 1, 0.3, 1), filter 280ms var(--ease-standard);
+}
+
+.pf-work-media__frame:hover img {
+  transform: scale(1.04);
+  filter: brightness(1.05);
 }
 
 .pf-work-media__ph {
@@ -1554,6 +1677,12 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   color: var(--taupe);
   text-align: center;
   padding: 16px;
+  transition: color 180ms var(--ease-standard), letter-spacing 220ms var(--ease-standard);
+}
+
+.pf-work-media__frame:hover .pf-work-media__ph {
+  color: var(--gold);
+  letter-spacing: 0.2em;
 }
 
 .pf-work-media__actions {
@@ -1562,6 +1691,8 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   gap: 10px;
   margin-top: auto;
   flex-shrink: 0;
+  animation: pfWorkIn 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: 160ms;
 }
 
 .pf-work-media__actions .pf-btn {
@@ -1572,6 +1703,22 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  transition:
+    background 160ms var(--ease-standard),
+    color 160ms var(--ease-standard),
+    border-color 160ms var(--ease-standard),
+    transform 160ms var(--ease-standard),
+    box-shadow 160ms var(--ease-standard);
+}
+
+.pf-work-media__actions .pf-btn:hover:not(.pf-btn--disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--gold) 18%, transparent);
+}
+
+.pf-work-media__actions .pf-btn:active:not(.pf-btn--disabled) {
+  transform: translateY(0) scale(0.97);
+  box-shadow: none;
 }
 
 .pf-work-media__actions .pf-btn--disabled {
@@ -1594,6 +1741,19 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   padding: 8px 12px;
   border: 1px solid var(--gold);
   background: transparent;
+  transition:
+    background 160ms var(--ease-standard),
+    border-color 160ms var(--ease-standard),
+    color 160ms var(--ease-standard),
+    transform 160ms var(--ease-standard);
+  animation: pfWorkPop 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--pf-tag-i, 0) * 35ms + 120ms);
+}
+
+.pf-tags--work .pf-tag:hover {
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
+  border-color: var(--gold-bright, var(--gold));
+  transform: translateY(-1px);
 }
 
 .pf-work-features {
@@ -1602,6 +1762,12 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   border: 1px solid var(--gold);
   background: transparent;
   min-height: 120px;
+  transition: border-color 200ms var(--ease-standard), box-shadow 200ms var(--ease-standard);
+}
+
+.pf-work-features:hover {
+  border-color: var(--gold-bright, var(--gold));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gold) 25%, transparent);
 }
 
 .pf-work-features__list {
@@ -1611,6 +1777,17 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   font-size: 15px;
   line-height: 1.55;
   color: var(--taupe);
+}
+
+.pf-work-features__list li {
+  animation: pfWorkIn 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--pf-feat-i, 0) * 40ms + 180ms);
+  transition: color 160ms var(--ease-standard), transform 160ms var(--ease-standard);
+}
+
+.pf-work-features__list li:hover {
+  color: var(--bone);
+  transform: translateX(3px);
 }
 
 .pf-work-features__list li + li {
@@ -1634,6 +1811,18 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   padding: 8px 14px;
   border: 1px solid var(--gold);
   background: transparent;
+  transition:
+    background 160ms var(--ease-standard),
+    border-color 160ms var(--ease-standard),
+    transform 160ms var(--ease-standard);
+  animation: pfWorkSlide 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--pf-team-i, 0) * 45ms + 200ms);
+}
+
+.pf-work-team__row:hover {
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
+  border-color: var(--gold-bright, var(--gold));
+  transform: translateX(3px);
 }
 
 .pf-work-team__star {
@@ -1642,6 +1831,13 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   font-family: var(--font-brand);
   font-size: 13px;
   line-height: 1;
+  display: inline-block;
+  transition: color 160ms var(--ease-standard);
+}
+
+.pf-work-team__row:hover .pf-work-team__star {
+  color: var(--gold-bright, var(--gold));
+  animation: pfWorkStarPulse 520ms var(--ease-standard);
 }
 
 .pf-work-team__name {
@@ -1664,6 +1860,43 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   margin-bottom: 10px;
   text-transform: uppercase;
   font-weight: 700;
+}
+
+.pf-detail--work > .pf-detail__tag,
+.pf-detail--work > .pf-detail__title,
+.pf-detail--work > .pf-detail__quote,
+.pf-detail--work > .pf-tags,
+.pf-detail--work > .pf-detail__desc,
+.pf-detail--work > .pf-detail__block {
+  animation: pfWorkIn 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.pf-detail--work > .pf-detail__tag {
+  animation-delay: 0ms;
+}
+
+.pf-detail--work > .pf-detail__title {
+  animation-delay: 45ms;
+}
+
+.pf-detail--work > .pf-detail__quote {
+  animation-delay: 90ms;
+}
+
+.pf-detail--work > .pf-tags {
+  animation-delay: 120ms;
+}
+
+.pf-detail--work > .pf-detail__desc {
+  animation-delay: 150ms;
+}
+
+.pf-detail--work > .pf-detail__block {
+  animation-delay: 190ms;
+}
+
+.pf-detail--work > .pf-detail__block + .pf-detail__block {
+  animation-delay: 240ms;
 }
 
 .pf-detail__title {
@@ -2049,7 +2282,37 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   .pf-view.is-enter-from-left,
   .pf-view.is-leave-left,
   .pf-view.is-leave-right,
-  .pf-detail {
+  .pf-detail,
+  .pf-list-head,
+  .pf-row,
+  .pf-detail--work > *,
+  .pf-tags--work .pf-tag,
+  .pf-work-features__list li,
+  .pf-work-team__row,
+  .pf-work-media__frame,
+  .pf-work-media__actions {
+    animation: none !important;
+  }
+
+  .pf-row,
+  .pf-row:hover,
+  .pf-row:focus-visible,
+  .pf-row:active,
+  .pf-work-media__frame,
+  .pf-work-media__frame:hover,
+  .pf-work-media__frame img,
+  .pf-work-media__actions .pf-btn,
+  .pf-work-media__actions .pf-btn:hover,
+  .pf-work-media__actions .pf-btn:active,
+  .pf-tags--work .pf-tag,
+  .pf-work-features__list li,
+  .pf-work-team__row,
+  .pf-work-team__star {
+    transition: none !important;
+    transform: none !important;
+  }
+
+  .pf-work-team__row:hover .pf-work-team__star {
     animation: none !important;
   }
 
