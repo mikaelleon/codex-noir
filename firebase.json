@@ -27,6 +27,7 @@
       "images/logo/frame1.png",
       "images/character-select/**",
       "images/landing/**",
+      "images/artworks/**/*.png",
       "**/*.md",
       "**/README*"
     ],
