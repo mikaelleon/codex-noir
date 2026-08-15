@@ -1277,13 +1277,15 @@
       slots
         .map((slot) => {
           if (slot.src) {
-            const fitClass =
-              slot.fit === "profile" || slot.kind === "photo"
+            const fit =
+              slot.fit === "profile"
                 ? " pf-work-media__frame--profile"
-                : "";
+                : slot.fit === "contain" || slot.kind === "preview"
+                  ? " pf-work-media__frame--contain"
+                  : "";
             return (
               '<figure class="pf-work-media__frame pf-work-media__frame--filled' +
-              fitClass +
+              fit +
               '">' +
               '<img src="' +
               escapeHtml(slot.src) +

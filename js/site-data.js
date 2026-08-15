@@ -373,10 +373,14 @@ window.SiteData = (function () {
       stack: ["HTML/CSS/JS", "Node.js + Express 5", "MySQL (Aiven)", "JWT · Leaflet", "XML 1.0 + XSLT 1.0"],
       status: "Mixed live + prototype · M5 end-to-end data in progress · live on Render",
       media: [
-        { label: "Work profile", kind: "photo", src: "images/pfp.png", fit: "profile" },
+        {
+          label: "BAGO.PH",
+          kind: "preview",
+          src: "images/works/1.svg",
+          fit: "contain",
+        },
         { label: "Photo / PDF preview", kind: "preview" },
       ],
-      href: "https://bago-ph-frontend.onrender.com/",
       demo: "https://bago-ph-frontend.onrender.com/",
       source: "https://github.com/mikaelleon/bago.ph-quadstack",
     },
@@ -417,7 +421,12 @@ window.SiteData = (function () {
       ],
       status: "Live on Vercel · Playwright test suite with Page Object Model",
       media: [
-        { label: "Work profile", kind: "photo", src: "images/pfp.png", fit: "profile" },
+        {
+          label: "BakeSync ERP",
+          kind: "preview",
+          src: "images/works/2.svg",
+          fit: "contain",
+        },
         { label: "Photo / PDF preview", kind: "preview" },
       ],
       href: "https://bake-sync.vercel.app",
@@ -475,7 +484,12 @@ window.SiteData = (function () {
       status:
         "Core modules live · M7 production hardening & QA in progress · hosted on InfinityFree",
       media: [
-        { label: "Work profile", kind: "photo", src: "images/pfp.png", fit: "profile" },
+        {
+          label: "Pawdar",
+          kind: "preview",
+          src: "images/works/3.svg",
+          fit: "contain",
+        },
         { label: "Photo / PDF preview", kind: "preview" },
       ],
       href: "https://kcaliwate.freedev.app/web/index.html",
