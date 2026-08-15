@@ -289,7 +289,7 @@
             '<button type="button" class="pf-gcell" data-pf-nav="projects" title="' +
             escapeHtml(g.title) +
             '"><img src="' +
-            escapeHtml(D.galleryImage(g.id)) +
+            escapeHtml(D.galleryImage(g)) +
             '" alt="' +
             escapeHtml(g.title) +
             '" loading="lazy" decoding="async" /></button>'
@@ -1186,7 +1186,7 @@
             " — " +
             escapeHtml(g.category) +
             '"><img src="' +
-            escapeHtml(D.galleryImage(g.id)) +
+            escapeHtml(D.galleryImage(g)) +
             '" alt="' +
             escapeHtml(g.title) +
             '" loading="lazy" decoding="async" /></div>'
