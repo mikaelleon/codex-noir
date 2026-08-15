@@ -1241,6 +1241,8 @@ html.light .logo-light.pf-rail__logo {
   width: 100%;
   cursor: pointer;
   color: inherit;
+  content-visibility: auto;
+  contain-intrinsic-size: 280px 280px;
 }
 
 .pf-gcell:hover,

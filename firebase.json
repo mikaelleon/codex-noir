@@ -28,6 +28,12 @@
       "images/character-select/**",
       "images/landing/**",
       "images/artworks/**/*.png",
+      "images/artworks/*.svg",
+      "images/works/*.svg",
+      "images/BAGO-PDF.pdf",
+      "images/PAWDAR-PDF.pdf",
+      "images/opt/bago.pdf",
+      "images/opt/pawdar.pdf",
       "**/*.md",
       "**/README*"
     ],

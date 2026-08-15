@@ -363,13 +363,24 @@ window.SiteData = (function () {
       image: "images/artworks/CHIBI-YCH_Leviathan&Hime.svg",
     },
     {
+      id: "yoshida-rin",
+      title: "Yoshida Rin",
+      description: "Character illustration.",
+      category: "Character Designs",
+      medium: "Digital",
+      date: "2025-07-15",
+      featured: true,
+      oc: false,
+      image: "images/artworks/FC-DC_yoshida-rin2-g.svg",
+    },
+    {
       id: "pepper",
       title: "Pepper",
       description: "Character piece.",
       category: "Character Designs",
       medium: "Digital",
       date: "2025-10-18",
-      featured: true,
+      featured: false,
       oc: true,
       image: "images/artworks/PEPPER.svg",
     },
@@ -407,6 +418,17 @@ window.SiteData = (function () {
       image: "images/artworks/DCB-BANNER (FREEBIE) - Himeme.svg",
     },
     {
+      id: "perrine",
+      title: "Perrine",
+      description: "Silly character sketch.",
+      category: "Character Designs",
+      medium: "Digital",
+      date: "2025-07-30",
+      featured: false,
+      oc: true,
+      image: "images/artworks/FC-DC_sillysillyperrine.svg",
+    },
+    {
       id: "wm-eyebanner",
       title: "Eye Banner",
       description: "Watermarked eye banner.",
@@ -417,6 +439,28 @@ window.SiteData = (function () {
       oc: false,
       image: "images/artworks/WM-EYEBANNER.svg",
     },
+    {
+      id: "sample5",
+      title: "Sample 05",
+      description: "Portfolio sample.",
+      category: "Illustrations",
+      medium: "Digital",
+      date: "2025-05-08",
+      featured: false,
+      oc: false,
+      image: "images/artworks/mikaelleon-sample5_yu5h1i.svg",
+    },
+    {
+      id: "sample7",
+      title: "Sample 07",
+      description: "Portfolio sample.",
+      category: "Illustrations",
+      medium: "Digital",
+      date: "2025-04-22",
+      featured: false,
+      oc: false,
+      image: "images/artworks/mikaelleon-sample7.svg",
+    },
   ];
 
   const galleryImage = (idOrItem) => {
@@ -425,6 +469,25 @@ window.SiteData = (function () {
     }
     const hit = gallery.find((g) => g.id === String(idOrItem));
     return hit && hit.image ? hit.image : "";
+  };
+
+  const artworkBaseName = (src) => {
+    const name = String(src || "").split("/").pop() || "";
+    return name.replace(/\.[^.]+$/i, "");
+  };
+
+  /** Small WebP for grids — not the source SVG. */
+  const galleryThumb = (idOrItem) => {
+    const src = galleryImage(idOrItem);
+    const base = artworkBaseName(src);
+    return base ? "images/artworks/thumbs/" + base + ".webp" : "";
+  };
+
+  /** Display WebP for lightbox / large preview. */
+  const galleryView = (idOrItem) => {
+    const src = galleryImage(idOrItem);
+    const base = artworkBaseName(src);
+    return base ? "images/artworks/view/" + base + ".webp" : src;
   };
 
   const projects = [
@@ -480,7 +543,7 @@ window.SiteData = (function () {
         {
           label: "BAGO.PH",
           kind: "preview",
-          src: "images/works/1.svg",
+          src: "images/works/thumbs/1.webp",
           fit: "contain",
         },
         { label: "Photo / PDF preview", kind: "preview" },
@@ -528,7 +591,7 @@ window.SiteData = (function () {
         {
           label: "BakeSync ERP",
           kind: "preview",
-          src: "images/works/2.svg",
+          src: "images/works/thumbs/2.webp",
           fit: "contain",
         },
         { label: "Photo / PDF preview", kind: "preview" },
@@ -591,7 +654,7 @@ window.SiteData = (function () {
         {
           label: "Pawdar",
           kind: "preview",
-          src: "images/works/3.svg",
+          src: "images/works/thumbs/3.webp",
           fit: "contain",
         },
         { label: "Photo / PDF preview", kind: "preview" },
@@ -698,6 +761,8 @@ window.SiteData = (function () {
     archiveSplit,
     gallery,
     galleryImage,
+    galleryThumb,
+    galleryView,
     projects,
     repos,
     testimonials,

@@ -291,10 +291,10 @@
             '<button type="button" class="pf-gcell" data-pf-nav="projects" title="' +
             escapeHtml(g.title) +
             '"><img src="' +
-            escapeHtml(D.galleryImage(g)) +
+            escapeHtml(D.galleryThumb(g)) +
             '" alt="' +
             escapeHtml(g.title) +
-            '" loading="lazy" decoding="async" /></button>'
+            '" width="640" height="640" sizes="(max-width:900px) 45vw, 280px" loading="lazy" decoding="async" /></button>'
         )
         .join("") +
       "</div>" +
@@ -1199,10 +1199,12 @@
     const dateEl = lb.querySelector("[data-pf-lb-date]");
     const artist = lb.querySelector("[data-pf-lb-artist]");
     const tags = lb.querySelector("[data-pf-lb-tags]");
-    const src = D.galleryImage(g);
+    const src = D.galleryView(g);
     if (img) {
       img.src = src;
       img.alt = g.title || "";
+      img.decoding = "async";
+      img.fetchPriority = "high";
     }
     if (title) title.textContent = g.title || "";
     if (desc) {
@@ -1220,6 +1222,21 @@
     const next = lb.querySelector("[data-pf-lb-next]");
     if (prev) prev.disabled = items.length < 2;
     if (next) next.disabled = items.length < 2;
+
+    if (items.length > 1) {
+      const n = items.length;
+      [-1, 1].forEach((delta) => {
+        const neighbor = items[(state.galleryIdx + delta + n) % n];
+        const href = D.galleryView(neighbor);
+        if (!href || document.querySelector('link[data-pf-lb-prefetch="' + href + '"]')) return;
+        const link = document.createElement("link");
+        link.rel = "prefetch";
+        link.as = "image";
+        link.href = href;
+        link.dataset.pfLbPrefetch = href;
+        document.head.appendChild(link);
+      });
+    }
   }
 
   function openLightbox(index) {
@@ -1272,10 +1289,14 @@
             " — " +
             escapeHtml(g.category) +
             '"><img src="' +
-            escapeHtml(D.galleryImage(g)) +
+            escapeHtml(D.galleryThumb(g)) +
             '" alt="' +
             escapeHtml(g.title) +
-            '" loading="lazy" decoding="async" /></button>'
+            '" width="640" height="640" sizes="(max-width:900px) 45vw, 280px"' +
+            (i < 4
+              ? ' fetchpriority="high" decoding="async"'
+              : ' loading="lazy" decoding="async"') +
+            " /></button>"
         )
         .join("") +
       "</div>" +
