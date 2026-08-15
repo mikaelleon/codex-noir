@@ -107,15 +107,22 @@
 }
 
 .pf-shell {
+  --pf-mobile-rail: 0px;
   display: none;
   height: 100vh;
   height: 100dvh;
-  min-height: 600px;
+  min-height: 0;
   background: var(--ink-black);
   overflow: hidden;
   color: var(--bone);
   flex: 1;
   width: 100%;
+}
+
+@supports (min-height: 100dvh) {
+  .pf-shell {
+    min-height: min(100dvh, 100%);
+  }
 }
 
 body:not(.realm-gate) .pf-shell,
@@ -2086,7 +2093,7 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
 
 @media (max-width: 1100px) {
   .pf-ld {
-    grid-template-columns: minmax(200px, 240px) minmax(0, 1fr);
+    grid-template-columns: minmax(180px, 220px) minmax(0, 1fr);
   }
 
   .pf-media-col {
@@ -2119,26 +2126,153 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
   }
 }
 
+/* Tablet + phone: stack content, bottom rail, work drill */
 @media (max-width: 900px) {
+  .pf-shell {
+    --pf-mobile-rail: calc(56px + env(safe-area-inset-bottom, 0px));
+  }
+
+  :root {
+    --pf-mobile-rail: calc(56px + env(safe-area-inset-bottom, 0px));
+  }
+
+  body:not(.realm-gate) .pf-shell,
+  .pf-shell--page {
+    flex-direction: column-reverse;
+  }
+
+  .pf-rail {
+    width: 100%;
+    height: var(--pf-mobile-rail);
+    min-height: var(--pf-mobile-rail);
+    flex-direction: row;
+    border-right: none;
+    border-top: 1px solid var(--hairline);
+    padding: 0 2px env(safe-area-inset-bottom, 0px);
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+
+  .pf-rail::-webkit-scrollbar {
+    display: none;
+    height: 0;
+  }
+
+  .pf-rail__mark {
+    display: none;
+  }
+
+  .pf-rail-btn {
+    flex: 1 0 auto;
+    min-width: 52px;
+    max-width: 72px;
+    padding: 6px 4px;
+    gap: 2px;
+    font-size: 8px;
+    letter-spacing: 0.04em;
+    justify-content: center;
+  }
+
+  .pf-rail-btn .pf-glyph {
+    font-size: 16px;
+  }
+
+  .pf-rail-btn.active {
+    box-shadow: inset 0 2px 0 var(--gold);
+  }
+
+  .pf-rail__tools {
+    margin: 0 0 0 auto;
+    flex-direction: row;
+    flex-shrink: 0;
+    width: auto;
+    padding: 0 6px;
+    gap: 4px;
+    align-items: center;
+    align-self: center;
+  }
+
+  .pf-theme {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    font-size: 14px;
+  }
+
+  .pf-mode {
+    margin: 0;
+    flex-direction: row;
+    width: auto;
+    gap: 3px;
+  }
+
+  .pf-mode-btn {
+    padding: 6px 7px;
+    font-size: 8px;
+    letter-spacing: 0.06em;
+    min-width: 0;
+  }
+
   .pf-page {
-    padding: 32px 20px 96px;
+    padding: 28px 16px 36px;
   }
 
   .pf-intro {
     grid-template-columns: 1fr;
+    gap: 24px;
   }
 
   .pf-intro__portrait {
-    max-width: 280px;
+    width: min(220px, 70vw);
+    max-width: 220px;
+    margin: 0 auto;
   }
 
   .pf-project-grid,
   .pf-gallery-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
   }
 
   .pf-spec-list {
     grid-template-columns: 1fr;
+  }
+
+  .pf-tabs {
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 4px 0;
+    gap: 0;
+  }
+
+  .pf-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .pf-tabs button {
+    flex: 0 0 auto;
+    padding: 10px 16px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+  }
+
+  .pf-work-home__head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pf-work-filters {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .pf-gh__head {
@@ -2157,10 +2291,6 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
 
   .pf-gh__split {
     grid-template-columns: 1fr;
-  }
-
-  .pf-work-home__head {
-    align-items: flex-start;
   }
 
   .pf-glance__row {
@@ -2183,11 +2313,17 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
 
   .pf-list-col {
     border-right: none;
+    padding: 20px 14px 16px;
   }
 
   .pf-media-col {
     border-left: none;
     border-top: 1px solid var(--hairline);
+    padding: 20px 14px 20px;
+  }
+
+  .pf-detail-col {
+    padding: 24px 16px 28px;
   }
 
   .pf-ld.drill .pf-list-col {
@@ -2215,6 +2351,19 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
     flex-direction: column;
   }
 
+  .pf-ld.drill .pf-work-media__frame {
+    min-height: 140px;
+    flex: 0 0 auto;
+    aspect-ratio: 4 / 3;
+  }
+
+  .pf-ld.drill .pf-work-media__frame--profile {
+    aspect-ratio: 1;
+    max-height: 280px;
+    width: min(100%, 280px);
+    margin-inline: auto;
+  }
+
   .pf-ld.drill .pf-work-media__actions {
     width: 100%;
     grid-template-columns: 1fr 1fr;
@@ -2222,66 +2371,116 @@ body[data-profile="artist"] .pf-work.active .pf-work-art {
 
   .pf-back {
     display: inline-block;
+    margin-bottom: 12px;
+  }
+
+  .pf-detail__title {
+    font-size: clamp(22px, 7vw, 32px);
+  }
+
+  .pf-detail__quote,
+  .pf-detail__desc {
+    font-size: 15px;
+    max-width: none;
+  }
+
+  .pf-about__id-head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .pf-pipe-skills {
+    row-gap: 6px;
+  }
+
+  .pf-pipe-skills span {
+    padding: 4px 10px;
+  }
+
+  .pf-pipe-skills span + span {
+    border-left: none;
+  }
+
+  .pf-pipe-skills span:not(:last-child)::after {
+    content: "·";
+    margin-left: 10px;
+    color: var(--gold);
+  }
+
+  .realm-reopen {
+    bottom: calc(var(--pf-mobile-rail, 56px) + 0.75rem);
+    right: 0.75rem;
+    z-index: 50;
+  }
+
+  .pf-hero-unlock__title {
+    font-size: clamp(36px, 12vw, 64px);
+  }
+
+  .pf-cta-band {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .pf-btn-row {
+    gap: 10px;
+  }
+
+  .pf-btn-row .pf-btn {
+    flex: 1 1 auto;
+    min-width: min(100%, 160px);
   }
 }
 
-@media (max-width: 767px) {
-  body:not(.realm-gate) .pf-shell {
-    flex-direction: column-reverse;
-  }
-
-  .pf-rail {
-    width: 100%;
-    height: 64px;
-    flex-direction: row;
-    border-right: none;
-    border-top: 1px solid var(--hairline);
-    padding: 0 4px;
-    justify-content: space-around;
-    align-items: center;
-  }
-
-  .pf-rail__mark {
-    display: none;
-  }
-
-  .pf-rail__tools {
-    margin: 0;
-    flex-direction: row;
-    width: auto;
-    padding: 0;
-    gap: 4px;
-  }
-
-  .pf-theme {
-    width: 36px;
-    height: 36px;
-    flex-shrink: 0;
-  }
-
-  .pf-mode {
-    margin: 0;
-    flex-direction: row;
-    width: auto;
-    gap: 4px;
-  }
-
-  .pf-mode-btn {
-    padding: 6px 8px;
-    font-size: 9px;
+@media (max-width: 600px) {
+  .pf-project-grid,
+  .pf-gallery-grid {
+    grid-template-columns: 1fr;
   }
 
   .pf-rail-btn {
-    flex: 1;
-    padding: 8px 2px;
+    min-width: 48px;
+    max-width: 64px;
   }
 
-  .pf-rail-btn.active {
-    box-shadow: inset 0 2px 0 var(--gold);
+  .pf-work-media__actions {
+    grid-template-columns: 1fr;
   }
 
-  .pf-detail-col {
-    padding: 28px 20px 88px;
+  .pf-ld.drill .pf-work-media__actions {
+    grid-template-columns: 1fr;
+  }
+
+  .pf-tags--work .pf-tag {
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+}
+
+@media (max-height: 520px) and (orientation: landscape) {
+  .pf-shell {
+    min-height: 0;
+    --pf-mobile-rail: calc(48px + env(safe-area-inset-bottom, 0px));
+  }
+
+  :root {
+    --pf-mobile-rail: calc(48px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .pf-rail {
+    height: var(--pf-mobile-rail);
+    min-height: var(--pf-mobile-rail);
+  }
+
+  .pf-rail-btn {
+    font-size: 0;
+    gap: 0;
+    letter-spacing: 0;
+  }
+
+  .pf-rail-btn .pf-glyph {
+    font-size: 15px;
   }
 }
 

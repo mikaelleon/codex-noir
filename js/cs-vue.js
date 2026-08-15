@@ -1,10 +1,9 @@
 /* Character-select stage — Vue 3 island
  * Hover effect from Andy Merskin XNMWvQ (parallax depth), layout stays Codex tarot.
- * Side hover dossier: fade in empty flank (not over other card).
  */
 
 (function () {
-  const { createApp, ref, computed, onMounted } = Vue;
+  const { createApp, ref, onMounted } = Vue;
 
   const PROFILES = [
     {
@@ -19,18 +18,6 @@
       infoTitle: "Developer",
       infoText: "Code & Craft — typed surfaces, clear systems.",
       ariaLabel: "Select Developer profile",
-      dossier: {
-        title: "Developer-Portfolio",
-        quote: "Typed surfaces, clear systems.",
-        description:
-          "BSIT student building front-end experiences — React, TypeScript, and commission storefront flows meant to stay readable.",
-        stats: [
-          { label: "Focus", value: "Front-end UI" },
-          { label: "Stack", value: "React · TS" },
-          { label: "Mode", value: "Product craft" },
-        ],
-        updated: "Updated Aug 2026",
-      },
     },
     {
       id: "artist",
@@ -44,18 +31,6 @@
       infoTitle: "Artist",
       infoText: "Ink & illustration — characters, commissions, craft.",
       ariaLabel: "Select Artist profile",
-      dossier: {
-        title: "Artist-Portfolio",
-        quote: "Characters first. Client-ready craft.",
-        description:
-          "Commission spine: character design, chibi stickers, and illustrations shaped for people who already know the vibe.",
-        stats: [
-          { label: "Focus", value: "Character art" },
-          { label: "Medium", value: "Digital" },
-          { label: "Mode", value: "Commissions" },
-        ],
-        updated: "Updated Aug 2026",
-      },
     },
   ];
 
@@ -243,55 +218,6 @@
     },
   };
 
-  const HoverDossier = {
-    name: "HoverDossier",
-    props: {
-      profile: { type: Object, required: true },
-      visible: { type: Boolean, default: false },
-      flank: { type: String, required: true },
-      locked: { type: Boolean, default: false },
-    },
-    emits: ["select", "hold", "release"],
-    template: `
-      <aside
-        class="cs-hover-panel"
-        :class="[
-          'cs-hover-panel--' + flank,
-          { 'is-visible': visible && !locked }
-        ]"
-        :aria-hidden="!(visible && !locked)"
-        @pointerenter="$emit('hold', profile.id)"
-        @pointerleave="$emit('release')"
-      >
-        <span class="cs-hover-panel__spark cs-hover-panel__spark--tl" aria-hidden="true">✦</span>
-        <span class="cs-hover-panel__spark cs-hover-panel__spark--tr" aria-hidden="true">✦</span>
-        <span class="cs-hover-panel__spark cs-hover-panel__spark--bl" aria-hidden="true">✦</span>
-        <span class="cs-hover-panel__spark cs-hover-panel__spark--br" aria-hidden="true">✦</span>
-
-        <p class="cs-hover-panel__updated">{{ profile.dossier.updated }}</p>
-        <h2 class="cs-hover-panel__title">{{ profile.dossier.title }}</h2>
-        <p class="cs-hover-panel__quote">“{{ profile.dossier.quote }}”</p>
-        <p class="cs-hover-panel__desc">{{ profile.dossier.description }}</p>
-
-        <h3 class="cs-hover-panel__stats-label">Stats</h3>
-        <ul class="cs-hover-panel__stats">
-          <li v-for="(s, i) in profile.dossier.stats" :key="i">
-            <span class="cs-hover-panel__stat-k">{{ s.label }}</span>
-            <span class="cs-hover-panel__stat-v">{{ s.value }}</span>
-          </li>
-        </ul>
-
-        <button
-          type="button"
-          class="cs-hover-panel__continue"
-          @click.stop="$emit('select', profile.id)"
-        >
-          Continue
-        </button>
-      </aside>
-    `,
-  };
-
   function createStage(el, hooks) {
     if (!el) return null;
 
@@ -306,7 +232,7 @@
     };
 
     const app = createApp({
-      components: { DepthCard, HoverDossier },
+      components: { DepthCard },
       setup() {
         const locked = ref(false);
         const confirming = ref(null);
@@ -318,9 +244,6 @@
         );
         const cardRefs = ref({});
         let coldTimer = null;
-
-        const developer = computed(() => PROFILES.find((p) => p.id === "developer"));
-        const artist = computed(() => PROFILES.find((p) => p.id === "artist"));
 
         function setCardRef(id, inst) {
           if (inst) cardRefs.value[id] = inst;
@@ -373,8 +296,6 @@
 
         return {
           profiles: PROFILES,
-          developer,
-          artist,
           locked,
           confirming,
           hot,
@@ -390,25 +311,10 @@
             hooks.onFocusSide?.(id);
           },
           onCold: () => scheduleCold(),
-          onHold: (id) => {
-            if (locked.value) return;
-            setHot(id);
-            hooks.onFocusSide?.(id);
-          },
-          onRelease: () => scheduleCold(),
           onHoverSparks: (id) => hooks.onHoverSparks?.(id, getCardEl(id)),
         };
       },
       template: `
-        <HoverDossier
-          :profile="developer"
-          flank="left"
-          :visible="hot === 'developer'"
-          :locked="locked || !!confirming"
-          @select="onSelect"
-          @hold="onHold"
-          @release="onRelease"
-        />
         <DepthCard
           v-for="p in profiles"
           :key="p.id"
@@ -425,15 +331,6 @@
           @hot="onHot"
           @cold="onCold"
           @hover-sparks="onHoverSparks"
-        />
-        <HoverDossier
-          :profile="artist"
-          flank="right"
-          :visible="hot === 'artist'"
-          :locked="locked || !!confirming"
-          @select="onSelect"
-          @hold="onHold"
-          @release="onRelease"
         />
       `,
     });

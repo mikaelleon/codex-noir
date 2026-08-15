@@ -15,14 +15,18 @@
   z-index: 100;
   height: 100vh;
   height: 100dvh;
-  min-height: 560px;
-  overflow: hidden;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   background: #0c0a10;
   isolation: isolate;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: safe center;
+  padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px);
 }
 
 .cs-root.is-gone {
@@ -197,45 +201,7 @@ body.realm-gate .site-main {
   margin: 0 auto;
 }
 
-/* Side hover dossier — empty flank, not over other card */
-.cs-hover-panel {
-  --cs-panel-ease: cubic-bezier(0.23, 1, 0.32, 1);
-  position: relative;
-  z-index: 4;
-  flex: 0 1 260px;
-  width: min(260px, 22vw);
-  max-width: 280px;
-  padding: 22px 20px 18px;
-  box-sizing: border-box;
-  background: #161219;
-  border: 1px solid var(--label-focused);
-  color: var(--bone, #f3efe6);
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transform: translateY(8px);
-  transition:
-    opacity 280ms var(--cs-panel-ease),
-    transform 280ms var(--cs-panel-ease),
-    visibility 280ms;
-}
-
-.cs-hover-panel.is-visible {
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-
-.cs-hover-panel--left {
-  order: 0;
-  margin-right: auto;
-}
-
-.cs-hover-panel--right {
-  order: 3;
-  margin-left: auto;
-}
+/* Cards only — side hover dossiers removed */
 
 .cs-card--dev {
   order: 1;
@@ -243,134 +209,6 @@ body.realm-gate .site-main {
 
 .cs-card--artist {
   order: 2;
-}
-
-.cs-hover-panel__spark {
-  position: absolute;
-  font-size: 10px;
-  color: var(--label-focused);
-  line-height: 1;
-  pointer-events: none;
-}
-
-.cs-hover-panel__spark--tl {
-  top: 6px;
-  left: 8px;
-}
-
-.cs-hover-panel__spark--tr {
-  top: 6px;
-  right: 8px;
-}
-
-.cs-hover-panel__spark--bl {
-  bottom: 6px;
-  left: 8px;
-}
-
-.cs-hover-panel__spark--br {
-  bottom: 6px;
-  right: 8px;
-}
-
-.cs-hover-panel__updated {
-  margin: 0 0 10px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--label-idle);
-}
-
-.cs-hover-panel__title {
-  margin: 0 0 10px;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--label-focused);
-}
-
-.cs-hover-panel__quote {
-  margin: 0 0 12px;
-  font-family: var(--font-body);
-  font-size: 14px;
-  font-style: italic;
-  line-height: 1.45;
-  color: rgba(255, 255, 255, 0.92);
-}
-
-.cs-hover-panel__desc {
-  margin: 0 0 16px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  line-height: 1.55;
-  color: rgba(243, 239, 230, 0.78);
-}
-
-.cs-hover-panel__stats-label {
-  margin: 0 0 8px;
-  font-family: var(--font-heading);
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--label-focused);
-}
-
-.cs-hover-panel__stats {
-  list-style: none;
-  margin: 0 0 18px;
-  padding: 0;
-  display: grid;
-  gap: 6px;
-}
-
-.cs-hover-panel__stats li {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  border-bottom: 1px solid rgba(184, 147, 91, 0.22);
-  padding-bottom: 5px;
-}
-
-.cs-hover-panel__stat-k {
-  color: var(--label-idle);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.cs-hover-panel__stat-v {
-  color: rgba(243, 239, 230, 0.92);
-  text-align: right;
-}
-
-.cs-hover-panel__continue {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 36px;
-  padding: 0 16px;
-  border: 1px solid var(--label-focused);
-  background: transparent;
-  color: var(--label-focused);
-  font-family: var(--font-heading);
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition:
-    background 160ms var(--cs-ease, ease),
-    color 160ms var(--cs-ease, ease);
-}
-
-.cs-hover-panel__continue:hover,
-.cs-hover-panel__continue:focus-visible {
-  background: rgba(232, 199, 122, 0.12);
-  color: #fff;
-  outline: none;
 }
 
 /* Cards — enter after dialogue */
@@ -965,57 +803,67 @@ body.realm-gate .realm-reopen {
 }
 
 @media (max-width: 860px) {
+  .cs-root {
+    justify-content: flex-start;
+    padding-top: max(16px, env(safe-area-inset-top, 0px));
+    padding-bottom: max(24px, env(safe-area-inset-bottom, 0px));
+  }
+
   .cs-stage {
     flex-direction: column;
-    gap: 28px;
-    padding: 24px;
-  }
-
-  .cs-hover-panel--left,
-  .cs-hover-panel--right {
-    order: 0;
-    margin: 0;
-    width: min(320px, 88vw);
-    max-width: none;
-    flex: none;
-  }
-
-  .cs-hover-panel--left {
-    order: 1;
+    gap: 20px;
+    padding: 16px 16px 28px;
+    min-height: auto;
   }
 
   .cs-card--dev {
-    order: 2;
-  }
-
-  .cs-hover-panel--right {
-    order: 3;
+    order: 1;
   }
 
   .cs-card--artist {
-    order: 4;
+    order: 2;
   }
 
   .cs-card {
-    width: min(280px, 78vw);
+    width: min(280px, 86vw);
   }
 
   .cs-root[data-focused="developer"] .cs-card--dev .cs-ext-label,
   .cs-root[data-focused="artist"] .cs-card--artist .cs-ext-label {
     font-size: 18px;
   }
+
+  .cs-dialogue {
+    width: min(92vw, 420px);
+    margin-inline: auto;
+  }
+}
+
+@media (max-height: 700px) {
+  .cs-root {
+    justify-content: flex-start;
+  }
+
+  .cs-card {
+    width: min(240px, 70vw);
+  }
+}
+
+@media (max-height: 520px) and (orientation: landscape) {
+  .cs-stage {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
+    padding: 12px;
+  }
+
+  .cs-card {
+    width: min(200px, 40vw);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cs-hover-panel {
-    transition: opacity 120ms ease, visibility 120ms;
-    transform: none;
-  }
-
-  .cs-hover-panel.is-visible {
-    transform: none;
-  }
-
   .cs-card,
   .cs-root.is-cards-in .cs-card,
   .cs-root.is-cards-in .cs-card .cs-bob {
