@@ -25,6 +25,8 @@
     projectIdx: 0,
     faqOpen: 0,
     galleryFilter: "featured",
+    galleryItems: [],
+    galleryIdx: 0,
     homeWorkFilter: "all",
     nameUnlocked: false,
     aboutOpen: "about",
@@ -1160,11 +1162,93 @@
   }
 
   /* —— WORK: gallery (art) —— */
+  function galleryItemsNow() {
+    let items = D.gallery.slice();
+    if (state.galleryFilter === "featured") items = items.filter((g) => g.featured);
+    return items;
+  }
+
+  function formatGalleryDate(raw) {
+    if (!raw) return "";
+    const d = new Date(raw + (String(raw).length <= 10 ? "T12:00:00" : ""));
+    if (Number.isNaN(d.getTime())) return String(raw);
+    return d.toLocaleDateString(undefined, {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  }
+
+  function closeLightbox() {
+    const lb = root.querySelector("[data-pf-lightbox]");
+    if (!lb || lb.hidden) return;
+    lb.hidden = true;
+    lb.setAttribute("aria-hidden", "true");
+    lb.classList.remove("is-open");
+    document.body.classList.remove("pf-lb-open");
+  }
+
+  function paintLightbox() {
+    const items = state.galleryItems;
+    const g = items[state.galleryIdx];
+    const lb = root.querySelector("[data-pf-lightbox]");
+    if (!lb || !g) return;
+    const img = lb.querySelector("[data-pf-lb-img]");
+    const title = lb.querySelector("[data-pf-lb-title]");
+    const desc = lb.querySelector("[data-pf-lb-desc]");
+    const dateEl = lb.querySelector("[data-pf-lb-date]");
+    const artist = lb.querySelector("[data-pf-lb-artist]");
+    const tags = lb.querySelector("[data-pf-lb-tags]");
+    const src = D.galleryImage(g);
+    if (img) {
+      img.src = src;
+      img.alt = g.title || "";
+    }
+    if (title) title.textContent = g.title || "";
+    if (desc) {
+      desc.textContent = g.description || "Viewing full image.";
+    }
+    if (dateEl) dateEl.textContent = formatGalleryDate(g.date) || "—";
+    if (artist) artist.textContent = (D.brand && D.brand.name) || "Mikaelleon";
+    if (tags) {
+      const bits = [g.category, g.medium].filter(Boolean);
+      tags.innerHTML = bits
+        .map((t) => '<span class="pf-lb__tag">' + escapeHtml(t) + "</span>")
+        .join("");
+    }
+    const prev = lb.querySelector("[data-pf-lb-prev]");
+    const next = lb.querySelector("[data-pf-lb-next]");
+    if (prev) prev.disabled = items.length < 2;
+    if (next) next.disabled = items.length < 2;
+  }
+
+  function openLightbox(index) {
+    const items = galleryItemsNow();
+    if (!items.length) return;
+    state.galleryItems = items;
+    state.galleryIdx = Math.max(0, Math.min(items.length - 1, Number(index) || 0));
+    const lb = root.querySelector("[data-pf-lightbox]");
+    if (!lb) return;
+    paintLightbox();
+    lb.hidden = false;
+    lb.setAttribute("aria-hidden", "false");
+    lb.classList.add("is-open");
+    document.body.classList.add("pf-lb-open");
+    lb.querySelector(".pf-lb__x")?.focus();
+  }
+
+  function stepLightbox(delta) {
+    const n = state.galleryItems.length;
+    if (n < 2) return;
+    state.galleryIdx = (state.galleryIdx + delta + n) % n;
+    paintLightbox();
+  }
+
   function renderGallery() {
     const mount = root.querySelector("[data-pf-gallery]");
     if (!mount) return;
-    let items = D.gallery;
-    if (state.galleryFilter === "featured") items = items.filter((g) => g.featured);
+    const items = galleryItemsNow();
+    state.galleryItems = items;
 
     mount.innerHTML =
       '<div class="pf-crumb">Home / <span>Work</span></div>' +
@@ -1180,8 +1264,10 @@
       '<div class="pf-gallery-grid">' +
       items
         .map(
-          (g) =>
-            '<div class="pf-gcell" title="' +
+          (g, i) =>
+            '<button type="button" class="pf-gcell" data-gallery-open="' +
+            i +
+            '" title="' +
             escapeHtml(g.title) +
             " — " +
             escapeHtml(g.category) +
@@ -1189,7 +1275,7 @@
             escapeHtml(D.galleryImage(g)) +
             '" alt="' +
             escapeHtml(g.title) +
-            '" loading="lazy" decoding="async" /></div>'
+            '" loading="lazy" decoding="async" /></button>'
         )
         .join("") +
       "</div>" +
@@ -1625,6 +1711,7 @@
     const from = state.section;
     const instant = !!(opts?.instant || prefersReduced());
 
+    closeLightbox();
     syncRail(id);
     root.querySelectorAll(".pf-ld").forEach((el) => el.classList.remove("drill"));
     const hash = "#" + id;
@@ -1712,6 +1799,25 @@
       return;
     }
 
+    const gOpen = e.target.closest("[data-gallery-open]");
+    if (gOpen) {
+      openLightbox(gOpen.dataset.galleryOpen);
+      return;
+    }
+
+    if (e.target.closest("[data-pf-lb-close]")) {
+      closeLightbox();
+      return;
+    }
+    if (e.target.closest("[data-pf-lb-prev]")) {
+      stepLightbox(-1);
+      return;
+    }
+    if (e.target.closest("[data-pf-lb-next]")) {
+      stepLightbox(1);
+      return;
+    }
+
     const wf = e.target.closest("[data-home-work-filter]");
     if (wf) {
       state.homeWorkFilter = wf.dataset.homeWorkFilter || "all";
@@ -1792,6 +1898,9 @@
   });
 
   root.addEventListener("keydown", (e) => {
+    const lb = root.querySelector("[data-pf-lightbox]");
+    if (lb && !lb.hidden) return;
+
     const projList = e.target.closest("[data-pf-project-list]");
     if (projList && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
       e.preventDefault();
@@ -1799,6 +1908,21 @@
       state.projectIdx = Math.max(0, Math.min(D.projects.length - 1, state.projectIdx + dlt));
       renderProjects();
       projList.querySelector('[data-project-i="' + state.projectIdx + '"]')?.focus();
+    }
+  });
+
+  window.addEventListener("keydown", (e) => {
+    const lb = root.querySelector("[data-pf-lightbox]");
+    if (!lb || lb.hidden) return;
+    if (e.key === "Escape") {
+      e.preventDefault();
+      closeLightbox();
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      stepLightbox(-1);
+    } else if (e.key === "ArrowRight") {
+      e.preventDefault();
+      stepLightbox(1);
     }
   });
 

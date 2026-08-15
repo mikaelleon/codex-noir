@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="css/main.css?v=5" />
   <link rel="stylesheet" href="css/character-select.css?v=7" />
   <link rel="stylesheet" href="css/cs-stars.css?v=5" />
-  <link rel="stylesheet" href="css/app-shell.css?v=24" />
+  <link rel="stylesheet" href="css/app-shell.css?v=25" />
   <title>Mikaelleon — Codex Noir</title>
   <script>
     (function () {
@@ -140,6 +140,34 @@
             <div class="pf-page" data-pf-contact></div>
           </section>
         </div>
+
+        <div class="pf-lb" data-pf-lightbox hidden aria-hidden="true">
+          <button type="button" class="pf-lb__scrim" data-pf-lb-close aria-label="Close preview"></button>
+          <button type="button" class="pf-lb__nav pf-lb__nav--prev" data-pf-lb-prev aria-label="Previous image">‹</button>
+          <button type="button" class="pf-lb__nav pf-lb__nav--next" data-pf-lb-next aria-label="Next image">›</button>
+          <div class="pf-lb__stage" role="dialog" aria-modal="true" aria-labelledby="pf-lb-title">
+            <button type="button" class="pf-lb__x" data-pf-lb-close aria-label="Close">×</button>
+            <div class="pf-lb__frame">
+              <img data-pf-lb-img alt="" />
+            </div>
+            <div class="pf-lb__meta">
+              <div class="pf-lb__col">
+                <h3 class="pf-lb__label">Details</h3>
+                <p class="pf-lb__title" id="pf-lb-title" data-pf-lb-title></p>
+                <p class="pf-lb__desc" data-pf-lb-desc></p>
+              </div>
+              <div class="pf-lb__col">
+                <h3 class="pf-lb__label">Credits</h3>
+                <p class="pf-lb__credit" data-pf-lb-date></p>
+                <p class="pf-lb__artist" data-pf-lb-artist></p>
+              </div>
+              <div class="pf-lb__col">
+                <h3 class="pf-lb__label">Tags</h3>
+                <div class="pf-lb__tags" data-pf-lb-tags></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
     <div class="toast" data-toast role="status"></div>
@@ -150,6 +178,6 @@
   <script src="js/site-data.js?v=19" defer></script>
   <script src="js/cs-vue.js?v=8" defer></script>
   <script src="js/character-select.js?v=7" defer></script>
-  <script src="js/app-shell.js?v=19" defer></script>
+  <script src="js/app-shell.js?v=20" defer></script>
 </body>
 </html>

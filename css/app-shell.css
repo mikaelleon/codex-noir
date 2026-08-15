@@ -1243,11 +1243,233 @@ html.light .logo-light.pf-rail__logo {
   color: inherit;
 }
 
+.pf-gcell:hover,
+.pf-gcell:focus-visible {
+  border-style: solid;
+  border-color: var(--gold);
+  outline: none;
+}
+
+.pf-gcell:hover img,
+.pf-gcell:focus-visible img {
+  transform: scale(1.03);
+}
+
 .pf-gcell img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform 320ms var(--ease-standard);
+}
+
+/* —— Artist gallery lightbox —— */
+body.pf-lb-open {
+  overflow: hidden;
+}
+
+.pf-lb {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 56px;
+  box-sizing: border-box;
+}
+
+.pf-lb[hidden] {
+  display: none !important;
+}
+
+.pf-lb__scrim {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background: rgba(8, 6, 10, 0.82);
+  cursor: pointer;
+}
+
+.pf-lb__stage {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: min(920px, 92vw);
+  max-height: min(92vh, 900px);
+  background: #161219;
+  border: 1px solid var(--gold);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+}
+
+.pf-lb__x {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  z-index: 3;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--gold);
+  background: color-mix(in srgb, var(--ink-black) 70%, transparent);
+  color: var(--gold);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pf-lb__x:hover,
+.pf-lb__x:focus-visible {
+  background: var(--gold);
+  color: var(--on-gold, var(--ink-black));
+  outline: none;
+}
+
+.pf-lb__frame {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 18px 12px;
+  background: #0c0a10;
+}
+
+.pf-lb__frame img {
+  display: block;
+  max-width: 100%;
+  max-height: min(68vh, 640px);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border: 1px solid color-mix(in srgb, var(--gold) 35%, transparent);
+  background: #111;
+}
+
+.pf-lb__meta {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: 16px;
+  padding: 14px 18px 16px;
+  border-top: 1px solid var(--hairline);
+  background: color-mix(in srgb, var(--panel) 92%, transparent);
+}
+
+.pf-lb__label {
+  margin: 0 0 6px;
+  font-family: var(--font-heading);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.pf-lb__title {
+  margin: 0 0 4px;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--bone);
+}
+
+.pf-lb__desc,
+.pf-lb__credit {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--taupe);
+}
+
+.pf-lb__artist {
+  margin: 4px 0 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--gold-bright, var(--gold));
+}
+
+.pf-lb__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pf-lb__tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border: 1px solid var(--gold);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--bone);
+  background: color-mix(in srgb, var(--gold) 10%, transparent);
+}
+
+.pf-lb__nav {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 64px;
+  border: 1px solid var(--gold);
+  background: color-mix(in srgb, var(--ink-black) 75%, transparent);
+  color: var(--gold-bright, var(--gold));
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pf-lb__nav:hover:not(:disabled),
+.pf-lb__nav:focus-visible:not(:disabled) {
+  background: var(--gold);
+  color: var(--on-gold, var(--ink-black));
+  outline: none;
+}
+
+.pf-lb__nav:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.pf-lb__nav--prev {
+  left: max(12px, env(safe-area-inset-left, 0px));
+}
+
+.pf-lb__nav--next {
+  right: max(12px, env(safe-area-inset-right, 0px));
+}
+
+@media (max-width: 720px) {
+  .pf-lb {
+    padding: 12px;
+  }
+
+  .pf-lb__meta {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .pf-lb__nav {
+    width: 36px;
+    height: 48px;
+    font-size: 22px;
+  }
+
+  .pf-lb__frame img {
+    max-height: min(52vh, 480px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-gcell img {
+    transition: none;
+  }
 }
 
 .pf-gcell--ph {
