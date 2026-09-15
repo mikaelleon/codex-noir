@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="css/main.css?v=5" />
   <link rel="stylesheet" href="css/character-select.css?v=7" />
   <link rel="stylesheet" href="css/cs-stars.css?v=5" />
-  <link rel="stylesheet" href="css/app-shell.css?v=26" />
+  <link rel="stylesheet" href="css/app-shell.css?v=28" />
   <title>Mikaelleon — Codex Noir</title>
   <script>
     (function () {
@@ -90,6 +90,9 @@
           <a class="pf-rail-btn pf-rail-comm" href="commissions.html" aria-label="Commissions">
             <span class="pf-glyph" aria-hidden="true">✎</span>Commissions
           </a>
+          <button type="button" class="pf-rail-btn" data-pf-nav="faq" aria-label="FAQ">
+            <span class="pf-glyph" aria-hidden="true">?</span>FAQ
+          </button>
           <button type="button" class="pf-rail-btn" data-pf-nav="contact" aria-label="Contact">
             <span class="pf-glyph" aria-hidden="true">✉</span>Contact
           </button>
@@ -135,6 +138,11 @@
             </div>
           </section>
 
+          <!-- FAQ -->
+          <section class="pf-view pf-scroll" data-pf-view="faq" aria-label="FAQ">
+            <div class="pf-page" data-pf-faq></div>
+          </section>
+
           <!-- CONTACT -->
           <section class="pf-view pf-scroll" data-pf-view="contact" aria-label="Contact">
             <div class="pf-page" data-pf-contact></div>
@@ -178,6 +186,6 @@
   <script src="js/site-data.js?v=22" defer></script>
   <script src="js/cs-vue.js?v=8" defer></script>
   <script src="js/character-select.js?v=7" defer></script>
-  <script src="js/app-shell.js?v=21" defer></script>
+  <script src="js/app-shell.js?v=22" defer></script>
 </body>
 </html>

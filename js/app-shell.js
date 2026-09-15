@@ -11,13 +11,14 @@
 
   const live = root.querySelector("[data-pf-live]");
   const PROFILE_KEY = "home-profile-mode";
-  const SECTIONS = ["home", "about", "projects", "contact"];
+  const SECTIONS = ["home", "about", "projects", "faq", "contact"];
 
   /* IA:
    * Home    → unlock hero, intro, CTAs, featured preview, jump links
    * About   → full bio / journey / tools / education
    * Work    → projects (dev) or gallery (art)
-   * Contact → letter, commission status, FAQ (once)
+   * FAQ     → commission / order accordion (own view)
+   * Contact → letter, commission status, socials
    */
 
   const state = {
@@ -1621,12 +1622,27 @@
       '<div class="pf-connect"><h3 class="pf-stack-cols__label">Connect</h3>' +
       socialRow +
       "</div></aside></div>" +
-      '<div class="pf-sec"><h3 class="pf-sec__head pf-sec__head--plus">Frequently Asked Questions</h3>' +
-      '<p class="pf-body" style="margin-bottom:16px;font-style:italic">' +
+      '<p class="pf-body" style="margin-top:36px">' +
+      '<button type="button" class="pf-link-rule" data-pf-nav="faq">Read the FAQ —▸</button>' +
+      "</p>" +
+      footHtml();
+  }
+
+  /* —— FAQ: own view (not nested under Contact) —— */
+  function renderFaq() {
+    const mount = root.querySelector("[data-pf-faq]");
+    if (!mount) return;
+
+    mount.innerHTML =
+      '<div class="pf-faq-page">' +
+      '<div class="pf-crumb">Home / <span>FAQ</span></div>' +
+      '<p class="pf-contact__kicker">Archive</p>' +
+      '<h1 class="pf-about-title" style="font-size:clamp(32px,5vw,48px)">Frequently Asked Questions</h1>' +
+      '<p class="pf-body" style="margin-bottom:28px;font-style:italic">' +
       escapeHtml(D.faqItalic) +
       "</p>" +
       '<div class="pf-faq">' +
-      D.faq
+      (D.faq || [])
         .map((it, i) => {
           const open = state.faqOpen === i;
           return (
@@ -1648,8 +1664,14 @@
           );
         })
         .join("") +
-      "</div></div>" +
-      footHtml();
+      "</div>" +
+      '<div class="pf-cta-band" style="margin-top:48px">' +
+      "<h2>Still have a question?</h2>" +
+      "<p>Drop a letter — commissions and collabs land in one inbox.</p>" +
+      '<button type="button" class="pf-btn pf-btn--solid" data-pf-nav="contact">Get in touch —▸</button>' +
+      "</div>" +
+      footHtml() +
+      "</div>";
   }
 
   function syncModeButtons() {
@@ -1667,11 +1689,25 @@
     renderAbout();
     renderProjects();
     renderGallery();
+    renderFaq();
     renderContact();
   }
 
+  function sectionLabel(id) {
+    if (id === "faq") return "FAQ";
+    if (id === "projects") return "Work";
+    return id.charAt(0).toUpperCase() + id.slice(1);
+  }
+
   function normalizeSection(id) {
-    const map = { portfolio: "projects", work: "projects", commissions: "home", gallery: "projects" };
+    const map = {
+      portfolio: "projects",
+      work: "projects",
+      commissions: "home",
+      gallery: "projects",
+      faqs: "faq",
+      questions: "faq",
+    };
     const next = map[id] || id;
     return SECTIONS.includes(next) ? next : "home";
   }
@@ -1741,7 +1777,7 @@
     if (id === from && !opts?.force) {
       const current = root.querySelector('[data-pf-view="' + id + '"]');
       if (!current?.classList.contains("active")) showViewInstant(id);
-      if (!opts?.silent) announce(id.charAt(0).toUpperCase() + id.slice(1));
+      if (!opts?.silent) announce(sectionLabel(id));
       return;
     }
 
@@ -1753,7 +1789,7 @@
     if (instant || !outgoing || !incoming || !outgoing.classList.contains("active")) {
       clearTimeout(viewTimer);
       showViewInstant(id);
-      if (!opts?.silent) announce(id.charAt(0).toUpperCase() + id.slice(1));
+      if (!opts?.silent) announce(sectionLabel(id));
       return;
     }
 
@@ -1775,7 +1811,7 @@
       viewTimer = null;
     }, 400);
 
-    if (!opts?.silent) announce(id.charAt(0).toUpperCase() + id.slice(1));
+    if (!opts?.silent) announce(sectionLabel(id));
   }
 
   function setMode(next) {
@@ -1891,7 +1927,7 @@
     if (faq) {
       const i = Number(faq.dataset.faqI);
       state.faqOpen = state.faqOpen === i ? -1 : i;
-      renderContact();
+      renderFaq();
       return;
     }
 

@@ -51,7 +51,7 @@
     const boot = (location.hash || "#home").slice(1);
     const map = { portfolio: "projects", commissions: "home", work: "projects" };
     const id = map[boot] || boot;
-    const next = ["home", "about", "projects", "contact"].includes(id) ? id : "home";
+    const next = ["home", "about", "projects", "faq", "contact"].includes(id) ? id : "home";
 
     if (window.AppShell?.reveal) {
       window.AppShell.reveal(next);

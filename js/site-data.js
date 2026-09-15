@@ -6,7 +6,8 @@
  *   profiles.*.shortBio + objective + highlights → About (+ Work mode switch)
  *   bios.full / journey    → About only
  *   projects / gallery     → Work (Home shows preview slice only)
- *   faq / contact / status → Contact only (+ commissions page for builder)
+ *   faq                       → FAQ view only
+ *   contact / status          → Contact only (+ commissions page for builder)
  *   archiveSplit           → reserved / unused by shell (was redundant with rail)
  */
 window.SiteData = (function () {

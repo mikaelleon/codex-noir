@@ -1501,6 +1501,19 @@ body.pf-lb-open {
   border-top: 1px solid var(--hairline);
 }
 
+.pf-faq-page {
+  max-width: 720px;
+}
+
+.pf-faq-page .pf-contact__kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--gold);
+  margin: 0 0 10px;
+  text-transform: uppercase;
+}
+
 .pf-faq__item {
   border-bottom: 1px solid var(--hairline);
 }
@@ -1521,6 +1534,13 @@ body.pf-lb-open {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--bone);
+}
+
+button.pf-link-rule {
+  appearance: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
 }
 
 .pf-faq__q span {
