@@ -41,6 +41,8 @@ window.SiteData = (function () {
     eyebrow: "Activity",
     title: "Coding Activity",
     sub: "My contributions over the last year.",
+    /* Repos polled for Recent Activity when Events API is thin / rate-limited */
+    activityRepos: ["portfolio-kc", "bago.ph-quadstack", "BakeSync", "Pawdar"],
   };
 
   const bios = {

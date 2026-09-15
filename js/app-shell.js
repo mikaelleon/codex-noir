@@ -621,14 +621,25 @@
     const url = ev.repo?.name ? "https://github.com/" + ev.repo.name : "#";
 
     if (type === "PushEvent") {
-      const n = (payload.commits && payload.commits.length) || payload.size || 1;
+      const commits = Array.isArray(payload.commits) ? payload.commits : [];
+      const n = commits.length || payload.size || 1;
+      const head = commits[0];
       const ref = String(payload.ref || "main").replace(/^refs\/heads\//, "");
+      const msg =
+        (head && head.message && String(head.message).split("\n")[0].trim()) ||
+        "Pushed " + n + " commit" + (n === 1 ? "" : "s");
+      const commitUrl =
+        head && head.sha && ev.repo?.name
+          ? "https://github.com/" + ev.repo.name + "/commit/" + head.sha
+          : url;
       return {
         icon: "commit",
         repo: repo,
-        text: "Pushed " + n + " commit" + (n === 1 ? "" : "s"),
+        text: msg,
         chip: ref,
-        url: url,
+        url: commitUrl,
+        kind: "push",
+        at: ev.created_at ? Date.parse(ev.created_at) : 0,
       };
     }
     if (type === "CreateEvent") {
@@ -639,22 +650,45 @@
         text: "Created " + kind + (payload.ref ? " " + payload.ref : ""),
         chip: payload.ref || kind,
         url: url,
+        kind: "other",
+        at: ev.created_at ? Date.parse(ev.created_at) : 0,
       };
     }
     if (type === "ForkEvent") {
-      return { icon: "git-fork", repo: repo, text: "Forked repository", chip: "fork", url: url };
+      return {
+        icon: "git-fork",
+        repo: repo,
+        text: "Forked repository",
+        chip: "fork",
+        url: url,
+        kind: "other",
+        at: ev.created_at ? Date.parse(ev.created_at) : 0,
+      };
     }
     if (type === "WatchEvent") {
-      return { icon: "star-outline", repo: repo, text: "Starred repository", chip: "starred", url: url };
+      return {
+        icon: "star-outline",
+        repo: repo,
+        text: "Starred repository",
+        chip: "starred",
+        url: url,
+        kind: "other",
+        at: ev.created_at ? Date.parse(ev.created_at) : 0,
+      };
     }
     if (type === "IssuesEvent") {
       const n = payload.issue?.number;
       return {
         icon: "git-issue",
         repo: repo,
-        text: (payload.action || "Updated") + " issue" + (payload.issue?.title ? " — " + payload.issue.title : ""),
+        text:
+          (payload.action || "Updated") +
+          " issue" +
+          (payload.issue?.title ? " — " + payload.issue.title : ""),
         chip: n ? "#" + n : "issue",
         url: payload.issue?.html_url || url,
+        kind: "other",
+        at: ev.created_at ? Date.parse(ev.created_at) : 0,
       };
     }
     if (type === "PullRequestEvent") {
@@ -668,6 +702,8 @@
           (payload.pull_request?.title ? " — " + payload.pull_request.title : ""),
         chip: n ? "#" + n : "pr",
         url: payload.pull_request?.html_url || url,
+        kind: "other",
+        at: ev.created_at ? Date.parse(ev.created_at) : 0,
       };
     }
     if (type === "PullRequestReviewEvent") {
@@ -677,6 +713,8 @@
         text: "Reviewed a pull request",
         chip: "review",
         url: url,
+        kind: "other",
+        at: ev.created_at ? Date.parse(ev.created_at) : 0,
       };
     }
     if (type === "ReleaseEvent") {
@@ -686,6 +724,8 @@
         text: "Published a release",
         chip: payload.release?.tag_name || "release",
         url: url,
+        kind: "other",
+        at: ev.created_at ? Date.parse(ev.created_at) : 0,
       };
     }
     return {
@@ -694,6 +734,8 @@
       text: type.replace(/Event$/, "") + " on " + repo,
       chip: "event",
       url: url,
+      kind: "other",
+      at: ev.created_at ? Date.parse(ev.created_at) : 0,
     };
   }
 
@@ -766,6 +808,92 @@
       .join("");
   }
 
+  const GH_FEED_CACHE_KEY = "pf-gh-feed-cache-v1";
+  const GH_FEED_CACHE_MS = 20 * 60 * 1000;
+
+  function readGhFeedCache() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(GH_FEED_CACHE_KEY) || "null");
+      if (!raw || !Array.isArray(raw.items) || !raw.savedAt) return null;
+      if (Date.now() - raw.savedAt > GH_FEED_CACHE_MS) return null;
+      return raw;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function writeGhFeedCache(items, overview) {
+    try {
+      localStorage.setItem(
+        GH_FEED_CACHE_KEY,
+        JSON.stringify({ savedAt: Date.now(), items: items, overview: overview || null })
+      );
+    } catch (_) {}
+  }
+
+  function activityRepoNames() {
+    const fromCfg = (D.github && D.github.activityRepos) || [];
+    const fromRepos = (D.repos || []).map((r) => r.name).filter(Boolean);
+    const all = fromCfg.concat(fromRepos);
+    return Array.from(new Set(all)).slice(0, 6);
+  }
+
+  async function fetchRepoCommitItems(user, headers) {
+    const names = activityRepoNames();
+    const settled = await Promise.all(
+      names.map(async (name) => {
+        try {
+          const res = await fetch(
+            "https://api.github.com/repos/" +
+              encodeURIComponent(user) +
+              "/" +
+              encodeURIComponent(name) +
+              "/commits?per_page=3",
+            { headers: headers }
+          );
+          if (!res.ok) return [];
+          const list = await res.json();
+          if (!Array.isArray(list)) return [];
+          return list.map((c) => {
+            const iso = c.commit?.author?.date || c.commit?.committer?.date || "";
+            return {
+              icon: "commit",
+              repo: user + "/" + name,
+              text: String(c.commit?.message || "Commit").split("\n")[0].trim(),
+              chip: String(c.sha || "").slice(0, 7),
+              url: c.html_url || "https://github.com/" + user + "/" + name,
+              kind: "push",
+              at: iso ? Date.parse(iso) : 0,
+              when: relativeGhTime(iso),
+            };
+          });
+        } catch (_) {
+          return [];
+        }
+      })
+    );
+    return settled.flat();
+  }
+
+  function pickFeedItems(eventItems, commitItems, limit) {
+    const byKey = new Map();
+    function keyOf(it) {
+      return (it.repo || "") + "|" + (it.text || "") + "|" + (it.chip || "");
+    }
+    function add(it) {
+      if (!it || !it.text) return;
+      const k = keyOf(it);
+      if (byKey.has(k)) return;
+      byKey.set(k, it);
+    }
+    const pushes = (eventItems || []).filter((i) => i.kind === "push");
+    const others = (eventItems || []).filter((i) => i.kind !== "push");
+    pushes.concat(commitItems || []).concat(others).forEach(add);
+    return Array.from(byKey.values())
+      .sort((a, b) => (b.at || 0) - (a.at || 0))
+      .slice(0, limit || 5);
+  }
+
   async function loadGithubActivity() {
     const feed = root.querySelector("[data-pf-gh-feed]");
     const overview = root.querySelector("[data-pf-gh-overview]");
@@ -773,6 +901,7 @@
 
     const user = (D.github && D.github.username) || "mikaelleon";
     const headers = { Accept: "application/vnd.github+json" };
+    const cached = readGhFeedCache();
 
     try {
       const [evRes, userRes] = await Promise.all([
@@ -787,31 +916,69 @@
         }),
       ]);
 
+      const rateLimited = evRes.status === 403 || userRes.status === 403;
       const events = evRes.ok ? await evRes.json() : [];
       const profile = userRes.ok ? await userRes.json() : {};
       const list = Array.isArray(events) ? events : [];
 
-      if (!list.length) {
-        feed.innerHTML = githubFallbackHtml();
-      } else {
-        feed.innerHTML = list
-          .slice(0, 5)
-          .map((ev) => {
-            const parsed = parseGhEvent(ev);
-            parsed.when = relativeGhTime(ev.created_at);
-            return ghFeedItemHtml(parsed);
-          })
-          .join("");
+      const eventItems = list.map((ev) => {
+        const parsed = parseGhEvent(ev);
+        parsed.when = relativeGhTime(ev.created_at);
+        return parsed;
+      });
+
+      let commitItems = [];
+      const needCommits =
+        !eventItems.some((i) => i.kind === "push") || rateLimited || !list.length;
+      if (needCommits || eventItems.filter((i) => i.kind === "push").length < 3) {
+        commitItems = await fetchRepoCommitItems(user, headers);
       }
 
-      if (overview) {
-        overview.innerHTML = overviewCardsHtml({
-          repos: profile.public_repos != null ? profile.public_repos : (D.repos || []).length,
+      const feedItems = pickFeedItems(eventItems, commitItems, 5);
+
+      if (feedItems.length) {
+        feed.innerHTML = feedItems.map(ghFeedItemHtml).join("");
+        const overviewStats = {
+          repos:
+            profile.public_repos != null ? profile.public_repos : (D.repos || []).length,
           prs: list.filter((e) => e.type === "PullRequestEvent").length,
           reviews: list.filter((e) => e.type === "PullRequestReviewEvent").length,
-        });
+        };
+        if (overview) overview.innerHTML = overviewCardsHtml(overviewStats);
+        writeGhFeedCache(feedItems, overviewStats);
+      } else if (cached && cached.items.length) {
+        feed.innerHTML = cached.items.map(ghFeedItemHtml).join("");
+        if (overview && cached.overview) {
+          overview.innerHTML = overviewCardsHtml(cached.overview);
+        }
+      } else if (rateLimited) {
+        feed.innerHTML =
+          '<li class="pf-gh__status">GitHub rate limit hit — refresh in a bit, or open the profile link below.</li>';
+        if (overview) {
+          overview.innerHTML = overviewCardsHtml({
+            repos: (D.repos || []).length,
+            prs: "—",
+            reviews: "—",
+          });
+        }
+      } else {
+        feed.innerHTML = githubFallbackHtml();
+        if (overview) {
+          overview.innerHTML = overviewCardsHtml({
+            repos: (D.repos || []).length,
+            prs: "—",
+            reviews: "—",
+          });
+        }
       }
     } catch (_) {
+      if (cached && cached.items.length) {
+        feed.innerHTML = cached.items.map(ghFeedItemHtml).join("");
+        if (overview && cached.overview) {
+          overview.innerHTML = overviewCardsHtml(cached.overview);
+        }
+        return;
+      }
       feed.innerHTML = githubFallbackHtml();
       if (overview) {
         overview.innerHTML = overviewCardsHtml({
